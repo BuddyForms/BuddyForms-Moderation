@@ -67,7 +67,7 @@ function bf_review_create_frontend_form_element($form, $form_args){
         case 'Review-Logic':
 
             $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('name' => 'draft')));
-            $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'review')));
+            $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'pending')));
 
         break;
 
@@ -186,4 +186,22 @@ function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
             update_post_meta($parent_post_id, $meta_key, $meta_value);
         }
     }
+}
+
+add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
+function bf_review_post_control_args($args){
+
+    if($_POST['submitted'] == 'draft'){
+        $args['action'] = 'draft';
+        $args['post_parent'] = $_POST['new_post_id'];
+        $args['post_status'] = 'draft';
+    }
+
+    if($_POST['submitted'] == 'pending'){
+        $args['action'] = 'pending';
+        $args['post_parent'] = $_POST['new_post_id'];
+        $args['post_status'] = 'pending';
+    }
+
+    return $args;
 }
