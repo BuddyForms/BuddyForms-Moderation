@@ -25,7 +25,6 @@ function bf_review_create_new_form_builder_form_element($form_fields, $form_slug
     switch ($field_type) {
 
         case 'Review-Logic':
-
             unset($form_fields);
             $form_fields['right']['name']		= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][name]", 'Review ogic');
             $form_fields['right']['slug']		= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][slug]", 'bf_review_logic');
@@ -37,8 +36,6 @@ function bf_review_create_new_form_builder_form_element($form_fields, $form_slug
             if(isset($buddyforms_options['buddyforms'][$form_slug]['form_fields'][$field_id]['review_button']))
                 $review_button = $buddyforms_options['buddyforms'][$form_slug]['form_fields'][$field_id]['review_button'];
             $form_fields['full']['draft']		= new Element_Checkbox('<b>' . __('Display Button', 'buddyforms') . '</b>' ,"buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][review_button]",array('draft' => __('Show Draft Button', 'buddyforms') ,'review' => __('Show Review Button', 'buddyforms')),array('id' => 'draft'.$form_slug.'_'.$field_id , 'value' => $review_button));
-
-
             break;
 
     }
@@ -63,18 +60,13 @@ function bf_review_create_frontend_form_element($form, $form_args){
     $post               = get_post($post_id);
 
     switch ($customfield['type']) {
-
         case 'Review-Logic':
-
-            $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('name' => 'draft')));
-            $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'pending')));
-
+            $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('name' => 'new-draft')));
+            $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'needs-review')));
         break;
-
     }
 
     return $form;
-
 }
 add_filter('buddyforms_create_edit_form_display_element','bf_review_create_frontend_form_element',1,2);
 
@@ -104,7 +96,6 @@ class BF_Review_Update_Post {
 
     public function modify_post_content( $data , $postarr ) {
 
-
         if($data['post_status'] != 'publish')
             return $data;
 
@@ -115,7 +106,7 @@ class BF_Review_Update_Post {
 
         if(isset($bf_form_slug) && $data['post_parent'] != 0){
 
-            $data['post_status'] = 'draft';
+            $data['post_status'] = 'approved';
 
             $update_post = array(
                 'ID'        		=> $postarr['post_parent'],
@@ -191,17 +182,53 @@ function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
 add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
 function bf_review_post_control_args($args){
 
-    if($_POST['submitted'] == 'draft'){
-        $args['action'] = 'draft';
+    if($_POST['submitted'] == 'new-draft'){
+        $args['action'] = 'new-draft';
         $args['post_parent'] = $_POST['new_post_id'];
-        $args['post_status'] = 'draft';
+        $args['post_status'] = 'new-draft';
     }
 
-    if($_POST['submitted'] == 'pending'){
-        $args['action'] = 'pending';
+    if($_POST['submitted'] == 'needs-review'){
+        $args['action'] = 'needs-review';
         $args['post_parent'] = $_POST['new_post_id'];
-        $args['post_status'] = 'pending';
+        $args['post_status'] = 'needs-review';
     }
 
     return $args;
 }
+
+// Register Custom Status
+function custom_post_status() {
+
+    $args = array(
+        'label'                     => _x( 'New Draft', 'New Draft', 'buddyforms' ),
+        'label_count'               => _n_noop( 'New Draft (%s)',  'New Draft (%s)', 'buddyforms' ),
+        'public'                    => false,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'exclude_from_search'       => true,
+    );
+    register_post_status( 'new-draft', $args );
+    $args = array(
+        'label'                     => _x( 'Needs Review', 'Needs Review', 'buddyforms' ),
+        'label_count'               => _n_noop( 'Needs Review (%s)',  'Needs Review (%s)', 'buddyforms' ),
+        'public'                    => false,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'exclude_from_search'       => true,
+    );
+    register_post_status( 'needs-review', $args );
+    $args = array(
+        'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
+        'label_count'               => _n_noop( 'Approved (%s)',  'Approved (%s)', 'buddyforms' ),
+        'public'                    => false,
+        'show_in_admin_all_list'    => true,
+        'show_in_admin_status_list' => true,
+        'exclude_from_search'       => true,
+    );
+    register_post_status( 'approved', $args );
+
+}
+
+// Hook into the 'init' action
+add_action( 'init', 'custom_post_status', 999 );

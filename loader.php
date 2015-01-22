@@ -29,7 +29,7 @@
  */
 
 
-add_action('init', 'bf_review_includes');
+add_action('init', 'bf_review_includes', 10);
 function bf_review_includes(){
     include_once(dirname(__FILE__) . '/includes/buddyforms-review.php');
 }
