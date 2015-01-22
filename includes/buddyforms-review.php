@@ -104,12 +104,17 @@ class BF_Review_Update_Post {
 
     public function modify_post_content( $data , $postarr ) {
 
+
+        if($data['post_status'] != 'publish')
+            return $data;
+
         if($data['post_type'] == 'revision')
             return $data;
 
         $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
 
         if(isset($bf_form_slug) && $data['post_parent'] != 0){
+            
             $data['post_status'] = 'trash';
 
             $update_post = array(
