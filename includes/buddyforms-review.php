@@ -114,8 +114,8 @@ class BF_Review_Update_Post {
         $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
 
         if(isset($bf_form_slug) && $data['post_parent'] != 0){
-            
-            $data['post_status'] = 'trash';
+
+            $data['post_status'] = 'draft';
 
             $update_post = array(
                 'ID'        		=> $postarr['post_parent'],
@@ -127,10 +127,11 @@ class BF_Review_Update_Post {
                 'post_excerpt'		=> $postarr['post_excerpt'],
             );
 
-            $updated_post_id = wp_update_post($update_post);
+            $parent_post_id = wp_update_post($update_post);
 
-            if($updated_post_id){
-                bf_review_copy_post_taxonomies($updated_post_id, $postarr['ID']);
+            if($parent_post_id){
+                bf_review_copy_post_taxonomies($parent_post_id, $postarr['ID']);
+                bf_review_copy_post_meta_info($parent_post_id,  $postarr['ID']);
             }
 
         }
@@ -157,7 +158,6 @@ function bf_review_copy_post_taxonomies($parent_post_id, $child_post_id) {
 
         $post_taxonomies = get_object_taxonomies($post->post_type);
 
-
         foreach ($post_taxonomies as $taxonomy) {
             $post_terms = wp_get_object_terms($post->ID, $taxonomy, array( 'orderby' => 'term_order' ));
             $terms = array();
@@ -174,18 +174,16 @@ function bf_review_copy_post_taxonomies($parent_post_id, $child_post_id) {
  * @param $new_id
  * @param $post
  */
-function bf_review_copy_post_meta_info($new_id, $post) {
-    $post_meta_keys = get_post_custom_keys($post->ID);
-    if (empty($post_meta_keys)) return;
-    $meta_blacklist = explode(",",get_option('duplicate_post_blacklist'));
-    if ($meta_blacklist == "") $meta_blacklist = array();
-    $meta_keys = array_diff($post_meta_keys, $meta_blacklist);
+function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
+    $post_meta_keys = get_post_custom_keys($child_post_id);
+    if (empty($post_meta_keys))
+        return;
 
-    foreach ($meta_keys as $meta_key) {
-        $meta_values = get_post_custom_values($meta_key, $post->ID);
+    foreach ($post_meta_keys as $meta_key) {
+        $meta_values = get_post_custom_values($meta_key, $child_post_id);
         foreach ($meta_values as $meta_value) {
             $meta_value = maybe_unserialize($meta_value);
-            add_post_meta($new_id, $meta_key, $meta_value);
+            update_post_meta($parent_post_id, $meta_key, $meta_value);
         }
     }
 }
