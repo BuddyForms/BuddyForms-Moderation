@@ -32,6 +32,7 @@
 add_action('init', 'bf_review_includes', 10);
 function bf_review_includes(){
     include_once(dirname(__FILE__) . '/includes/buddyforms-review.php');
+    include_once(dirname(__FILE__) . '/includes/form-elements.php');
 }
 
 add_action('plugins_loaded', 'bf_review_requirements');
