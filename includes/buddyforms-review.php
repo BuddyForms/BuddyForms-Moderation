@@ -179,7 +179,6 @@ function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
     }
 }
 
-add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
 function bf_review_post_control_args($args){
 
     if($_POST['submitted'] == 'new-draft'){
@@ -196,13 +195,14 @@ function bf_review_post_control_args($args){
 
     return $args;
 }
+add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
 
 // Register Custom Status
-function custom_post_status() {
+function bf_review_post_status() {
 
     $args = array(
-        'label'                     => _x( 'New Draft', 'New Draft', 'buddyforms' ),
-        'label_count'               => _n_noop( 'New Draft (%s)',  'New Draft (%s)', 'buddyforms' ),
+        'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
+        'label_count'               => _n_noop( 'Edit Draft (%s)',  'Edit Draft (%s)', 'buddyforms' ),
         'public'                    => false,
         'show_in_admin_all_list'    => true,
         'show_in_admin_status_list' => true,
@@ -210,8 +210,8 @@ function custom_post_status() {
     );
     register_post_status( 'new-draft', $args );
     $args = array(
-        'label'                     => _x( 'Needs Review', 'Needs Review', 'buddyforms' ),
-        'label_count'               => _n_noop( 'Needs Review (%s)',  'Needs Review (%s)', 'buddyforms' ),
+        'label'                     => _x( 'Awaiting Review', 'Awaiting Review', 'buddyforms' ),
+        'label_count'               => _n_noop( 'Awaiting Review (%s)',  'Awaiting Review (%s)', 'buddyforms' ),
         'public'                    => false,
         'show_in_admin_all_list'    => true,
         'show_in_admin_status_list' => true,
@@ -221,7 +221,7 @@ function custom_post_status() {
     $args = array(
         'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
         'label_count'               => _n_noop( 'Approved (%s)',  'Approved (%s)', 'buddyforms' ),
-        'public'                    => false,
+        'public'                    => FALSE,
         'show_in_admin_all_list'    => true,
         'show_in_admin_status_list' => true,
         'exclude_from_search'       => true,
@@ -229,6 +229,61 @@ function custom_post_status() {
     register_post_status( 'approved', $args );
 
 }
+add_action( 'init', 'bf_review_post_status', 999 );
 
-// Hook into the 'init' action
-add_action( 'init', 'custom_post_status', 999 );
+function bf_review_submitbox_misc_actions(){
+
+    global $post;
+
+//only when editing a post
+    if( $post->post_type == 'post' ){ //////////////////////////////// ONLY WORKS FOR POST NOW ////////////////////////////////////
+
+        // custom post status: approved
+        $complete = '';
+        $label = '';
+
+        if( $post->post_status == 'approved' ){
+            $complete = ' selected=\"selected\"';
+            $label = '<span id=\"post-status-display\"> Approved</span>';
+        }
+
+        echo '<script>
+    jQuery(document).ready(function($){
+        $("select#post_status").append("<option value=\"approved\" '.$complete.'>Approved</option>");
+        $(".misc-pub-section label").append("'.$label.'");
+    });
+    </script>';
+
+    }
+}
+add_action( 'post_submitbox_misc_actions', 'bf_review_submitbox_misc_actions' );
+
+/**
+ * Append the custom post type to the post status
+ * dropdown in the quick edit area on the post
+ * listing page.
+ * @return null
+ */
+function bf_review_append_to_inline_status_dropdown() {
+    global $post;
+    // no posts
+    if (!$post) return;
+
+
+    echo "
+        <script>
+        jQuery(document).ready(function ($){
+            jQuery('.inline-edit-status select').append('<option value=\"approved\">Approved</option>');
+        });
+        </script>
+        ";
+
+}
+add_action( 'admin_footer-edit.php', 'bf_review_append_to_inline_status_dropdown', 999 );
+
+
+function bf_review_get_post_status_array($status_array){
+    $status_array['approved'] = 'Approved';
+    return $status_array;
+}
+add_filter( 'bf_get_post_status_array','bf_review_get_post_status_array', 10, 1);
