@@ -168,6 +168,27 @@ add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
 add_filter('bf_create_edit_form_post_id', 'bf_review_create_edit_form_post_id', 10, 1);
 function bf_review_create_edit_form_post_id($post_id){
 
+    $buddyforms_options = get_option('buddyforms_options');
+
+    $bf_form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+
+    if(!$bf_form_slug)
+        return $post_id;
+
+    $form_fields = $buddyforms_options['buddyforms'][$bf_form_slug]['form_fields'];
+
+    if(!$form_fields)
+        return $post_id;
+
+    $bf_review_logic = false;
+    foreach($form_fields as $key => $form_field){
+        if(in_array('bf_review_logic', $form_field))
+            $bf_review_logic = true;
+    }
+
+    if(!$bf_review_logic)
+        return $post_id;
+
     $args = array(
         'post_parent' => $post_id,
         'posts_per_page' => 1,
@@ -179,5 +200,57 @@ function bf_review_create_edit_form_post_id($post_id){
         $post_id = $children[0]->ID;
 
     return $post_id;
+
+}
+
+add_filter('bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1);
+
+function bf_create_post_status_to_display($query_args){
+
+    $buddyforms_options = get_option('buddyforms_options');
+
+    $form_fields = $buddyforms_options['buddyforms'][$query_args['form_slug']]['form_fields'];
+
+    $bf_review_logic = false;
+    foreach($form_fields as $key => $form_field){
+        if(in_array('bf_review_logic', $form_field))
+            $bf_review_logic = true;
+    }
+
+
+    if($bf_review_logic)
+        $query_args['post_status'] =  array('publish', 'awaiting-review', 'edit-draft');
+
+    return $query_args;
+
+}
+
+add_filter('bf_post_status_css','bf_review_post_status_css', 10, 2);
+
+function bf_review_post_status_css($post_status_css, $form_slug){
+    $buddyforms_options = get_option('buddyforms_options');
+
+    $form_fields = $buddyforms_options['buddyforms'][$form_slug]['form_fields'];
+
+    $bf_review_logic = false;
+    foreach($form_fields as $key => $form_field){
+        if(in_array('bf_review_logic', $form_field))
+            $bf_review_logic = true;
+    }
+
+    if(!$bf_review_logic)
+        return $post_status_css;
+
+
+    if( $post_status_css == 'awaiting-review')
+        $post_status_css = 'bf-pending';
+
+    if( $post_status_css == 'edit-draft')
+        $post_status_css = 'draft';
+
+echo '$post_status_css '.$post_status_css.' $form_slug '. $form_slug;
+
+
+    return $post_status_css;
 
 }

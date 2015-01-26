@@ -23,7 +23,7 @@ class BF_Review_Update_Post {
             $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
 
             if(isset($bf_form_slug) && $data['post_parent'] != 0){
-                
+
                 $data['post_status'] = 'approved';
 
                 $update_post = array(
@@ -104,7 +104,7 @@ class BF_Review_Update_Post {
             'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
             'label_count'               => _n_noop( 'Edit Draft (%s)',  'Edit Draft (%s)', 'buddyforms' ),
             'public'                    => false,
-            'show_in_admin_all_list'    => true,
+            'show_in_admin_all_list'    => false,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
             'protected'                 => true,
@@ -115,7 +115,7 @@ class BF_Review_Update_Post {
             'label'                     => _x( 'Awaiting Review', 'Awaiting Review', 'buddyforms' ),
             'label_count'               => _n_noop( 'Awaiting Review (%s)',  'Awaiting Review (%s)', 'buddyforms' ),
             'public'                    => false,
-            'show_in_admin_all_list'    => true,
+            'show_in_admin_all_list'    => false,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
             'protected'                 => true,
@@ -126,7 +126,7 @@ class BF_Review_Update_Post {
             'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
             'label_count'               => _n_noop( 'Approved (%s)',  'Approved (%s)', 'buddyforms' ),
             'public'                    => false,
-            'show_in_admin_all_list'    => true,
+            'show_in_admin_all_list'    => false,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
             'protected'                 => true,
