@@ -23,10 +23,7 @@ class BF_Review_Update_Post {
             $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
 
             if(isset($bf_form_slug) && $data['post_parent'] != 0){
-
-//                echo '<pre>';
-//                print_r($data);
-//                echo '</pre>';
+                
                 $data['post_status'] = 'approved';
 
                 $update_post = array(
@@ -110,6 +107,7 @@ class BF_Review_Update_Post {
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
+            'protected'                 => true,
         );
         register_post_status( 'edit-draft', $args );
 
@@ -120,6 +118,7 @@ class BF_Review_Update_Post {
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
+            'protected'                 => true,
         );
         register_post_status( 'awaiting-review', $args );
 
@@ -130,6 +129,7 @@ class BF_Review_Update_Post {
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
             'exclude_from_search'       => true,
+            'protected'                 => true,
         );
         register_post_status( 'approved', $args );
 
