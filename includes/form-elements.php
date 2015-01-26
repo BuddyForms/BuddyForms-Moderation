@@ -27,7 +27,7 @@ function bf_review_create_new_form_builder_form_element($form_fields, $form_slug
 
         case 'Review-Logic':
             unset($form_fields);
-            $form_fields['right']['name']		= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][name]", 'Review ogic');
+            $form_fields['right']['name']		= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][name]", 'Review Logic');
             $form_fields['right']['slug']		= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][slug]", 'bf_review_logic');
 
             $form_fields['right']['type']	    = new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][type]", $field_type);
@@ -61,22 +61,9 @@ function bf_review_create_frontend_form_element($form, $form_args){
 
             $post = get_post($post_id);
 
-
-
-            // This is a Parent post
-            if( $post->post_parent == 0 ){
-
-                //Check if existing post && $post->post_status != 'awaiting-review'
                 if($post_id == 0 ){
-
-                    echo 'new$post_idq '.$post_id.' $post->post_status '. $post->post_status;
-
                     $form->addElement( new Element_Button( 'Save', 'submit', array('name' => 'edit-draft')));
-
                 } else {
-
-                    echo 'new$post_id '.$post_id.' $post->post_status '. $post->post_status;
-
                     if($post->post_status == 'edit-draft'){
                         $form->addElement( new Element_Button( 'Save', 'submit', array('name' => 'submitted')));
                         $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'awaiting-review')));
@@ -85,37 +72,7 @@ function bf_review_create_frontend_form_element($form, $form_args){
                     }
                 }
 
-            } else {
-
-                if($post->post_status == 'edit-draft'){
-                    $form->addElement( new Element_Button( 'Save', 'submit', array('name' => 'submitted')));
-                    $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'awaiting-review')));
-                } else {
-                    $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('name' => 'edit-draft')));
-                }
-            }
-
             add_filter('buddyforms_create_edit_form_button', 'bf_review_buddyforms_create_edit_form_button', 10, 1);
-
-//            if($post_id != 0 ){
-//
-//                $args = array(
-//                    'post_parent' => $post_id,
-//                    'posts_per_page' => -1,
-//                     );
-//
-//
-//                print_r($args);
-//
-//                $children = get_posts($args);
-//                foreach ( $children as $child ) : setup_postdata( $child );?>
-<!--                    <li>-->
-<!--                        <a href="--><?php //the_permalink(); ?><!--">--><?php //the_title(); ?><!--</a>-->
-<!--                    </li>-->
-<!--                --><?php //endforeach;
-//
-//            }
-
 
             break;
     }
@@ -147,9 +104,7 @@ function bf_review_approve( $actions, $post ) {
 function bf_review_post_control_args($args){
 
     if($_POST['submitted'] == 'edit-draft'){
-
         $args['action'] = 'new-post';
-
         if($_POST['new_post_id'] != 0 ){
             $args['post_parent'] = $_POST['new_post_id'];
         }
@@ -241,15 +196,11 @@ function bf_review_post_status_css($post_status_css, $form_slug){
     if(!$bf_review_logic)
         return $post_status_css;
 
-
     if( $post_status_css == 'awaiting-review')
         $post_status_css = 'bf-pending';
 
     if( $post_status_css == 'edit-draft')
         $post_status_css = 'draft';
-
-echo '$post_status_css '.$post_status_css.' $form_slug '. $form_slug;
-
 
     return $post_status_css;
 

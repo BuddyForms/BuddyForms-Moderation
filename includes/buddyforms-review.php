@@ -43,10 +43,10 @@ class BF_Review_Update_Post {
                     $this->bf_review_copy_post_meta_info($parent_post_id,  $postarr['ID']);
                 }
 
-
+            } else {
+                $data['post_status'] = 'publish';
             }
         }
-
 
         return $data;
 
@@ -80,9 +80,11 @@ class BF_Review_Update_Post {
 
     /**
      * Copy the meta information of a post to another post
-     * @param $new_id
-     * @param $post
-    */
+     * @param $parent_post_id
+     * @param $child_post_id
+     * @internal param $new_id
+     * @internal param $post
+     */
     function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
         $post_meta_keys = get_post_custom_keys($child_post_id);
         if (empty($post_meta_keys))
@@ -145,31 +147,41 @@ class BF_Review_Update_Post {
         if(!isset($bf_form_slug))
             return;
 
+        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+            return;
+
         if( $post->post_type != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
             return;
 
         $complete = '';
         $label = '';
 
+        echo '<script>';
+        echo ' jQuery(document).ready(function($){';
         if( $post->post_status == 'edit-draft' ){
             $complete = ' selected=\"selected\"';
             $label = '<span id=\"post-status-display\"> Edit Draft</span>';
         }
+        echo '$("select#post_status").append("<option value=\"'.$post->post_status.'\" '.$complete.'>Edit Draft</option>");
+            $(".misc-pub-section label").append("'.$label.'");';
+        $complete = '';
+        $label = '';
         if( $post->post_status == 'awaiting-review' ){
             $complete = ' selected=\"selected\"';
             $label = '<span id=\"post-status-display\"> Awaiting Review</span>';
         }
+        echo '$("select#post_status").append("<option value=\"'.$post->post_status.'\" '.$complete.'>Awaiting Review</option>");
+            $(".misc-pub-section label").append("'.$label.'");';
+        $complete = '';
+        $label = '';
         if( $post->post_status == 'approved' ){
             $complete = ' selected=\"selected\"';
             $label = '<span id=\"post-status-display\"> Approved</span>';
         }
+        echo '$("select#post_status").append("<option value=\"'.$post->post_status.'\" '.$complete.'>Approved</option>");
+            $(".misc-pub-section label").append("'.$label.'");';
 
-        echo '<script>
-            jQuery(document).ready(function($){
-                $("select#post_status").append("<option value=\"approved\" '.$complete.'>Approved</option>");
-                $(".misc-pub-section label").append("'.$label.'");
-            });
-            </script>';
+        echo ' });</script>';
 
     }
 
@@ -198,9 +210,9 @@ class BF_Review_Update_Post {
         echo "
         <script>
         jQuery(document).ready(function ($){
-            jQuery('.inline-edit-status select').append('<option value=\"edit-draft\">Edit Draft</option>');
-            jQuery('.inline-edit-status select').append('<option value=\"awaiting-review\">Awaiting Review</option>');
-            jQuery('.inline-edit-status select').append('<option value=\"approved\">Approved</option>');
+            jQuery('.inline-edit-status select').append('<option value=\"edit-draft\">Edit Draft</option>' +
+             '<option value=\"awaiting-review\">Awaiting Review</option>' +
+             '<option value=\"approved\">Approved</option>');
         });
         </script>
         ";
