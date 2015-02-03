@@ -204,6 +204,9 @@ class BF_Review_Update_Post {
         if(!isset($bf_form_slug))
             return;
 
+        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+            return;
+
         if( $post->post_type != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
             return;
 

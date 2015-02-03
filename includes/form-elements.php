@@ -10,7 +10,7 @@
  * @return the form object
  */
 function bf_review_add_form_element_to_sidebar($form, $form_slug){
-    $form->addElement(new Element_HTML('<p><a href="Review-Logic/'.$form_slug.'" class="action">Review Logic</a></p>'));
+    $form->addElement(new Element_HTML('<p><a href="Review-Logic/'.$form_slug.'/unique" class="action">Review Logic</a></p>'));
     return $form;
 }
 add_filter('buddyforms_add_form_element_to_sidebar','bf_review_add_form_element_to_sidebar',1,2);
@@ -128,6 +128,9 @@ function bf_review_create_edit_form_post_id($post_id){
     $bf_form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
 
     if(!$bf_form_slug)
+        return $post_id;
+
+    if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['form_fields']))
         return $post_id;
 
     $form_fields = $buddyforms_options['buddyforms'][$bf_form_slug]['form_fields'];
