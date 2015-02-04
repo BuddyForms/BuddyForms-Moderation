@@ -62,13 +62,13 @@ function bf_review_create_frontend_form_element($form, $form_args){
             $post = get_post($post_id);
 
                 if($post_id == 0 ){
-                    $form->addElement( new Element_Button( 'Save', 'submit', array('name' => 'edit-draft')));
+                    $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
                 } else {
                     if($post->post_status == 'edit-draft'){
-                        $form->addElement( new Element_Button( 'Save', 'submit', array('name' => 'submitted')));
-                        $form->addElement( new Element_Button( 'Submit for review', 'submit', array('name' => 'awaiting-review')));
+                        $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted')));
+                        $form->addElement( new Element_Button( 'Submit for review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review')));
                     } else {
-                        $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('name' => 'edit-draft')));
+                        $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
                     }
                 }
 
