@@ -16,6 +16,20 @@ class BF_Review_Update_Post {
 
     public function modify_post_content( $data , $postarr ) {
 
+        $buddyforms_options = get_option('buddyforms_options');
+
+        $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
+
+        if(!isset($bf_form_slug))
+            return $data;
+
+        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+            return $data;
+
+        if( $data['post_type'] != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
+            return $data;
+
+
         if($data['post_status'] == 'publish' || $data['post_status'] == 'approved'){
             if($data['post_type'] == 'revision')
                 return $data;
