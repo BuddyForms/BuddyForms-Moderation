@@ -1,9 +1,9 @@
 === BuddyForms Review ===
 Contributors: svenl77
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
-Requires at least: WordPress 3.x, BuddyPress 1.7.x
+Requires at least: WordPress 3.x, BuddyPress 2.x
 Tested up to: WordPress 4.1, BuddyPress 2.x
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,8 +86,17 @@ BuddyForms gives you these possibilities for a wide variety of uses.
 
 == Screenshots ==
 
+1. **Different Post Status in the Frontend**
+
+2. **Different Post Status in the Backend**
+
+3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.0.1 =
+small bug fixes
+fixed: form submit not working on mobile
 
 = 1.0 =
 final 1.0 version

@@ -3,7 +3,7 @@
  Plugin Name: BuddyForms Review
  Plugin URI: http://themekraft.com/store/wordpress-front-end-editor-and-form-builder-buddyforms/
  Description: Create new drafts or pending reviews from new or published posts without changing the live version.
- Version: 1.0
+ Version: 1.0.1
  Author: Sven Lehnert
  Author URI: http://themekraft.com/members/svenl77/
  License: GPLv2 or later
@@ -27,7 +27,6 @@
  *
  ****************************************************************************
  */
-
 
 add_action('init', 'bf_review_includes', 10);
 function bf_review_includes(){
