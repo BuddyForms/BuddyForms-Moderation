@@ -62,13 +62,13 @@ function bf_review_create_frontend_form_element($form, $form_args){
             $post = get_post($post_id);
 
                 if($post_id == 0 ){
-                    $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
+                    $form->addElement( new Element_Button( 'Save', 'submit', array('id'=> $form_slug, 'class' => 'bf-submit', 'name' => 'edit-draft')));
                 } else {
                     if($post->post_status == 'edit-draft'){
-                        $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted')));
-                        $form->addElement( new Element_Button( 'Submit for review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review')));
+                        $form->addElement( new Element_Button( 'Save', 'submit', array('id'=> $form_slug, 'class' => 'bf-submit', 'name' => 'submitted')));
+                        $form->addElement( new Element_Button( 'Submit for review', 'submit', array('id'=> $form_slug, 'class' => 'bf-submit', 'name' => 'awaiting-review')));
                     } else {
-                        $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
+                        $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('id'=> $form_slug, 'class' => 'bf-submit', 'name' => 'edit-draft')));
                     }
                 }
 
@@ -103,21 +103,27 @@ function bf_review_approve( $actions, $post ) {
 
 function bf_review_post_control_args($args){
 
-    if($_POST['submitted'] == 'edit-draft'){
+    if( isset($_POST['data'])){
+        parse_str($_POST['data'], $formdata);
+    } else {
+        $formdata = $_POST;
+    }
+
+    if($formdata['submitted'] == 'edit-draft'){
         $args['action'] = 'new-post';
-        if($_POST['new_post_id'] != 0 ){
-            $args['post_parent'] = $_POST['new_post_id'];
+        if($formdata['post_id'] != 0 ){
+            $args['post_parent'] = $formdata['post_id'];
         }
         $args['post_status'] = 'edit-draft';
     }
 
-    if($_POST['submitted'] == 'awaiting-review'){
+    if($formdata['submitted'] == 'awaiting-review'){
         $args['post_status'] = 'awaiting-review';
     }
 
     return $args;
 }
-add_filter('bf_post_control_args', 'bf_review_post_control_args', 10, 1);
+add_filter('buddyforms_update_post_args', 'bf_review_post_control_args', 10, 1);
 
 
 add_filter('bf_create_edit_form_post_id', 'bf_review_create_edit_form_post_id', 10, 1);
