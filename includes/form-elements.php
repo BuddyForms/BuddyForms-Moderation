@@ -83,6 +83,56 @@ function bf_review_buddyforms_create_edit_form_button($form_button){
 
 }
 
+function buddyforms_review_ajax_process_edit_post_json_response($json_args){
+    global $buddyforms;
+
+    extract($json_args);
+
+    $post = get_post($post_id);
+
+    if(!isset($_POST['form_slug']))
+        return $json_args;
+
+    if(!isset($buddyforms['buddyforms'][$_POST['form_slug']]['form_fields']))
+        return $json_args;
+
+
+    $review = false;
+    foreach($buddyforms['buddyforms'][$_POST['form_slug']]['form_fields'] as $key => $field ){
+
+        if($field['type'] == 'Review-Logic'){
+            $review = true;
+        }
+    }
+
+    if(!$review)
+        return $json_args;
+
+    if($post_id == 0 ){
+        $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+    } else {
+        if($post->post_status == 'edit-draft'){
+            $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
+            $formelements[] = new Element_Button( 'Submit for review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+        } else {
+            $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+        }
+    }
+
+    ob_start();
+    foreach ($formelements as $key => $formelement) {
+        $formelement->render();
+    }
+    $field_html = ob_get_contents();
+    ob_end_clean();
+
+    $json_args['form_actions'] = $field_html;
+    return $json_args;
+
+}
+add_filter('buddyforms_ajax_process_edit_post_json_response','buddyforms_review_ajax_process_edit_post_json_response',10,1);
+
+
 /*
  * Add the duplicate link to action list for post_row_actions
  *

@@ -1,5 +1,5 @@
 === BuddyForms Review ===
-Contributors: svenl77
+Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
 Tested up to: WordPress 4.1, BuddyPress 2.x
@@ -11,7 +11,7 @@ Create new drafts or pending reviews from new or published posts without changin
 
 == Description ==
 
-This is the BuddyForms Review Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http://themekraft.com/store/wordpress-front-end-editor-and-form-builder-buddyforms/" target="_blank">Get BuddyForms now!</a>
+This is the BuddyForms Review Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http:buddyforms.com" target="_blank">Get BuddyForms now!</a>
 
 <b>Problem</b><br>
 In WordPress it is not possible to edit a published post and save it as new draft or pending review without removing the post from the frontend.
@@ -60,14 +60,6 @@ The BuddyForms documentation with many how-tos is following now!
 If you still get stuck somewhere, our support gets you back on the right track.
 You can find all help buttons in your BuddyForms Settings Panel in your WP Dashboard!
 
-<h4>Got ideas or just missing something?</h4>
-
-If you still miss something, now it’s your time!
-
-Visit our ideas forums, add your ideas and vote for others!
-
-<a href="https://themekraft.zendesk.com/hc/communities/public/topics/200001402-BuddyForms-Ideas" target="_blank">Visit Ideas Forums</a>
-
 == Installation ==
 
 You can download and install BuddyForms Members by using the built in WordPress plugin installer. If you download BuddyForms manually, make sure it is uploaded to "/wp-content/plugins/buddyforms/".
@@ -77,7 +69,7 @@ Activate BuddyPress in the "Plugins" admin panel by using the "Activate" link. I
 == Frequently Asked Questions ==
 
 You need the BuddyForms plugin installed for the plugin to work.
-<a href="http://themekraft.com/store/wordpress-front-end-editor-and-form-builder-buddyforms/" target="_blank">Get BuddyForms now!</a>
+<a href="http://buddyforms.com" target="_blank">Get BuddyForms now!</a>
 
 When is BuddyForms the right choice for you?
 
