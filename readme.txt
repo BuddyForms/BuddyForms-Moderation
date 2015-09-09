@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
-Tested up to: WordPress 4.1, BuddyPress 2.x
-Stable tag: 1.0.1
+Tested up to: WordPress 4.3, BuddyPress 2.3.2.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,12 @@ BuddyForms gives you these possibilities for a wide variety of uses.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.0.2 =
+add ajax compatibility
+small code cleanup
+rename session
+change the url to buddyforms.com
 
 = 1.0.1 =
 small bug fixes
