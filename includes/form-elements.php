@@ -9,9 +9,16 @@
  *
  * @return the form object
  */
-function bf_review_add_form_element_to_sidebar($form, $form_slug){
-    $form->addElement(new Element_HTML('<p><a href="Review-Logic/'.$form_slug.'/unique" class="action">Review Logic</a></p>'));
-    return $form;
+function bf_review_add_form_element_to_sidebar($sidebar_elements){
+    global $post;
+
+    if($post->post_type != 'buddyforms')
+        return;
+
+    if(bp_is_active('groups')){
+        $sidebar_elements[] = new Element_HTML('<p><a href="#" data-fieldtype="Review-Logic" data-unique="unique" class="bf_add_element_action">Review Logic</a></p>');
+    }
+    return $sidebar_elements;
 }
 add_filter('buddyforms_add_form_element_to_sidebar','bf_review_add_form_element_to_sidebar',1,2);
 
@@ -20,19 +27,19 @@ add_filter('buddyforms_add_form_element_to_sidebar','bf_review_add_form_element_
  *
  */
 function bf_review_create_new_form_builder_form_element($form_fields, $form_slug, $field_type, $field_id){
-    global $field_position;
-    $buddyforms_options = get_option('buddyforms_options');
+    global $field_position, $buddyforms;
+    $buddyforms_options = $buddyforms;
 
     switch ($field_type) {
 
         case 'Review-Logic':
             unset($form_fields);
-            $form_fields['right']['name']	= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][name]", 'Review Logic');
-            $form_fields['right']['slug']   = new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][slug]", 'bf_review_logic');
+            $form_fields['general']['name']	= new Element_Hidden("buddyforms_options[form_fields][".$field_id."][name]", 'Review Logic');
+            $form_fields['general']['slug']   = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][slug]", 'bf_review_logic');
 
-            $form_fields['right']['type']	= new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][type]", $field_type);
-            $form_fields['right']['order']  = new Element_Hidden("buddyforms_options[buddyforms][".$form_slug."][form_fields][".$field_id."][order]", $field_position, array('id' => 'buddyforms/' . $form_slug .'/form_fields/'. $field_id .'/order'));
-            $form_fields['left']['html']    = new Element_HTML(__("There are no settings needed so far. If you add the Review Logic form element to the form, the form will use the Review Logic automatically.<br><br> The Form Submit button will change dynamically dependend on the post status.", 'buddyforms'));
+            $form_fields['general']['type']	= new Element_Hidden("buddyforms_options[form_fields][".$field_id."][type]", $field_type);
+            $form_fields['general']['order']  = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][order]", $field_position, array('id' => 'buddyforms/' . $form_slug .'/form_fields/'. $field_id .'/order'));
+            $form_fields['general']['html']    = new Element_HTML(__("There are no settings needed so far. If you add the Review Logic form element to the form, the form will use the Review Logic automatically.<br><br> The Form Submit button will change dynamically dependend on the post status.", 'buddyforms'));
             break;
 
     }
@@ -86,19 +93,25 @@ function bf_review_buddyforms_create_edit_form_button($form_button){
 function buddyforms_review_ajax_process_edit_post_json_response($json_args){
     global $buddyforms;
 
-    extract($json_args);
+    if(isset($json_args))
+        extract($json_args);
 
-    $post = get_post($post_id);
+    if(isset($post_id) && $post_id != 0){
+        $post = get_post($post_id);
+    } else {
+        $post_id = 0;
+    }
+
 
     if(!isset($_POST['form_slug']))
         return $json_args;
 
-    if(!isset($buddyforms['buddyforms'][$_POST['form_slug']]['form_fields']))
+    if(!isset($buddyforms[$_POST['form_slug']]['form_fields']))
         return $json_args;
 
 
     $review = false;
-    foreach($buddyforms['buddyforms'][$_POST['form_slug']]['form_fields'] as $key => $field ){
+    foreach($buddyforms[$_POST['form_slug']]['form_fields'] as $key => $field ){
 
         if($field['type'] == 'Review-Logic'){
             $review = true;
@@ -168,18 +181,18 @@ add_filter('buddyforms_update_post_args', 'bf_review_post_control_args', 10, 1);
 
 add_filter('bf_create_edit_form_post_id', 'bf_review_create_edit_form_post_id', 10, 1);
 function bf_review_create_edit_form_post_id($post_id){
-
-    $buddyforms_options = get_option('buddyforms_options');
+    global $buddyforms;
+    $buddyforms_options = $buddyforms;
 
     $bf_form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
 
     if(!$bf_form_slug)
         return $post_id;
 
-    if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['form_fields']))
+    if(!isset($buddyforms_options[$bf_form_slug]['form_fields']))
         return $post_id;
 
-    $form_fields = $buddyforms_options['buddyforms'][$bf_form_slug]['form_fields'];
+    $form_fields = $buddyforms_options[$bf_form_slug]['form_fields'];
 
     if(!$form_fields)
         return $post_id;
@@ -210,10 +223,10 @@ function bf_review_create_edit_form_post_id($post_id){
 add_filter('bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1);
 
 function bf_create_post_status_to_display($query_args){
+    global $buddyforms;
+    $buddyforms_options = $buddyforms;
 
-    $buddyforms_options = get_option('buddyforms_options');
-
-    $form_fields = $buddyforms_options['buddyforms'][$query_args['form_slug']]['form_fields'];
+    $form_fields = $buddyforms_options[$query_args['form_slug']]['form_fields'];
 
     $bf_review_logic = false;
     foreach($form_fields as $key => $form_field){
@@ -232,9 +245,10 @@ function bf_create_post_status_to_display($query_args){
 add_filter('bf_post_status_css','bf_review_post_status_css', 10, 2);
 
 function bf_review_post_status_css($post_status_css, $form_slug){
-    $buddyforms_options = get_option('buddyforms_options');
+    global $buddyforms;
+    $buddyforms_options = $buddyforms;
 
-    $form_fields = $buddyforms_options['buddyforms'][$form_slug]['form_fields'];
+    $form_fields = $buddyforms_options[$form_slug]['form_fields'];
 
     $bf_review_logic = false;
     foreach($form_fields as $key => $form_field){

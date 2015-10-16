@@ -15,18 +15,18 @@ class BF_Review_Update_Post {
     }
 
     public function modify_post_content( $data , $postarr ) {
-
-        $buddyforms_options = get_option('buddyforms_options');
+        global $buddyforms;
+        $buddyforms_options = $buddyforms;
 
         $bf_form_slug = get_post_meta($postarr['ID'],'_bf_form_slug', true);
 
         if(!isset($bf_form_slug))
             return $data;
 
-        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+        if(!isset($buddyforms_options[$bf_form_slug]['post_type']))
             return $data;
 
-        if( $data['post_type'] != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
+        if( $data['post_type'] != $buddyforms_options[$bf_form_slug]['post_type'] )
             return $data;
 
 
@@ -152,19 +152,19 @@ class BF_Review_Update_Post {
     }
 
     function bf_review_submitbox_misc_actions(){
-        global $post;
+        global $post, $buddyforms;
 
-        $buddyforms_options = get_option('buddyforms_options');
+        $buddyforms_options = $buddyforms;
 
         $bf_form_slug = get_post_meta($post->ID,'_bf_form_slug', true);
 
         if(!isset($bf_form_slug))
             return;
 
-        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+        if(!isset($buddyforms_options[$bf_form_slug]['post_type']))
             return;
 
-        if( $post->post_type != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
+        if( $post->post_type != $buddyforms_options[$bf_form_slug]['post_type'] )
             return;
 
         $complete = '';
@@ -207,21 +207,21 @@ class BF_Review_Update_Post {
      * @return null
      */
     function bf_review_append_to_inline_status_dropdown() {
-        global $post;
+        global $post, $buddyforms;
 
         if (!$post) return;
 
-        $buddyforms_options = get_option('buddyforms_options');
+        $buddyforms_options = $buddyforms;
 
         $bf_form_slug = get_post_meta($post->ID,'_bf_form_slug', true);
 
         if(!isset($bf_form_slug))
             return;
 
-        if(!isset($buddyforms_options['buddyforms'][$bf_form_slug]['post_type']))
+        if(!isset($buddyforms_options[$bf_form_slug]['post_type']))
             return;
 
-        if( $post->post_type != $buddyforms_options['buddyforms'][$bf_form_slug]['post_type'] )
+        if( $post->post_type != $buddyforms_options[$bf_form_slug]['post_type'] )
             return;
 
         echo "
