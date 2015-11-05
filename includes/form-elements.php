@@ -15,9 +15,8 @@ function bf_review_add_form_element_to_sidebar($sidebar_elements){
     if($post->post_type != 'buddyforms')
         return;
 
-    if(bp_is_active('groups')){
-        $sidebar_elements[] = new Element_HTML('<p><a href="#" data-fieldtype="Review-Logic" data-unique="unique" class="bf_add_element_action">Review Logic</a></p>');
-    }
+    $sidebar_elements[] = new Element_HTML('<p><a href="#" data-fieldtype="review-logic" data-unique="unique" class="bf_add_element_action">Review Logic</a></p>');
+
     return $sidebar_elements;
 }
 add_filter('buddyforms_add_form_element_to_sidebar','bf_review_add_form_element_to_sidebar',1,2);
@@ -32,14 +31,14 @@ function bf_review_create_new_form_builder_form_element($form_fields, $form_slug
 
     switch ($field_type) {
 
-        case 'Review-Logic':
+        case 'review-logic':
             unset($form_fields);
-            $form_fields['general']['name']	= new Element_Hidden("buddyforms_options[form_fields][".$field_id."][name]", 'Review Logic');
-            $form_fields['general']['slug']   = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][slug]", 'bf_review_logic');
+            $form_fields['general']['name']     = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][name]", 'Review Logic');
+            $form_fields['general']['slug']     = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][slug]", 'bf_review_logic');
 
-            $form_fields['general']['type']	= new Element_Hidden("buddyforms_options[form_fields][".$field_id."][type]", $field_type);
-            $form_fields['general']['order']  = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][order]", $field_position, array('id' => 'buddyforms/' . $form_slug .'/form_fields/'. $field_id .'/order'));
-            $form_fields['general']['html']    = new Element_HTML(__("There are no settings needed so far. If you add the Review Logic form element to the form, the form will use the Review Logic automatically.<br><br> The Form Submit button will change dynamically dependend on the post status.", 'buddyforms'));
+            $form_fields['general']['type']	    = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][type]", $field_type);
+            $form_fields['general']['order']    = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][order]", $field_position, array('id' => 'buddyforms/' . $form_slug .'/form_fields/'. $field_id .'/order'));
+            $form_fields['general']['html']     = new Element_HTML(__("There are no settings needed so far. If you add the Review Logic form element to the form, the form will use the Review Logic automatically.<br> The Form Submit button will change dynamically dependend on the post status. <br><br> If you use the Post Status Form Element please removen it. Review Logic will not work if the Post Status field is used in the same form. <br>", 'buddyforms'));
             break;
 
     }
@@ -60,7 +59,7 @@ function bf_review_create_frontend_form_element($form, $form_args){
         return $form;
 
     switch ($customfield['type']) {
-        case 'Review-Logic':
+        case 'review-logic':
 
             $post = get_post($post_id);
 

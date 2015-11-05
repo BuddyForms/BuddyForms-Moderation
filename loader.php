@@ -34,9 +34,9 @@ function bf_review_includes(){
     include_once(dirname(__FILE__) . '/includes/form-elements.php');
 }
 
-add_action('plugins_loaded', 'bf_review_requirements');
+add_action('plugins_loaded', 'bf_review_requirements', 9999);
 function bf_review_requirements(){
-    if( ! defined( 'buddyforms' )){
+    if( ! defined( 'BUDDYFORMS_VERSION' )){
         add_action( 'admin_notices', create_function( '', 'printf(\'<div id="message" class="error"><p><strong>\' . __(\'BuddyForms Review needs BuddyForms to be installed. <a target="_blank" href="%s">--> Get it now</a>!\', " wc4bp_xprofile" ) . \'</strong></p></div>\', "http://themekraft.com/store/wordpress-front-end-editor-and-form-builder-buddyforms/" );' ) );
         return;
     }
