@@ -100,7 +100,6 @@ function bf_review_create_frontend_form_element($form, $form_args){
             $label_no_edit   = new Element_HTML( '<p>' . __($customfield['label_no_edit'], 'buddyforms') . '</p>'  );
 
             // Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
-
             $status          = new Element_Hidden("status", 'edit-draft');
 
             // If post_id is 0 we have a new posts
@@ -171,29 +170,47 @@ function buddyforms_review_ajax_process_edit_post_json_response($json_args){
     foreach($buddyforms[$_POST['form_slug']]['form_fields'] as $key => $customfield ){
 
         if($customfield['type'] == 'review-logic'){
-            $review_status = 'edit-draft';
 
+            $label_review    = new Element_Button( __($customfield['label_review'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+            $label_submit    = new Element_Button( __($customfield['label_submit'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+            $label_save      = new Element_Button( __($customfield['label_save'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
+            $label_new_draft = new Element_Button( __($customfield['label_new_draft'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+            $label_no_edit   = new Element_HTML( '<p>' . __($customfield['label_no_edit'], 'buddyforms') . '</p>'  );
+
+            // Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
+            $status          = new Element_Hidden("status", 'edit-draft');
+
+            // If post_id is 0 we have a new posts
             if($post_id == 0 ){
+
                 if($customfield['review_logic'] == 'hidden_draft'){
-                    $formelements[] = new Element_Button( 'Submit for Review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+                    $formelements[] = $label_review;
                 } else {
-                    $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                    $formelements[] = $label_submit;
                 }
+
             } else {
-                if($post->post_status == 'edit-draft'){
-                    $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
-                    $formelements[] = new Element_Button( 'Submit for Review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
-                } elseif($post->post_status == 'awaiting-review') {
+
+                // This is an existing post
+                $post_status = get_post_status($post_id); // Get the Posts
+
+                // Check Post Status
+                if($post_status == 'edit-draft'){
+                    $formelements[] = $label_save;
+                    $formelements[] = $label_review;
+                }
+                if($post_status == 'awaiting-review') {
                     if($customfield['review_logic'] != 'many_drafts' ){
-                        $formelements[] = new Element_HTML( '<p>This Post is waiting for approval and can not be changed until it gets approved</p>'  );
+                        $formelements[] = $label_no_edit;
                     } else {
-                        $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                        $formelements[] = $label_new_draft;
                     }
-                } else {
-                    $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                }
+                if($post_status == 'publish') {
+                    $formelements[] = $label_new_draft;
                 }
             }
-            $formelements[] = new Element_Hidden("status", $review_status);
+            $formelements[] = $status;
         }
     }
 
