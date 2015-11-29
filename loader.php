@@ -41,3 +41,28 @@ function bf_review_requirements(){
         return;
     }
 }
+
+add_filter('bf_edit_post_link', 'bf_review_edit_post_link', 1, 2);
+
+function bf_review_edit_post_link($edit_post_link, $post_id){
+    global $buddyforms;
+
+    $form_slug = get_post_meta($post_id ,'_bf_form_slug', true);
+
+    $post_status = get_post_status($post_id);
+
+
+
+    foreach($buddyforms[$form_slug]['form_fields'] as $key => $customfield ) {
+
+        if ($customfield['type'] == 'review-logic') {
+
+            if ($post_status == 'awaiting-review' && $customfield['review_logic'] != 'many_drafts' ) {
+                $edit_post_link = 'Edit is Disabled during review';
+            }
+
+        }
+    }
+
+    return $edit_post_link;
+}

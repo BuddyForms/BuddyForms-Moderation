@@ -1,6 +1,4 @@
 <?php
-
-
 /*
  * Add a new form element to the form create view sidebar
  *
@@ -26,8 +24,9 @@ add_filter('buddyforms_add_form_element_to_sidebar','bf_review_add_form_element_
  *
  */
 function bf_review_create_new_form_builder_form_element($form_fields, $form_slug, $field_type, $field_id){
-    global $field_position, $buddyforms;
-    $buddyforms_options = $buddyforms;
+    global $field_position, $post;
+
+    $buddyform = get_post_meta($post->ID, '_buddyforms_options', true);
 
     switch ($field_type) {
 
@@ -38,7 +37,40 @@ function bf_review_create_new_form_builder_form_element($form_fields, $form_slug
 
             $form_fields['general']['type']	    = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][type]", $field_type);
             $form_fields['general']['order']    = new Element_Hidden("buddyforms_options[form_fields][".$field_id."][order]", $field_position, array('id' => 'buddyforms/' . $form_slug .'/form_fields/'. $field_id .'/order'));
-            $form_fields['general']['html']     = new Element_HTML(__("There are no settings needed so far. If you add the Review Logic form element to the form, the form will use the Review Logic automatically.<br> The Form Submit button will change dynamically dependend on the post status. <br><br> If you use the Post Status Form Element please removen it. Review Logic will not work if the Post Status field is used in the same form. <br>", 'buddyforms'));
+
+            $review_logic = isset($buddyform['form_fields'][$field_id]['review_logic']) ? $buddyform['form_fields'][$field_id]['review_logic'] : 'one_draft';
+            echo $review_logic;
+            $form_fields['general']['review_logic']    = new Element_Radio(
+                '<b>' . __('Review Logic', 'buddyforms') . '</b>',
+                "buddyforms_options[form_fields][" . $field_id . "][review_logic]",
+                Array(
+                    'one_draft'      => 'User can create one new draft and save it until he submit it for review. He can not create a new draft before the last draft gets approved<br>',
+                    'hidden_draft'   => 'If the user creates or edit a post he is only able to submit for review. No Save Button.<br>',
+                    'many_drafts'    => 'User can create as many new drafts as he like. Also if one earlier draft is waiting for approval he can create new drafts and submit for review. This can end up in multiple drafts and awaiting reviews post status.
+                                        If a earlier draft gets aproved it gets merged back to the public version. so if the latest draft gets approved all posts should be merged back recursive<br>')
+                ,
+                array(
+                    'value'      => $review_logic,
+                    'shortDesc'  => 'If a post is created or edited and the review logic is enabled the post is saved with post status edit-draft.
+                    If a post is submit for review the post status is set to awaiting-approval'
+                )
+            );
+
+            $label_submit = isset($buddyform['form_fields'][$field_id]['label_submit']) ? $buddyform['form_fields'][$field_id]['label_submit'] : 'Submit';
+            $form_fields['labels']['label_submit']   = new Element_Textbox('<b>' . __('Label for Submit Button', 'buddyforms') . '</b>', "buddyforms_options[form_fields][" . $field_id . "][label_submit]", array('value' => $label_submit));
+
+            $label_save = isset($buddyform['form_fields'][$field_id]['label_save']) ? $buddyform['form_fields'][$field_id]['label_save'] : 'Save';
+            $form_fields['labels']['label_save']   = new Element_Textbox('<b>' . __('Label for Save Button', 'buddyforms') . '</b>', "buddyforms_options[form_fields][" . $field_id . "][label_save]", array('value' => $label_save));
+
+            $label_review = isset($buddyform['form_fields'][$field_id]['label_review']) ? $buddyform['form_fields'][$field_id]['label_review'] : 'Submit for Review';
+            $form_fields['labels']['label_review']   = new Element_Textbox('<b>' . __('Label for Submit for Review Button', 'buddyforms') . '</b>', "buddyforms_options[form_fields][" . $field_id . "][label_review]", array('value' => $label_review));
+
+            $label_new_draft = isset($buddyform['form_fields'][$field_id]['label_new_draft']) ? $buddyform['form_fields'][$field_id]['label_new_draft'] : 'Create new Draft';
+            $form_fields['labels']['label_new_draft']   = new Element_Textbox('<b>' . __('Label for Create new Draft Button', 'buddyforms') . '</b>', "buddyforms_options[form_fields][" . $field_id . "][label_new_draft]", array('value' => $label_new_draft));
+
+            $label_no_edit = isset($buddyform['form_fields'][$field_id]['label_no_edit']) ? $buddyform['form_fields'][$field_id]['label_no_edit'] : 'This Post is waiting for approval and can not be changed until it gets approved';
+            $form_fields['labels']['label_no_edit']   = new Element_Textarea('<b>' . __('If the form is displayed but edeting is disabled', 'buddyforms') . '</b>', "buddyforms_options[form_fields][" . $field_id . "][label_no_edit]", array('value' => $label_no_edit));
+
             break;
 
     }
@@ -61,18 +93,47 @@ function bf_review_create_frontend_form_element($form, $form_args){
     switch ($customfield['type']) {
         case 'review-logic':
 
-            $post = get_post($post_id);
+            $label_review    = new Element_Button( __($customfield['label_review'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+            $label_submit    = new Element_Button( __($customfield['label_submit'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+            $label_save      = new Element_Button( __($customfield['label_save'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
+            $label_new_draft = new Element_Button( __($customfield['label_new_draft'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+            $label_no_edit   = new Element_HTML( '<p>' . __($customfield['label_no_edit'], 'buddyforms') . '</p>'  );
 
-                if($post_id == 0 ){
-                    $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
+            // Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
+
+            $status          = new Element_Hidden("status", 'edit-draft');
+
+            // If post_id is 0 we have a new posts
+            if($post_id == 0 ){
+
+                if($customfield['review_logic'] == 'hidden_draft'){
+                    $form->addElement( $label_review );
                 } else {
-                    if($post->post_status == 'edit-draft'){
-                        $form->addElement( new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted')));
-                        $form->addElement( new Element_Button( 'Submit for review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review')));
+                    $form->addElement( $label_submit );
+                }
+
+            } else {
+
+                // This is an existing post
+                $post_status = get_post_status($post_id); // Get the Posts
+
+                // Check Post Status
+                if($post_status == 'edit-draft'){
+                    $form->addElement( $label_save );
+                    $form->addElement( $label_review );
+                }
+                if($post_status == 'awaiting-review') {
+                    if($customfield['review_logic'] != 'many_drafts' ){
+                        $form->addElement( $label_no_edit );
                     } else {
-                        $form->addElement( new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft')));
+                        $form->addElement( $label_new_draft );
                     }
                 }
+                if($post_status == 'publish') {
+                    $form->addElement( $label_new_draft );
+                }
+            }
+            $form->addElement( $status );
 
             add_filter('buddyforms_create_edit_form_button', 'bf_review_buddyforms_create_edit_form_button', 10, 1);
 
@@ -101,33 +162,38 @@ function buddyforms_review_ajax_process_edit_post_json_response($json_args){
         $post_id = 0;
     }
 
-
     if(!isset($_POST['form_slug']))
         return $json_args;
 
     if(!isset($buddyforms[$_POST['form_slug']]['form_fields']))
         return $json_args;
 
+    foreach($buddyforms[$_POST['form_slug']]['form_fields'] as $key => $customfield ){
 
-    $review = false;
-    foreach($buddyforms[$_POST['form_slug']]['form_fields'] as $key => $field ){
+        if($customfield['type'] == 'review-logic'){
+            $review_status = 'edit-draft';
 
-        if($field['type'] == 'Review-Logic'){
-            $review = true;
-        }
-    }
-
-    if(!$review)
-        return $json_args;
-
-    if($post_id == 0 ){
-        $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
-    } else {
-        if($post->post_status == 'edit-draft'){
-            $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
-            $formelements[] = new Element_Button( 'Submit for review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
-        } else {
-            $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+            if($post_id == 0 ){
+                if($customfield['review_logic'] == 'hidden_draft'){
+                    $formelements[] = new Element_Button( 'Submit for Review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+                } else {
+                    $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                }
+            } else {
+                if($post->post_status == 'edit-draft'){
+                    $formelements[] = new Element_Button( 'Save', 'submit', array('class' => 'bf-submit', 'name' => 'submitted'));
+                    $formelements[] = new Element_Button( 'Submit for Review', 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
+                } elseif($post->post_status == 'awaiting-review') {
+                    if($customfield['review_logic'] != 'many_drafts' ){
+                        $formelements[] = new Element_HTML( '<p>This Post is waiting for approval and can not be changed until it gets approved</p>'  );
+                    } else {
+                        $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                    }
+                } else {
+                    $formelements[] = new Element_Button( 'Save new Draft', 'submit', array('class' => 'bf-submit', 'name' => 'edit-draft'));
+                }
+            }
+            $formelements[] = new Element_Hidden("status", $review_status);
         }
     }
 
