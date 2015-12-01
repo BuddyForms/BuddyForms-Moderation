@@ -42,7 +42,7 @@ function bf_review_requirements(){
     }
 }
 
-add_filter('bf_edit_post_link', 'bf_review_edit_post_link', 1, 2);
+add_filter('bf_loop_edit_post_link', 'bf_review_edit_post_link', 10, 2);
 
 function bf_review_edit_post_link($edit_post_link, $post_id){
     global $buddyforms;
@@ -52,33 +52,35 @@ function bf_review_edit_post_link($edit_post_link, $post_id){
     $post_status = get_post_status($post_id);
     $post_type = get_post_type($post_id);
 
+    if(isset($buddyforms[$form_slug]['form_fields'])){
+        foreach($buddyforms[$form_slug]['form_fields'] as $key => $customfield ) {
 
-    foreach($buddyforms[$form_slug]['form_fields'] as $key => $customfield ) {
+            if ($customfield['type'] == 'review-logic') {
+                if ( $customfield['review_logic'] != 'many_drafts' ) {
 
-        if ($customfield['type'] == 'review-logic') {
+                    $args = array(
+                        'post_type' => $post_type,
+                        'form_slug' => $form_slug,
+                        'post_status' => array('edit-draft', 'awaiting-review'),
+                        'posts_per_page' => -1,
+                        'post_parent' => $post_id,
+                        'author' => get_current_user_id()
+                    );
 
-            if ($post_status == 'publish' && $customfield['review_logic'] != 'many_drafts' ) {
-                $args = array(
-                    'post_type' => $post_type,
-                    'form_slug' => $form_slug,
-                    'post_status' => array('edit-draft', 'awaiting-review'),
-                    'posts_per_page' => -1,
-                    'post_parent' => $post_id,
-                    'author' => get_current_user_id()
-                );
+                    $post_parent = new WP_Query($args);
 
-                $post_parent = new WP_Query($args);
-
-                if ($post_parent->have_posts()) {
-                    $edit_post_link = __('New Version in Process', 'buddyforms');
+                    if ($post_parent->have_posts()) {
+                        $edit_post_link = __('New Version in Process', 'buddyforms');
+                    }
                 }
-            }
 
-            if ($post_status == 'awaiting-review' && $customfield['review_logic'] != 'many_drafts' ) {
-                $edit_post_link = __('Edit is Disabled during Review', 'buddyforms');
-            }
+                if ($post_status == 'awaiting-review' && $customfield['review_logic'] != 'many_drafts' ) {
+                    $edit_post_link = __('Edit is Disabled during Review', 'buddyforms');
+                }
 
+            }
         }
+
     }
 
     return $edit_post_link;

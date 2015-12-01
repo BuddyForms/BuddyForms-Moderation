@@ -227,21 +227,6 @@ function buddyforms_review_ajax_process_edit_post_json_response($json_args){
 }
 add_filter('buddyforms_ajax_process_edit_post_json_response','buddyforms_review_ajax_process_edit_post_json_response',10,1);
 
-
-/*
- * Add the duplicate link to action list for post_row_actions
- *
- */
-function bf_review_approve( $actions, $post ) {
-
-    if (current_user_can('edit_posts')) {
-        $actions['bf_approve'] = '<a href="#" title="Approve" >Approve</a>';
-    }
-    return $actions;
-}
-//add_filter( 'post_row_actions', 'bf_review_approve', 10, 2 );
-//add_filter( 'page_row_actions', 'bf_review_approve', 10, 2 );
-
 function bf_review_post_control_args($args){
 
     if($_POST['submitted'] == 'edit-draft'){
@@ -311,9 +296,11 @@ function bf_create_post_status_to_display($query_args){
     $form_fields = $buddyforms_options[$query_args['form_slug']]['form_fields'];
 
     $bf_review_logic = false;
-    foreach($form_fields as $key => $form_field){
-        if(in_array('bf_review_logic', $form_field))
-            $bf_review_logic = true;
+    if(isset($form_fields)){
+        foreach($form_fields as $key => $form_field){
+            if(in_array('bf_review_logic', $form_field))
+                $bf_review_logic = true;
+        }
     }
 
 
@@ -333,9 +320,11 @@ function bf_review_post_status_css($post_status_css, $form_slug){
     $form_fields = $buddyforms_options[$form_slug]['form_fields'];
 
     $bf_review_logic = false;
-    foreach($form_fields as $key => $form_field){
-        if(in_array('bf_review_logic', $form_field))
-            $bf_review_logic = true;
+    if(isset($form_fields)) {
+        foreach ($form_fields as $key => $form_field) {
+            if (in_array('bf_review_logic', $form_field))
+                $bf_review_logic = true;
+        }
     }
 
     if(!$bf_review_logic)
