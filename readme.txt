@@ -1,4 +1,4 @@
-=== BuddyForms Review ===
+=== BuddyForms Moderation (Review System) ===
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
