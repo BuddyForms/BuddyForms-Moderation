@@ -1,7 +1,7 @@
 <?php
 // We need to delete all children if the parent has been deleted.
-add_action('transition_post_status','bf_review_delete_children',99,3);
-function bf_review_delete_children($new_status,$old_status,$post){
+add_action('transition_post_status','bf_moderation_delete_children',99,3);
+function bf_moderation_delete_children($new_status,$old_status,$post){
 
     // Only continue if post status has changed to trash
     if($new_status != 'trash')
@@ -41,7 +41,7 @@ function bf_review_delete_children($new_status,$old_status,$post){
 }
 
 
-function bf_review_edit_post_link($edit_post_link, $post_id){
+function bf_moderation_edit_post_link($edit_post_link, $post_id){
     global $buddyforms;
 
     $form_slug = get_post_meta($post_id ,'_bf_form_slug', true);
@@ -49,39 +49,33 @@ function bf_review_edit_post_link($edit_post_link, $post_id){
     $post_status = get_post_status($post_id);
     $post_type = get_post_type($post_id);
 
-    if(isset($buddyforms[$form_slug]['form_fields'])){
-        foreach($buddyforms[$form_slug]['form_fields'] as $key => $customfield ) {
+    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+        return $edit_post_link;
 
-            if ($customfield['type'] == 'review-logic') {
-                if ( $customfield['review_logic'] != 'many_drafts' ) {
+    if ( $buddyforms[$form_slug]['moderation_logic'] != 'many_drafts' ) {
 
-                    $args = array(
-                        'post_type' => $post_type,
-                        'form_slug' => $form_slug,
-                        'post_status' => array('edit-draft', 'awaiting-review'),
-                        'posts_per_page' => -1,
-                        'post_parent' => $post_id,
-                        'author' => get_current_user_id()
-                    );
+        $args = array(
+            'post_type' => $post_type,
+            'form_slug' => $form_slug,
+            'post_status' => array('edit-draft', 'awaiting-review'),
+            'posts_per_page' => -1,
+            'post_parent' => $post_id,
+            'author' => get_current_user_id()
+        );
 
-                    $post_parent = new WP_Query($args);
+        $post_parent = new WP_Query($args);
 
-                    if ($post_parent->have_posts()) {
-                        $edit_post_link = __('New Version in Process', 'buddyforms');
-                    }
-                }
-                if ($post_status == 'awaiting-review' && $customfield['review_logic'] != 'many_drafts' ) {
-                    $edit_post_link = __('Edit is Disabled during Review', 'buddyforms');
-                }
-
-            }
+        if ($post_parent->have_posts()) {
+            $edit_post_link = __('New Version in Process', 'buddyforms');
         }
-
+    }
+    if ($post_status == 'awaiting-review' && $buddyforms[$form_slug]['moderation_logic'] != 'many_drafts' ) {
+        $edit_post_link = __('Edit is Disabled during moderation', 'buddyforms');
     }
 
     return $edit_post_link;
 }
-add_filter('bf_loop_edit_post_link', 'bf_review_edit_post_link', 10, 2);
+add_filter('bf_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2);
 
 function bf_buddyforms_the_loop_li_last($post_id){
     global $buddyforms;
@@ -99,17 +93,15 @@ function bf_buddyforms_the_loop_li_last($post_id){
         'author'			=> get_current_user_id()
     );
 
-
-
-    $the_review_query = new WP_Query( $args );
+    $the_moderation_query = new WP_Query( $args );
 
     get_currentuserinfo(); ?>
 
-    <?php if ( $the_review_query->have_posts() ) : ?>
+    <?php if ( $the_moderation_query->have_posts() ) : ?>
 
         <ul class="buddyforms-list_sub" role="sub">
 
-            <?php while ( $the_review_query->have_posts() ) : $the_review_query->the_post();
+            <?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
 
                 $the_permalink = get_permalink();
                 $post_status = get_post_status();
@@ -185,7 +177,7 @@ function bf_buddyforms_the_loop_li_last($post_id){
 
             <div class="navigation">
                 <?php if(function_exists('wp_pagenavi')) : wp_pagenavi(); else: ?>
-                    <div class="alignleft"><?php next_posts_link( '&larr;' . __( ' Previous Entries', 'buddyforms' ), $the_review_query->max_num_pages ) ?></div>
+                    <div class="alignleft"><?php next_posts_link( '&larr;' . __( ' Previous Entries', 'buddyforms' ), $the_moderation_query->max_num_pages ) ?></div>
                     <div class="alignright"><?php previous_posts_link( __( 'Next Entries ', 'buddyforms' ) . '&rarr;' ) ?></div>
                 <?php endif; ?>
 
@@ -202,9 +194,9 @@ function bf_buddyforms_the_loop_li_last($post_id){
 }
 add_action('buddyforms_the_loop_li_last', 'bf_buddyforms_the_loop_li_last');
 
-add_action('buddyforms_post_edit_meta_box_select_form', 'buddyforms_review_post_edit_meta_box_actions');
+add_action('buddyforms_post_edit_meta_box_select_form', 'buddyforms_moderation_post_edit_meta_box_actions');
 
-function buddyforms_review_post_edit_meta_box_actions(){
+function buddyforms_moderation_post_edit_meta_box_actions(){
     global $post;
     add_thickbox();
     ?>
@@ -265,11 +257,11 @@ function buddyforms_review_post_edit_meta_box_actions(){
     <a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal" title="Reject This Post" class="thickbox button" >Reject this Post</a>
 
     <div id="buddyforms_message_history">
-        <?php $bf_review_message_history = get_post_meta($post->ID, '_bf_review_message_history', true);  ?>
+        <?php $bf_moderation_message_history = get_post_meta($post->ID, '_bf_moderation_message_history', true);  ?>
         <ul>
             <?php
-            if(is_array($bf_review_message_history)){
-                foreach($bf_review_message_history as $key => $message){
+            if(is_array($bf_moderation_message_history)){
+                foreach($bf_moderation_message_history as $key => $message){
                    echo '<li>' . stripslashes(substr($message, 0,130)) . '</li>';
                 }
             }
@@ -407,10 +399,10 @@ function buddyforms_reject_now(){
         echo __('There has been an error changing the post status!', 'buddyforms');
     }
 
-    $bf_review_message_history = get_post_meta($post_id, '_bf_review_message_history', true);
+    $bf_moderation_message_history = get_post_meta($post_id, '_bf_moderation_message_history', true);
 
-    $bf_review_message_history[] = the_date('l, F j, Y') . $emailBody;
-    update_post_meta($post_id, '_bf_review_message_history', $bf_review_message_history );
+    $bf_moderation_message_history[] = the_date('l, F j, Y') . $emailBody;
+    update_post_meta($post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
 
     die();
 }

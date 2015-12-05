@@ -1,34 +1,34 @@
-=== BuddyForms Moderation (Review System) ===
+=== BuddyForms Moderation (moderation System) ===
 Contributors: svenl77, buddyforms
-Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
+Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, moderation, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
 Tested up to: WordPress 4.3, BuddyPress 2.3.2.1
 Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create new drafts or pending reviews from new or published posts without changing the live version.
+Create new drafts or pending moderations from new or published posts without changing the live version.
 
 == Description ==
 
-This is the BuddyForms Review Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http:buddyforms.com" target="_blank">Get BuddyForms now!</a>
+This is the BuddyForms moderation Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http:buddyforms.com" target="_blank">Get BuddyForms now!</a>
 
 <b>Problem</b><br>
-In WordPress it is not possible to edit a published post and save it as new draft or pending review without removing the post from the frontend.
-In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending review without creating a 404.
-For the BuddyForms frontend editing we want to have the feature to save a private draft or set the edit post to pending review without creating a 404.
+In WordPress it is not possible to edit a published post and save it as new draft or pending moderation without removing the post from the frontend.
+In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending moderation without creating a 404.
+For the BuddyForms frontend editing we want to have the feature to save a private draft or set the edit post to pending moderation without creating a 404.
 
 
-With the BuddyForms Review Extension you can solve exactly this problem.
+With the BuddyForms moderation Extension you can solve exactly this problem.
 
-The extension creates a new form element "Review Logic"
+The extension creates a new form element "moderation Logic"
 
-If the Form Element is added to a form, the form will add a review system to the attached post type.
+If the Form Element is added to a form, the form will add a moderation system to the attached post type.
 
 <b>With 3 new Post Status</b>
 <ul>
 <li><b>Edit draft</b>      --> Is a new created post or a new edit draft of an existing post and only available for your editing.</li>
-<li><b>Awaiting Review</b> --> You have finished editing and want your post to be reviewed and published.</li>
+<li><b>Awaiting moderation</b> --> You have finished editing and want your post to be moderationed and published.</li>
 <li><b>Approved</b>        --> Your post has been approved and is merged back to the live version.</li>
 </ul>
 
@@ -36,18 +36,18 @@ If the Form Element is added to a form, the form will add a review system to the
 <b>How it works:</b>
 If you create a new edit draft, a new child post of your live post will be created as a duplicate of your live post.
 During the editing process you will edit the child post and your live version is untouched and available to the public.
-If you set the post to "awaiting review" and a reviewer (admin) approves your post, the post will be merged back to the live version and set to approved.
+If you set the post to "awaiting moderation" and a moderationer (admin) approves your post, the post will be merged back to the live version and set to approved.
 
 This will work for all the content, custom fields and taxonomies.
 
 <b>Mail Notification</b>
-With the BuddyForms in build Notification System you can create mail trigger notification for the different post status to let your users and reviewers know, when a new post is ready for review or gets approved.
+With the BuddyForms in build Notification System you can create mail trigger notification for the different post status to let your users and moderationers know, when a new post is ready for moderation or gets approved.
 
-BuddyForms Review is the perfect plugin for you if you are in need of a solid frontend post editing moderation management.
+BuddyForms moderation is the perfect plugin for you if you are in need of a solid frontend post editing moderation management.
 
 It doesn't matter if you let your users create products or Kitten Story's. It just work fine with any custom post type related plugin.
 
-The BuddyForms Review extension gives you full control of the user submissions without affecting the live version or even giving them the rights to edit a published post.
+The BuddyForms moderation extension gives you full control of the user submissions without affecting the live version or even giving them the rights to edit a published post.
 
 == Documentation & Support ==
 

@@ -4,14 +4,14 @@
  * Update the original parent post
  *
  */
-class BF_Review_Update_Post {
+class BF_Moderation_Update_Post {
 
     public function __construct() {
         add_action( 'wp_insert_post_data'        , array( $this, 'modify_post_content' ), 99, 2 );
-        add_action( 'init'                       , array( $this, 'bf_review_post_status'), 999 );
-        add_action( 'post_submitbox_misc_actions', array( $this, 'bf_review_submitbox_misc_actions' ));
-        add_action( 'admin_footer-edit.php'      , array( $this, 'bf_review_append_to_inline_status_dropdown' ), 999 );
-        add_filter( 'bf_get_post_status_array'   , array( $this, 'bf_review_get_post_status_array' ), 10, 1);
+        add_action( 'init'                       , array( $this, 'bf_moderation_post_status'), 999 );
+        add_action( 'post_submitbox_misc_actions', array( $this, 'bf_moderation_submitbox_misc_actions' ));
+        add_action( 'admin_footer-edit.php'      , array( $this, 'bf_moderation_append_to_inline_status_dropdown' ), 999 );
+        add_filter( 'bf_get_post_status_array'   , array( $this, 'bf_moderation_get_post_status_array' ), 10, 1);
     }
 
     public function modify_post_content( $data , $postarr ) {
@@ -53,8 +53,8 @@ class BF_Review_Update_Post {
                 $parent_post_id = wp_update_post($update_post);
 
                 if($parent_post_id){
-                    $this->bf_review_copy_post_taxonomies($parent_post_id, $postarr['ID']);
-                    $this->bf_review_copy_post_meta_info($parent_post_id,  $postarr['ID']);
+                    $this->bf_moderation_copy_post_taxonomies($parent_post_id, $postarr['ID']);
+                    $this->bf_moderation_copy_post_meta_info($parent_post_id,  $postarr['ID']);
                 }
 
             } else {
@@ -71,7 +71,7 @@ class BF_Review_Update_Post {
      * @param $parent_post_id
      * @param $child_post_id
      */
-    function bf_review_copy_post_taxonomies($parent_post_id, $child_post_id) {
+    function bf_moderation_copy_post_taxonomies($parent_post_id, $child_post_id) {
         global $wpdb;
         if (isset($wpdb->terms)) {
             // Clear default category (added by wp_insert_post)
@@ -99,7 +99,7 @@ class BF_Review_Update_Post {
      * @internal param $new_id
      * @internal param $post
      */
-    function bf_review_copy_post_meta_info($parent_post_id, $child_post_id) {
+    function bf_moderation_copy_post_meta_info($parent_post_id, $child_post_id) {
         $post_meta_keys = get_post_custom_keys($child_post_id);
         if (empty($post_meta_keys))
             return;
@@ -114,7 +114,7 @@ class BF_Review_Update_Post {
     }
 
 
-    function bf_review_post_status() {
+    function bf_moderation_post_status() {
 
         $args = array(
             'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
@@ -128,8 +128,8 @@ class BF_Review_Update_Post {
         register_post_status( 'edit-draft', $args );
 
         $args = array(
-            'label'                     => _x( 'Awaiting Review', 'Awaiting Review', 'buddyforms' ),
-            'label_count'               => _n_noop( 'Awaiting Review (%s)',  'Awaiting Review (%s)', 'buddyforms' ),
+            'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms' ),
+            'label_count'               => _n_noop( 'Awaiting moderation (%s)',  'Awaiting moderation (%s)', 'buddyforms' ),
             'public'                    => false,
             'show_in_admin_all_list'    => false,
             'show_in_admin_status_list' => true,
@@ -151,7 +151,7 @@ class BF_Review_Update_Post {
 
     }
 
-    function bf_review_submitbox_misc_actions(){
+    function bf_moderation_submitbox_misc_actions(){
         global $post, $buddyforms;
 
         $buddyforms_options = $buddyforms;
@@ -182,9 +182,9 @@ class BF_Review_Update_Post {
         $label = '';
         if( $post->post_status == 'awaiting-review' ){
             $complete = ' selected=\"selected\"';
-            $label = '<span id=\"post-status-display\"> Awaiting Review</span>';
+            $label = '<span id=\"post-status-display\"> Awaiting moderation</span>';
         }
-        echo '$("select#post_status").append("<option value=\"'.$post->post_status.'\" '.$complete.'>Awaiting Review</option>");
+        echo '$("select#post_status").append("<option value=\"'.$post->post_status.'\" '.$complete.'>Awaiting moderation</option>");
             $(".misc-pub-section label").append("'.$label.'");';
         $complete = '';
         $label = '';
@@ -206,7 +206,7 @@ class BF_Review_Update_Post {
      * listing page.
      * @return null
      */
-    function bf_review_append_to_inline_status_dropdown() {
+    function bf_moderation_append_to_inline_status_dropdown() {
         global $post, $buddyforms;
 
         if (!$post) return;
@@ -228,7 +228,7 @@ class BF_Review_Update_Post {
         <script>
         jQuery(document).ready(function ($){
             jQuery('.inline-edit-status select').append('<option value=\"edit-draft\">Edit Draft</option>' +
-             '<option value=\"awaiting-review\">Awaiting Review</option>' +
+             '<option value=\"awaiting-review\">Awaiting moderation</option>' +
              '<option value=\"approved\">Approved</option>');
         });
         </script>
@@ -236,12 +236,12 @@ class BF_Review_Update_Post {
 
     }
 
-    function bf_review_get_post_status_array($status_array){
+    function bf_moderation_get_post_status_array($status_array){
         $status_array['edit-draft']      = 'Edit Draft';
-        $status_array['awaiting-review'] = 'Awaiting Review';
+        $status_array['awaiting-review'] = 'Awaiting moderation';
         $status_array['approved']        = 'Approved';
         return $status_array;
     }
 
 }
-new BF_Review_Update_Post;
+new BF_Moderation_Update_Post;

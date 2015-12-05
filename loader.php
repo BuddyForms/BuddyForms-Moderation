@@ -1,8 +1,8 @@
 <?php
 /*
- Plugin Name: BuddyForms Moderation (Review System)
- Plugin URI: http://buddyforms.com/downloads/review/
- Description: Create new drafts or pending reviews from new or published posts without changing the live version.
+ Plugin Name: BuddyForms Moderation (moderation System)
+ Plugin URI: http://buddyforms.com/downloads/moderation/
+ Description: Create new drafts or pending moderations from new or published posts without changing the live version.
  Version: 1.0.2
  Author: Sven Lehnert
  Author URI: https://profiles.wordpress.org/svenl77
@@ -28,17 +28,17 @@
  ****************************************************************************
  */
 
-function bf_review_includes(){
-    include_once(dirname(__FILE__) . '/includes/buddyforms-review.php');
+function bf_moderation_includes(){
+    include_once(dirname(__FILE__) . '/includes/buddyforms-moderation.php');
     include_once(dirname(__FILE__) . '/includes/form-elements.php');
     include_once(dirname(__FILE__) . '/includes/functions.php');
 }
-add_action('init', 'bf_review_includes', 10);
+add_action('init', 'bf_moderation_includes', 10);
 
-function bf_review_requirements(){
+function bf_moderation_requirements(){
     if( ! defined( 'BUDDYFORMS_VERSION' )){
-        add_action( 'admin_notices', create_function( '', 'printf(\'<div id="message" class="error"><p><strong>\' . __(\'BuddyForms Review needs BuddyForms to be installed. <a target="_blank" href="%s">--> Get it now</a>!\', " wc4bp_xprofile" ) . \'</strong></p></div>\', "http://themekraft.com/store/wordpress-front-end-editor-and-form-builder-buddyforms/" );' ) );
+        add_action( 'admin_notices', create_function( '', 'printf(\'<div id="message" class="error"><p><strong>\' . __(\'BuddyForms Moderation needs BuddyForms to be installed. <a target="_blank" href="%s">--> Get it now</a>!\', " wc4bp_xprofile" ) . \'</strong></p></div>\', "http://buddyforms.com/" );' ) );
         return;
     }
 }
-add_action('plugins_loaded', 'bf_review_requirements', 9999);
+add_action('plugins_loaded', 'bf_moderation_requirements', 9999);
