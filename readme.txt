@@ -1,34 +1,32 @@
-=== BuddyForms Moderation (moderation System) ===
+=== BuddyForms Moderation ( Former: Review Logic ) ===
 Contributors: svenl77, buddyforms
-Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, moderation, moderation, frontend editor
+Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
 Tested up to: WordPress 4.3, BuddyPress 2.3.2.1
-Stable tag: 1.0.2
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create new drafts or pending moderations from new or published posts without changing the live version.
+Create new drafts or pending reviews from new or published posts without changing the live version.
 
 == Description ==
 
 This is the BuddyForms moderation Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http:buddyforms.com" target="_blank">Get BuddyForms now!</a>
 
 <b>Problem</b><br>
-In WordPress it is not possible to edit a published post and save it as new draft or pending moderation without removing the post from the frontend.
-In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending moderation without creating a 404.
-For the BuddyForms frontend editing we want to have the feature to save a private draft or set the edit post to pending moderation without creating a 404.
+In WordPress it is not possible to edit a published post and save it as new draft or pending review without removing the post from the frontend.
+In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending review without creating a 404.
+For the BuddyForms frontend editing we want to have the feature to save a private draft or set the edit post to pending review without creating a 404.
 
 
-With the BuddyForms moderation Extension you can solve exactly this problem.
+With the BuddyForms Moderation Extension you can solve exactly this problem.
 
-The extension creates a new form element "moderation Logic"
-
-If the Form Element is added to a form, the form will add a moderation system to the attached post type.
+The extension creates a new Form Builder MetaBox "Moderation"
 
 <b>With 3 new Post Status</b>
 <ul>
 <li><b>Edit draft</b>      --> Is a new created post or a new edit draft of an existing post and only available for your editing.</li>
-<li><b>Awaiting moderation</b> --> You have finished editing and want your post to be moderationed and published.</li>
+<li><b>Awaiting Review</b> --> You have finished editing and want your post to be moderationed and published.</li>
 <li><b>Approved</b>        --> Your post has been approved and is merged back to the live version.</li>
 </ul>
 
@@ -36,18 +34,18 @@ If the Form Element is added to a form, the form will add a moderation system to
 <b>How it works:</b>
 If you create a new edit draft, a new child post of your live post will be created as a duplicate of your live post.
 During the editing process you will edit the child post and your live version is untouched and available to the public.
-If you set the post to "awaiting moderation" and a moderationer (admin) approves your post, the post will be merged back to the live version and set to approved.
+If you set the post to "awaiting review" and a moderationer (admin) approves your post, the post will be merged back to the live version and set to approved.
 
 This will work for all the content, custom fields and taxonomies.
 
 <b>Mail Notification</b>
-With the BuddyForms in build Notification System you can create mail trigger notification for the different post status to let your users and moderationers know, when a new post is ready for moderation or gets approved.
+With the BuddyForms in build Notification System you can create mail trigger notification for the different post status to let your users and Moderators know, when a new post is ready for moderation or gets approved.
 
-BuddyForms moderation is the perfect plugin for you if you are in need of a solid frontend post editing moderation management.
+BuddyForms Moderation is the perfect plugin for you if you are in need of a solid frontend post editing moderation management.
 
 It doesn't matter if you let your users create products or Kitten Story's. It just work fine with any custom post type related plugin.
 
-The BuddyForms moderation extension gives you full control of the user submissions without affecting the live version or even giving them the rights to edit a published post.
+The BuddyForms Moderation extension gives you full control of the user submissions without affecting the live version or even giving them the rights to edit a published post.
 
 == Documentation & Support ==
 
@@ -85,6 +83,25 @@ BuddyForms gives you these possibilities for a wide variety of uses.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.1 =
+Complete Rewrite. Thanks to Holden for working with me on the new Version.
+Change from form element to global form settings.
+Make the moderation label an options array.
+Rename BuddyForms Review to BuddyForms Moderation (Review System)
+Rename all from review to moderation. Also the Plugin Name. Moderation is more understandable. review was unclear for many users.
+Rebuild the form actions logic to work with global setting, have been a form element before.
+Add a option to disable moderation
+Make it work with the latest version of BuddyForms. The BuddyForms array has changed so I adjust the code too the new structure
+changed default BUDDYFORMS to BUDDYFORMS_VERSION
+Add new options for the review logic and workflow
+Add new label options
+Adjust the ajax
+Rework the post listings templates
+Add new post edit screen meta box option to reject a post and sent a message to the author
+Create new file functions.php
+Fixed Issues
+Clean up the code
 
 = 1.0.2 =
 add ajax compatibility
