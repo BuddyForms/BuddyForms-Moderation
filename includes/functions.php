@@ -49,7 +49,7 @@ function bf_moderation_edit_post_link($edit_post_link, $post_id){
     $post_status = get_post_status($post_id);
     $post_type = get_post_type($post_id);
 
-    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+    if(!isset($buddyforms[$form_slug]['moderation_logic']) || $buddyforms[$form_slug]['moderation_logic'] == 'default')
         return $edit_post_link;
 
     if ( $buddyforms[$form_slug]['moderation_logic'] != 'many_drafts' ) {

@@ -17,13 +17,14 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html(){
     $form_setup = array();
 
 
-    $moderation_logic = isset($buddyform['moderation_logic']) ? $buddyform['moderation_logic'] : 'one_draft';
+    $moderation_logic = isset($buddyform['moderation_logic']) ? $buddyform['moderation_logic'] : 'default';
 
     $form_setup['general']['moderation_logic'] = new Element_Radio(
         '<b>' . __('Moderation Logic', 'buddyforms') . '</b><br><br><p class="description">If a post is created or edited and the moderation logic is enabled the post is saved with post status edit-draft.
                     If a post is submit for moderation the post status is set to awaiting-approval</p>',
         "buddyforms_options[moderation_logic]",
         Array(
+            'default'        => 'Moderation is disabled<br>',
             'one_draft'      => 'User can create one new draft and save it until he submit it for moderation. He can not create a new draft before the last draft gets approved<br>',
             'hidden_draft'   => 'If the user creates or edit a post he is only able to submit for moderation. No Save Button.<br>',
             'many_drafts'    => 'User can create as many new drafts as he like. Also if one earlier draft is waiting for approval he can create new drafts and submit for moderation. This can end up in multiple drafts and awaiting moderations post status.
@@ -86,7 +87,7 @@ add_filter('add_meta_boxes','buddyforms_moderation_admin_settings_sidebar_metabo
 function bf_moderation_create_frontend_form_element($form, $form_slug, $post_id ){
     global $buddyforms, $bf_submit_button;
 
-    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+    if(!isset($buddyforms[$form_slug]['moderation_logic']) || $buddyforms[$form_slug]['moderation_logic'] == 'default')
         return $form;
 
     $bf_submit_button = false;
@@ -159,7 +160,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response($json_args){
 
     $form_slug = $_POST['form_slug'];
 
-    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+    if(!isset($buddyforms[$form_slug]['moderation_logic']) || $buddyforms[$form_slug]['moderation_logic'] == 'default')
         return $json_args;
 
     $label_moderation   = new Element_Button( __($buddyforms[$form_slug]['moderation']['label_review'], 'buddyforms'), 'submit', array('class' => 'bf-submit', 'name' => 'awaiting-review'));
@@ -245,7 +246,7 @@ function bf_moderation_create_edit_form_post_id($post_id){
     if(!$form_slug)
         return $post_id;
 
-    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+    if(!isset($buddyforms[$form_slug]['moderation_logic']) || $buddyforms[$form_slug]['moderation_logic'] == 'default')
         return $post_id;
 
     $args = array(
@@ -268,7 +269,7 @@ add_filter('bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1)
 function bf_create_post_status_to_display($query_args){
     global $buddyforms;
 
-    if(isset($buddyforms[$query_args['form_slug']]['moderation_logic']))
+    if(isset($buddyforms[$query_args['form_slug']]['moderation_logic']) || $buddyforms[$query_args['form_slug']]['moderation_logic'] == 'default')
         $query_args['post_status'] =  array('publish', 'awaiting-review', 'edit-draft');
 
     return $query_args;
@@ -280,7 +281,7 @@ add_filter('bf_post_status_css','bf_moderation_post_status_css', 10, 2);
 function bf_moderation_post_status_css($post_status_css, $form_slug){
     global $buddyforms;
 
-    if(!isset($buddyforms[$form_slug]['moderation_logic']))
+    if(!isset($buddyforms[$form_slug]['moderation_logic']) || $buddyforms[$form_slug]['moderation_logic'] == 'default')
         return $post_status_css;
 
     if( $post_status_css == 'awaiting-review')
