@@ -380,7 +380,7 @@ function buddyforms_reject_now(){
     $mailheaders .= "X-Priority: 1\n";
     $mailheaders .= "Content-Type: text/html; charset=\"UTF-8\"\n";
     $mailheaders .= "Content-Transfer-Encoding: 7bit\n\n";
-    $mailheaders .= "From: " . $from_email. "<". $from_email . ">" . "\r\n";
+    $mailheaders .= "From: " . $from_email . "<" . $from_email . ">" . "\r\n";
 
     $message='<html><head></head><body>'.$emailBody.'</body></html>';
 
