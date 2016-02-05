@@ -20,20 +20,18 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html(){
     $moderation_logic = isset($buddyform['moderation_logic']) ? $buddyform['moderation_logic'] : 'default';
 
     $form_setup['general']['moderation_logic'] = new Element_Radio(
-        '<b>' . __('Moderation Logic', 'buddyforms') . '</b><br><br><p class="description">If a post is created or edited and the moderation logic is enabled the post is saved with post status edit-draft.
-                    If a post is submit for moderation the post status is set to awaiting-approval</p>',
+        '<b>' . __('Moderation Logic', 'buddyforms') . '</b>',
         "buddyforms_options[moderation_logic]",
         Array(
             'default'        => 'Moderation is disabled<br>',
-            'one_draft'      => 'User can create one new draft and save it until he submit it for moderation. He can not create a new draft before the last draft gets approved<br>',
-            'hidden_draft'   => 'If the user creates or edit a post he is only able to submit for moderation. No Save Button.<br>',
-            'many_drafts'    => 'User can create as many new drafts as he like. Also if one earlier draft is waiting for approval he can create new drafts and submit for moderation. This can end up in multiple drafts and awaiting moderations post status.
-                                        If a earlier draft gets aproved it gets merged back to the public version. so if the latest draft gets approved all posts should be merged back recursive<br>')
+            'one_draft'      => 'Users can create, save and edit a draft until it is submitted for moderation. Once submitted, changes cannot be made until the post is approved. However, the user can delete the submitted post before it is approved.<br>',
+            'hidden_draft'   => 'Users can only submit a post for moderation. Drafts cannot be saved.<br>',
+            'many_drafts'    => 'Users can create as many drafts as they like and submit them for moderation. When a post is approved, all related older posts that are awaiting review get deleted. This could result in the post appearing multiple times in Edit Draft or Awaiting Moderation.<br>')
         ,
         array(
             'value'      => $moderation_logic,
-            'shortDesc'  => 'If a post is created or edited and the moderation logic is enabled the post is saved with post status edit-draft.
-                    If a post is submit for moderation the post status is set to awaiting-approval'
+            // 'shortDesc'  => 'If a post is created or edited and the moderation logic is enabled the post is saved with post status edit-draft.
+            //         If a post is submit for moderation the post status is set to awaiting-approval'
         )
     );
 

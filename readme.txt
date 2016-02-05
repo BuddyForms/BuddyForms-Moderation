@@ -16,7 +16,7 @@ This is the BuddyForms moderation Extension. You need the BuddyForms plugin inst
 <b>Problem</b><br>
 In WordPress it is not possible to edit a published post and save it as new draft or pending review without removing the post from the frontend.
 In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending review without creating a 404.
-For the BuddyForms frontend editing we want to have the feature to save a private draft or set the edit post to pending review without creating a 404.
+For the BuddyForms front-end editing we want to have the feature to save a private draft or set the edit post to pending review without creating a 404.
 
 
 With the BuddyForms Moderation Extension you can solve exactly this problem.
