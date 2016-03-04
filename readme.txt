@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
 Tested up to: WordPress 4.3, BuddyPress 2.3.2.1
-Stable tag: 1.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ During the editing process you will edit the child post and your live version is
 If you set the post to "awaiting review" and a moderationer (admin) approves your post, the post will be merged back to the live version and set to approved.
 
 This will work for all the content, custom fields and taxonomies.
+
+<b>Video from Webzio Showcase the Plugin!</b>
+[youtube https://www.youtube.com/watch?v=lg2lAt0zljc]
 
 <b>Mail Notification</b>
 With the BuddyForms in build Notification System you can create mail trigger notification for the different post status to let your users and Moderators know, when a new post is ready for moderation or gets approved.
@@ -83,6 +86,11 @@ BuddyForms gives you these possibilities for a wide variety of uses.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.1.1 =
+Spelling correction
+Code cleanup
+UI improvements
 
 = 1.1 =
 Complete Rewrite. Thanks to Holden for working with me on the new Version.
