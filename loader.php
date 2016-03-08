@@ -3,7 +3,7 @@
  Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  Plugin URI: http://buddyforms.com/downloads/moderation/
  Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- Version: 1.1
+ Version: 1.1.1
  Author: Sven Lehnert
  Author URI: https://profiles.wordpress.org/svenl77
  License: GPLv2 or later

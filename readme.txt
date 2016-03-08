@@ -2,7 +2,7 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: WordPress 3.x, BuddyPress 2.x
-Tested up to: WordPress 4.3, BuddyPress 2.3.2.1
+Tested up to: WordPress 4.4.2
 Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
