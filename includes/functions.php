@@ -77,6 +77,106 @@ function bf_moderation_edit_post_link($edit_post_link, $post_id){
 }
 add_filter('bf_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2);
 
+function buddyforms_review_the_table_tr_last($post_id){
+  global $buddyforms;
+
+  $post_parent = $post_id;
+  $form_slug = get_post_meta($post_parent, '_bf_form_slug', true);
+  $post_type = $buddyforms[$form_slug]['post_type'];
+
+  $args = array(
+      'post_type'			=> $post_type,
+      'form_slug'         => $form_slug,
+      'post_status'		=> array('edit-draft', 'awaiting-review'),
+      'posts_per_page'	=> -1,
+      'post_parent'		=> $post_parent,
+      'author'			=> get_current_user_id()
+  );
+
+  $the_moderation_query = new WP_Query( $args );
+
+  get_currentuserinfo(); ?>
+
+  <?php if ( $the_moderation_query->have_posts() ) : ?>
+
+    <ul class="buddyforms-list_sub" role="sub">
+
+        <?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
+        $the_permalink = get_permalink();
+        $post_status = get_post_status();
+
+        $post_status_css =  $post_status_name  = $post_status;
+
+        if( $post_status == 'pending')
+          $post_status_css = 'bf-pending';
+
+        if( $post_status == 'publish')
+          $post_status_name = __('Published', 'buddyforms');
+
+        if( $post_status == 'draft')
+          $post_status_name = __('Draft', 'buddyforms');
+
+        if( $post_status == 'pending')
+          $post_status_name = __('Pending Review', 'buddyforms');
+
+        if( $post_status == 'future')
+          $post_status_name = __('Scheduled', 'buddyforms');
+
+        $post_status_css = apply_filters('bf_post_status_css',$post_status_css,$form_slug);
+        ?>
+
+
+
+
+
+              <tr>
+    						<td colspan="2">
+
+    						</td>
+    						<td>
+                  <div class="item-status"><?php echo $post_status_name; ?></div>
+                  <?php _e( 'Created', 'buddyforms' ); ?> <?php the_time('F j, Y') ?>
+    						</td>
+    						<td>
+                  <div class="action">
+
+
+                      <?php
+                      if (get_the_author_meta('ID') ==  get_current_user_id()){
+                          $permalink = get_permalink( $buddyforms[$form_slug]['attached_page'] ); ?>
+
+                          <div class="meta">
+
+                              <?php
+                              if( current_user_can('buddyforms_'.$form_slug.'_edit') ) {
+
+                                  if(isset($buddyforms[$form_slug]['edit_link']) && $buddyforms[$form_slug]['edit_link'] != 'none') {
+                                      echo apply_filters( 'bf_loop_edit_post_link','<a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug. '/' .get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) .'</a>', get_the_ID());
+                                  } else {
+                                      echo apply_filters( 'bf_loop_edit_post_link', bf_edit_post_link('Edit'), get_the_ID() );
+                                  }
+
+                              }
+                              if( current_user_can('buddyforms_'.$form_slug.'_delete') ) {
+                                  echo ' - <a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a>';
+                              }
+                              do_action('buddyforms_the_loop_actions', get_the_ID())
+                              ?>
+                          </div>
+                      <?php } ?>
+
+                  </div>
+    						</td>
+    					</tr>
+
+        <?php endwhile; ?>
+    <ul>
+  <?php endif; ?>
+
+<?
+}
+add_action('buddyforms_the_table_tr_last', 'buddyforms_review_the_table_tr_last');
+
 function bf_buddyforms_the_loop_li_last($post_id){
     global $buddyforms;
 
