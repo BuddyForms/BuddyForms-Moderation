@@ -99,7 +99,7 @@ function buddyforms_review_the_table_tr_last($post_id){
 
   <?php if ( $the_moderation_query->have_posts() ) : ?>
 
-    <ul class="buddyforms-list_sub" role="sub">
+
 
         <?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
         $the_permalink = get_permalink();
@@ -125,52 +125,49 @@ function buddyforms_review_the_table_tr_last($post_id){
         $post_status_css = apply_filters('bf_post_status_css',$post_status_css,$form_slug);
         ?>
 
+          <tr id="bf_post_li_<?php the_ID() ?>" class="<?php echo $post_status_css; ?> second">
+						<td colspan="2">
 
+						</td>
+						<td>
+              <span class="mobile-th"><?php _e( 'Status', 'buddyforms' ); ?></span>
+              <div class="table-item-status"><?php echo $post_status_name ?></div>
+              <div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time('F j, Y') ?></div>
+						</td>
+						<td>
+              <div class="meta">
+                <span class="mobile-th"><?php _e( 'Actions', 'buddyforms' ); ?></span>
+                <ul class="edit_links">
+                  <?php
+      						if (get_the_author_meta('ID') ==  get_current_user_id()){
+      							$permalink = get_permalink( $buddyforms[$form_slug]['attached_page'] );
+      							$permalink = apply_filters('buddyforms_the_loop_edit_permalink', $permalink, $buddyforms[$form_slug]['attached_page']);
 
+                    ob_start();
+                      if( current_user_can('buddyforms_'.$form_slug.'_edit') ) {
+                        ?><li><?php
+                        if(isset($buddyforms[$form_slug]['edit_link']) && $buddyforms[$form_slug]['edit_link'] != 'none') {
+      										echo apply_filters( 'bf_loop_edit_post_link','<a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug. '/' .get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) .'</a>', get_the_ID());
+      									 } else {
+      										echo apply_filters( 'bf_loop_edit_post_link', bf_edit_post_link('Edit'), get_the_ID() );
+      									 }
+                         ?></li><?php
+                      }
 
+      								if( current_user_can('buddyforms_'.$form_slug.'_delete') ) {
+      									echo ' <li> <a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a></li>';
+      								 }
+      								do_action('buddyforms_the_loop_actions', get_the_ID());
+      							$meta_tmp = ob_get_clean();
 
-              <tr>
-    						<td colspan="2">
-
-    						</td>
-    						<td>
-                  <div class="item-status"><?php echo $post_status_name; ?></div>
-                  <?php _e( 'Created', 'buddyforms' ); ?> <?php the_time('F j, Y') ?>
-    						</td>
-    						<td>
-                  <div class="action">
-
-
-                      <?php
-                      if (get_the_author_meta('ID') ==  get_current_user_id()){
-                          $permalink = get_permalink( $buddyforms[$form_slug]['attached_page'] ); ?>
-
-                          <div class="meta">
-
-                              <?php
-                              if( current_user_can('buddyforms_'.$form_slug.'_edit') ) {
-
-                                  if(isset($buddyforms[$form_slug]['edit_link']) && $buddyforms[$form_slug]['edit_link'] != 'none') {
-                                      echo apply_filters( 'bf_loop_edit_post_link','<a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug. '/' .get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) .'</a>', get_the_ID());
-                                  } else {
-                                      echo apply_filters( 'bf_loop_edit_post_link', bf_edit_post_link('Edit'), get_the_ID() );
-                                  }
-
-                              }
-                              if( current_user_can('buddyforms_'.$form_slug.'_delete') ) {
-                                  echo ' - <a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a>';
-                              }
-                              do_action('buddyforms_the_loop_actions', get_the_ID())
-                              ?>
-                          </div>
-                      <?php } ?>
-
-                  </div>
-    						</td>
-    					</tr>
+                    echo apply_filters('buddyforms_the_loop_meta_html', $meta_tmp);
+      						} ?>
+                </ul>
+              </div>
+						</td>
+					</tr>
 
         <?php endwhile; ?>
-    <ul>
   <?php endif; ?>
 
 <?
