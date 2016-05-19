@@ -28,17 +28,20 @@
  ****************************************************************************
  */
 
-function bf_moderation_includes(){
-    include_once(dirname(__FILE__) . '/includes/buddyforms-moderation.php');
-    include_once(dirname(__FILE__) . '/includes/form-elements.php');
-    include_once(dirname(__FILE__) . '/includes/functions.php');
+function bf_moderation_includes() {
+	include_once( dirname( __FILE__ ) . '/includes/buddyforms-moderation.php' );
+	include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
+	include_once( dirname( __FILE__ ) . '/includes/functions.php' );
 }
-add_action('init', 'bf_moderation_includes', 10);
 
-function bf_moderation_requirements(){
-    if( ! defined( 'BUDDYFORMS_VERSION' )){
-        add_action( 'admin_notices', create_function( '', 'printf(\'<div id="message" class="error"><p><strong>\' . __(\'BuddyForms Moderation needs BuddyForms to be installed. <a target="_blank" href="%s">--> Get it now</a>!\', " wc4bp_xprofile" ) . \'</strong></p></div>\', "http://buddyforms.com/" );' ) );
-        return;
-    }
+add_action( 'init', 'bf_moderation_includes', 10 );
+
+function bf_moderation_requirements() {
+	if ( ! defined( 'BUDDYFORMS_VERSION' ) ) {
+		add_action( 'admin_notices', create_function( '', 'printf(\'<div id="message" class="error"><p><strong>\' . __(\'BuddyForms Moderation needs BuddyForms to be installed. <a target="_blank" href="%s">--> Get it now</a>!\', " wc4bp_xprofile" ) . \'</strong></p></div>\', "http://buddyforms.com/" );' ) );
+
+		return;
+	}
 }
-add_action('plugins_loaded', 'bf_moderation_requirements', 9999);
+
+add_action( 'plugins_loaded', 'bf_moderation_requirements', 9999 );
