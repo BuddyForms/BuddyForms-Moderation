@@ -14,9 +14,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 
 	$buddyform = get_post_meta( get_the_ID(), '_buddyforms_options', true );
 
-
 	$form_setup = array();
-
 
 	$moderation_logic = isset( $buddyform['moderation_logic'] ) ? $buddyform['moderation_logic'] : 'default';
 
@@ -82,7 +80,6 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	<?php
 
 }
-
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );
 
 /*
@@ -152,14 +149,11 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 
 	return $form;
 }
-
-add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 10, 3 );
+add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
 
 
 function bf_moderation_buddyforms_create_edit_form_button( $form_button ) {
-
 	return false;
-
 }
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
@@ -251,7 +245,6 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 	return $json_args;
 
 }
-
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 
 function bf_moderation_post_control_args( $args ) {
@@ -270,11 +263,9 @@ function bf_moderation_post_control_args( $args ) {
 
 	return $args;
 }
-
 add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10, 1 );
 
 
-add_filter( 'bf_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 function bf_moderation_create_edit_form_post_id( $post_id ) {
 	global $buddyforms;
 
@@ -303,8 +294,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	return $post_id;
 
 }
-
-add_filter( 'bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1 );
+add_filter( 'bf_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
 function bf_create_post_status_to_display( $query_args ) {
 	global $buddyforms;
@@ -316,8 +306,7 @@ function bf_create_post_status_to_display( $query_args ) {
 	return $query_args;
 
 }
-
-add_filter( 'bf_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
+add_filter( 'bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1 );
 
 function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	global $buddyforms;
@@ -335,5 +324,5 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	}
 
 	return $post_status_css;
-
 }
+add_filter( 'bf_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
