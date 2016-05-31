@@ -69,11 +69,11 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		$post_parent = new WP_Query( $args );
 
 		if ( $post_parent->have_posts() ) {
-			$edit_post_link = __( 'New Version in Process', 'buddyforms' );
+			$edit_post_link = '<li class="disabled"><span>' . __( 'New Version in Process', 'buddyforms' ) . '</span></li>';
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-		$edit_post_link = __( 'Edit is Disabled during moderation', 'buddyforms' );
+		$edit_post_link =  $edit_post_link = '<li class="disabled"><span>' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '</span></li>';
 	}
 
 	return $edit_post_link;
@@ -151,18 +151,15 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 
 								ob_start();
 								if ( current_user_can( 'buddyforms_' . $form_slug . '_edit' ) ) {
-									?>
-									<li><?php
 									if ( isset( $buddyforms[ $form_slug ]['edit_link'] ) && $buddyforms[ $form_slug ]['edit_link'] != 'none' ) {
-										echo apply_filters( 'bf_loop_edit_post_link', '<a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) . '</a>', get_the_ID() );
+										echo apply_filters( 'bf_loop_edit_post_link', '<li><a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) . '</a></li>', get_the_ID() );
 									} else {
-										echo apply_filters( 'bf_loop_edit_post_link', bf_edit_post_link( 'Edit' ), get_the_ID() );
+										echo apply_filters( 'bf_loop_edit_post_link', '<li>' . bf_edit_post_link( 'Edit' ) . '</li>', get_the_ID() );
 									}
-									?></li><?php
 								}
 
 								if ( current_user_can( 'buddyforms_' . $form_slug . '_delete' ) ) {
-									echo ' <li> <a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a></li>';
+									echo '<li><a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a></li>';
 								}
 								do_action( 'buddyforms_the_loop_actions', get_the_ID() );
 								$meta_tmp = ob_get_clean();
@@ -259,21 +256,23 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 								<div class="meta">
 									<div class="item-status"><?php echo $post_status_name; ?></div>
-									<?php
-									if ( current_user_can( 'buddyforms_' . $form_slug . '_edit' ) ) {
+									<ul class="edit_links">
+										<?php
+										if ( current_user_can( 'buddyforms_' . $form_slug . '_edit' ) ) {
 
-										if ( isset( $buddyforms[ $form_slug ]['edit_link'] ) && $buddyforms[ $form_slug ]['edit_link'] != 'none' ) {
-											echo apply_filters( 'bf_loop_edit_post_link', '<a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) . '</a>', get_the_ID() );
-										} else {
-											echo apply_filters( 'bf_loop_edit_post_link', bf_edit_post_link( 'Edit' ), get_the_ID() );
+											if ( isset( $buddyforms[ $form_slug ]['edit_link'] ) && $buddyforms[ $form_slug ]['edit_link'] != 'none' ) {
+												echo apply_filters( 'bf_loop_edit_post_link', '<li><a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '">' . __( 'Edit', 'buddyforms' ) . '</a></li>', get_the_ID() );
+											} else {
+												echo apply_filters( 'bf_loop_edit_post_link', '<li>' . bf_edit_post_link( 'Edit' ) . '</li>', get_the_ID() );
+											}
+
 										}
-
-									}
-									if ( current_user_can( 'buddyforms_' . $form_slug . '_delete' ) ) {
-										echo ' - <a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a>';
-									}
-									do_action( 'buddyforms_the_loop_actions', get_the_ID() )
-									?>
+										if ( current_user_can( 'buddyforms_' . $form_slug . '_delete' ) ) {
+											echo '<li><a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#">' . __( 'Delete', 'buddyforms' ) . '</a></li>';
+										}
+										do_action( 'buddyforms_the_loop_actions', get_the_ID() )
+										?>
+									</ul>
 								</div>
 							<?php } ?>
 
@@ -291,10 +290,8 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 			<div class="navigation">
 				<?php if ( function_exists( 'wp_pagenavi' ) ) : wp_pagenavi();
 				else: ?>
-					<div
-						class="alignleft"><?php next_posts_link( '&larr;' . __( ' Previous Entries', 'buddyforms' ), $the_moderation_query->max_num_pages ) ?></div>
-					<div
-						class="alignright"><?php previous_posts_link( __( 'Next Entries ', 'buddyforms' ) . '&rarr;' ) ?></div>
+					<div class="alignleft"><?php next_posts_link( '&larr;' . __( ' Previous Entries', 'buddyforms' ), $the_moderation_query->max_num_pages ) ?></div>
+					<div class="alignright"><?php previous_posts_link( __( 'Next Entries ', 'buddyforms' ) . '&rarr;' ) ?></div>
 				<?php endif; ?>
 
 			</div>
