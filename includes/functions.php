@@ -69,11 +69,11 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		$post_parent = new WP_Query( $args );
 
 		if ( $post_parent->have_posts() ) {
-			$edit_post_link = '<li class="disabled"><span>' . __( 'New Version in Process', 'buddyforms' ) . '</span></li>';
+			$edit_post_link = '<li class="disabled"><span aria-label="' . __( 'New Version in Process', 'buddyforms' ) . '" title="' . __( 'New Version in Process', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span></li>';
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-		$edit_post_link = '<li class="disabled"><span>' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '</span></li>';
+		$edit_post_link = '<li class="disabled"><span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span></li>';
 	}
 
 	return $edit_post_link;
