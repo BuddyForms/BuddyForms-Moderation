@@ -152,14 +152,14 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 								ob_start();
 								if ( current_user_can( 'buddyforms_' . $form_slug . '_edit' ) ) {
 									if ( isset( $buddyforms[ $form_slug ]['edit_link'] ) && $buddyforms[ $form_slug ]['edit_link'] != 'none' ) {
-										echo apply_filters( 'bf_loop_edit_post_link', '<li><a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '"><span aria-label="' . __( 'Edit', 'buddyforms' ) . '" title="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span></a></li>', get_the_ID() );
+										echo apply_filters( 'bf_loop_edit_post_link', '<li><a title="Edit" id="' . get_the_ID() . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . get_the_ID() . '"><span aria-label="' . __( 'Edit', 'buddyforms' ) . '" title="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span></a></li> ', get_the_ID() );
 									} else {
-										echo apply_filters( 'bf_loop_edit_post_link', '<li>' . bf_edit_post_link( '<span aria-label="' . __( 'Edit', 'buddyforms' ) . '" title="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span>' ) . '</li>', get_the_ID() );
+										echo apply_filters( 'bf_loop_edit_post_link', '<li>' . bf_edit_post_link( '<span aria-label="' . __( 'Edit', 'buddyforms' ) . '" title="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"></span>' ) . '</li> ', get_the_ID() );
 									}
 								}
 
 								if ( current_user_can( 'buddyforms_' . $form_slug . '_delete' ) ) {
-									echo '<li><a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post" href="#"><span aria-label="' . __( 'Delete', 'buddyforms' ) . '" title="' . __( 'Delete', 'buddyforms' ) . '" class="dashicons dashicons-trash"></span></a></li>';
+									echo '<li><a title="Delete"  id="' . get_the_ID() . '" class="bf_delete_post bf-delete-2" href="#"><span aria-label="' . __( 'Delete', 'buddyforms' ) . '" title="' . __( 'Delete', 'buddyforms' ) . '" class="dashicons dashicons-trash"></span></a></li>';
 								}
 								do_action( 'buddyforms_the_loop_actions', get_the_ID() );
 								$meta_tmp = ob_get_clean();
