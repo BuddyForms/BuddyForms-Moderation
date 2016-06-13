@@ -201,7 +201,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 	<?php if ( $the_moderation_query->have_posts() ) : ?>
 
-		<ul class="buddyforms-list_sub" role="sub">
+		<ul class="buddyforms-list-sub" role="sub">
 
 			<?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
 
@@ -223,7 +223,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 				do_action( 'bp_before_blog_post' ) ?>
 
-				<li id="bf_post_li_<?php the_ID() ?>" class="<?php echo $post_status_css; ?>">
+				<li id="bf_post_li_<?php the_ID() ?>" class="bf-submission-sub <?php echo $post_status_css; ?>">
 					<div class="item-avatar">
 
 						<?php
