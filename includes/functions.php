@@ -132,12 +132,12 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 			$post_status_css = apply_filters( 'bf_post_status_css', $post_status_css, $form_slug );
 			?>
 
-			<tr class="<?php echo $post_status_css; ?>">
+			<tr class="tr-sub <?php echo $post_status_css; ?>">
 				<td>
 					<span class="mobile-th"><?php _e( 'Status', 'buddyforms' ); ?></span>
 					<div class="status-item">
 						<div class="table-item-status"><?php echo $post_status_name ?></div>
-						<div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?><?php the_time( 'F j, Y' ) ?></div>
+						<div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></div>
 					</div>
 				</td>
 				<td>
