@@ -189,21 +189,22 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						<div class="item-desc"><?php echo get_the_excerpt(); ?></div>
 
 					</div>
-					<?php if ( is_user_logged_in() ) { ?>
+					<?php
+					if ( is_user_logged_in() && get_the_author_meta( 'ID' ) == get_current_user_id() ) {
+						ob_start();
+						?>
 						<div class="action">
-							<?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?>
-
-							<?php
-							if ( get_the_author_meta( 'ID' ) == get_current_user_id() ) { ?>
-								<div class="meta">
-									<div class="item-status"><?php echo $post_status_name; ?></div>
-									<?php bf_post_entry_actions($form_slug); ?>
-								</div>
-							<?php } ?>
-
+							<div class="meta">
+								<div class="item-status"><?php echo $post_status_name; ?></div>
+								<?php bf_post_entry_actions( $form_slug ); ?>
+								<span><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></span>
+							</div>
 						</div>
-					<?php } ?>
-					<?php //do_action('buddyforms_the_loop_li_last', get_the_ID()); ?>
+						<?php
+						$meta_tmp = ob_get_clean();
+						echo apply_filters( 'buddyforms_the_loop_meta_html', $meta_tmp );
+					}
+					?>
 					<div class="clear"></div>
 				</li>
 
