@@ -100,40 +100,35 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 	$the_moderation_query = new WP_Query( $args );
 	$current_user         = wp_get_current_user(); ?>
 
-	<?php if ( $the_moderation_query->have_posts() ) : ?>
+	<?php if ( $the_moderation_query->have_posts() ) : while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
+
+		$the_permalink      = get_permalink();
+		$post_status        = get_post_status();
+
+		$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
+		$post_status_name   = bf_get_post_status_readable( $post_status );
 
 
-		<?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
+		?>
 
-			$the_permalink      = get_permalink();
-			$post_status        = get_post_status();
+		<tr class="tr-sub <?php echo $post_status_css; ?>">
+			<td>
+				<span class="mobile-th"><?php _e( 'Status', 'buddyforms' ); ?></span>
+				<div class="status-item">
+					<div class="table-item-status"><?php echo $post_status_name ?></div>
+					<div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></div>
+				</div>
+			</td>
+			<td>
+				<div class="meta">
+					<span class="mobile-th"><?php _e( 'Actions', 'buddyforms' ); ?></span>
+					<?php bf_post_entry_actions($form_slug); ?>
+				</div>
+			</td>
+		</tr>
 
-			$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
-			$post_status_name   = bf_get_post_status_readable( $post_status );
+	<?php endwhile; endif;
 
-
-			?>
-
-			<tr class="tr-sub <?php echo $post_status_css; ?>">
-				<td>
-					<span class="mobile-th"><?php _e( 'Status', 'buddyforms' ); ?></span>
-					<div class="status-item">
-						<div class="table-item-status"><?php echo $post_status_name ?></div>
-						<div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></div>
-					</div>
-				</td>
-				<td>
-					<div class="meta">
-						<span class="mobile-th"><?php _e( 'Actions', 'buddyforms' ); ?></span>
-						<?php bf_post_entry_actions($form_slug); ?>
-					</div>
-				</td>
-			</tr>
-
-		<?php endwhile; ?>
-	<?php endif; ?>
-
-	<?
 }
 
 add_action( 'buddyforms_the_table_inner_tr_last', 'buddyforms_review_the_table_tr_last' );
