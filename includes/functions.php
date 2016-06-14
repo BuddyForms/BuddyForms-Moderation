@@ -214,17 +214,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 				<?php do_action( 'bf_after_loop_item' ) ?>
 
-
 			<?php endwhile; ?>
-
-			<div class="navigation">
-				<?php if ( function_exists( 'wp_pagenavi' ) ) : wp_pagenavi();
-				else: ?>
-					<div class="alignleft"><?php next_posts_link( '&larr;' . __( ' Previous Entries', 'buddyforms' ), $the_moderation_query->max_num_pages ) ?></div>
-					<div class="alignright"><?php previous_posts_link( __( 'Next Entries ', 'buddyforms' ) . '&rarr;' ) ?></div>
-				<?php endif; ?>
-
-			</div>
 
 		</ul>
 
