@@ -104,32 +104,14 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 
 
 		<?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
-			$the_permalink = get_permalink();
-			$post_status   = get_post_status();
 
-			$post_status_css = $post_status_name = $post_status;
+			$the_permalink      = get_permalink();
+			$post_status        = get_post_status();
 
-			if ( $post_status == 'pending' ) {
-				$post_status_css = 'bf-pending';
-			}
+			$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
+			$post_status_name   = bf_get_post_status_readable( $post_status );
 
-			if ( $post_status == 'publish' ) {
-				$post_status_name = __( 'Published', 'buddyforms' );
-			}
 
-			if ( $post_status == 'draft' ) {
-				$post_status_name = __( 'Draft', 'buddyforms' );
-			}
-
-			if ( $post_status == 'pending' ) {
-				$post_status_name = __( 'Pending Review', 'buddyforms' );
-			}
-
-			if ( $post_status == 'future' ) {
-				$post_status_name = __( 'Scheduled', 'buddyforms' );
-			}
-
-			$post_status_css = apply_filters( 'bf_post_status_css', $post_status_css, $form_slug );
 			?>
 
 			<tr class="tr-sub <?php echo $post_status_css; ?>">
@@ -182,21 +164,11 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 			<?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
 
-				$the_permalink = get_permalink();
-				$post_status   = get_post_status();
+				$the_permalink      = get_permalink();
+				$post_status        = get_post_status();
 
-				$post_status_css = $post_status_name = $post_status;
-
-				if ( $post_status == 'pending' ) {
-					$post_status_css = 'bf-pending';
-				}
-
-				if ( $post_status == 'publish' ) {
-					$post_status_name = 'published';
-				}
-
-
-				$post_status_css = apply_filters( 'bf_post_status_css', $post_status_css, $form_slug );
+				$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
+				$post_status_name   = bf_get_post_status_readable( $post_status );
 
 				do_action( 'bp_before_blog_post' ) ?>
 
@@ -226,11 +198,8 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						<div class="action">
 							<?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?>
 
-
 							<?php
-							if ( get_the_author_meta( 'ID' ) == get_current_user_id() ) {
-								$permalink = get_permalink( $buddyforms[ $form_slug ]['attached_page'] ); ?>
-
+							if ( get_the_author_meta( 'ID' ) == get_current_user_id() ) { ?>
 								<div class="meta">
 									<div class="item-status"><?php echo $post_status_name; ?></div>
 									<?php bf_post_entry_actions($form_slug); ?>
