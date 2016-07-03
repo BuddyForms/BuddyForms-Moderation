@@ -2,7 +2,7 @@
 
 
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
-	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'advanced', 'low' );
+	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 }
 
 function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
@@ -18,7 +18,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 
 	$moderation_logic = isset( $buddyform['moderation_logic'] ) ? $buddyform['moderation_logic'] : 'default';
 
-	$form_setup['general']['moderation_logic'] = new Element_Radio(
+	$form_setup[] = new Element_Radio(
 		'<b>' . __( 'Moderation Logic', 'buddyforms' ) . '</b>',
 		"buddyforms_options[moderation_logic]",
 		Array(
@@ -36,19 +36,19 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	);
 
 	$label_submit                        = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : 'Submit';
-	$form_setup['label']['label_submit'] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
 
 	$label_save                        = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : 'Save';
-	$form_setup['label']['label_save'] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
 
 	$label_review                        = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : 'Submit for moderation';
-	$form_setup['label']['label_review'] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
 
 	$label_new_draft                        = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : 'Create new Draft';
-	$form_setup['label']['label_new_draft'] = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
 
 	$label_no_edit                        = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : 'This Post is waiting for approval and can not be changed until it gets approved';
-	$form_setup['label']['label_no_edit'] = new Element_Textarea( '<b>' . __( 'If the form is displayed but edeting is disabled', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
+	$form_setup[] = new Element_Textarea( '<b>' . __( 'If the form is displayed but edeting is disabled', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
 
 	if ( ! isset( $field_id ) ) {
 		$field_id = $mod5 = substr( md5( time() * rand() ), 0, 10 );
@@ -56,26 +56,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 
 	?>
 
-	<div class="tabs-moderation-logic tabbable tabs-left ">
-		<ul id="bf_moderation_logic" class="nav nav-tabs nav-pills">
-			<li class="active"><a href="#bf_moderation_tab_general" data-toggle="tab">General</a></li>
-			<li class=""><a href="#bf_moderation_tab_label" data-toggle="tab">Label</a></li>
-		</ul>
-		<div class="tab-content">
-
-			<div class="tab-pane fade in active" id="bf_moderation_tab_general">
-				<div class="buddyforms_accordion_general">
-					<?php buddyforms_display_field_group_table( $form_setup['general'], $field_id ) ?>
-				</div>
-			</div>
-			<div class="tab-pane fade in" id="bf_moderation_tab_label">
-				<div class="buddyforms_accordion_label">
-					<?php buddyforms_display_field_group_table( $form_setup['label'], $field_id ) ?>
-				</div>
-			</div>
-
-		</div>
-	</div>
+	<?php buddyforms_display_field_group_table( $form_setup ) ?>
 
 	<?php
 
