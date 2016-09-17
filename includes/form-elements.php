@@ -3,6 +3,7 @@
 
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
+	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_class');
 }
 
 function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
