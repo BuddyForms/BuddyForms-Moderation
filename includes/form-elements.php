@@ -4,6 +4,8 @@
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_class');
+	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_form_type_posts');
+	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_post_type_none');
 }
 
 function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
