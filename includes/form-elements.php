@@ -4,7 +4,7 @@
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_class');
-	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_form_type_posts');
+	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_form_type_post');
 	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_post_type_none');
 }
 
@@ -283,7 +283,7 @@ add_filter( 'bf_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_
 function bf_create_post_status_to_display( $query_args ) {
 	global $buddyforms;
 
-	if ( isset( $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] ) || $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] == 'default' ) {
+	if ( !isset( $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] ) || $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] == 'default' ) {
 		$query_args['post_status'] = array( 'publish', 'awaiting-review', 'edit-draft' );
 	}
 
