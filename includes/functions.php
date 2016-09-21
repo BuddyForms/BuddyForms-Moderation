@@ -138,6 +138,10 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 	$post_parent = $post_id;
 	$form_slug   = get_post_meta( $post_parent, '_bf_form_slug', true );
+
+	if(isset($form_slug))
+		return;
+
 	$post_type   = $buddyforms[ $form_slug ]['post_type'];
 
 	$args = array(
