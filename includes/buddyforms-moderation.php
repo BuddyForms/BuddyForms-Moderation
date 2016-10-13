@@ -12,7 +12,7 @@ class BF_Moderation_Update_Post {
 		add_action( 'init', array( $this, 'bf_moderation_post_status' ), 999 );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'bf_moderation_submitbox_misc_actions' ) );
 		add_action( 'admin_footer-edit.php', array( $this, 'bf_moderation_append_to_inline_status_dropdown' ), 999 );
-		add_filter( 'bf_get_post_status_array', array( $this, 'bf_moderation_get_post_status_array' ), 10, 1 );
+		add_filter( 'buddyforms_get_post_status_array', array( $this, 'bf_moderation_get_post_status_array' ), 10, 1 );
 	}
 
 	public function modify_post_content( $data, $postarr ) {

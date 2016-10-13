@@ -278,7 +278,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	return $post_id;
 
 }
-add_filter( 'bf_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
+add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
 function bf_create_post_status_to_display( $query_args ) {
 	global $buddyforms;
@@ -290,7 +290,7 @@ function bf_create_post_status_to_display( $query_args ) {
 	return $query_args;
 
 }
-add_filter( 'bf_post_to_display_args', 'bf_create_post_status_to_display', 10, 1 );
+add_filter( 'buddyforms_post_to_display_args', 'bf_create_post_status_to_display', 10, 1 );
 
 function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	global $buddyforms;
@@ -309,4 +309,4 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 
 	return $post_status_css;
 }
-add_filter( 'bf_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
+add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
