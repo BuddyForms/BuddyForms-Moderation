@@ -311,3 +311,25 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	return $post_status_css;
 }
 add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
+
+
+add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
+function buddyforms_moderation_create_edit_form_post_status( $post_status, $form_slug ) {
+	global $buddyforms;
+
+	if( !isset( $buddyforms[$form_slug]['moderation_logic'] ) ){
+		return $post_status;
+	}
+
+	if( isset( $_POST['status'] ) ){
+		if( $_POST['status'] == 'submitted' ||  $_POST['status'] == 'publish'  ){
+			return 'edit-draft';
+		}
+
+		// What if someone enter a not existing post status?
+		$post_status = $_POST['status'];
+	}
+
+	return $post_status;
+
+}
