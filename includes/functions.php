@@ -109,7 +109,7 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 		$the_permalink      = get_permalink();
 		$post_status        = get_post_status();
 
-		$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
+		$post_status_css    = buddyforms_get_post_status_css_class( $post_status, $form_slug );
 		$post_status_name   = buddyforms_get_post_status_readable( $post_status );
 
 
@@ -126,7 +126,7 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 			<td>
 				<div class="meta">
 					<span class="mobile-th"><?php _e( 'Actions', 'buddyforms' ); ?></span>
-					<?php bf_post_entry_actions($form_slug); ?>
+					<?php buddyforms_post_entry_actions($form_slug); ?>
 				</div>
 			</td>
 		</tr>
@@ -170,7 +170,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 				$the_permalink      = get_permalink();
 				$post_status        = get_post_status();
 
-				$post_status_css    = bf_get_post_status_css_class( $post_status, $form_slug );
+				$post_status_css    = buddyforms_get_post_status_css_class( $post_status, $form_slug );
 				$post_status_name   = buddyforms_get_post_status_readable( $post_status );
 				?>
 
@@ -205,7 +205,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 							<span><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></span>
 							<div class="meta">
 								<div class="item-status"><?php echo $post_status_name; ?></div>
-								<?php bf_post_entry_actions( $form_slug ); ?>
+								<?php buddyforms_post_entry_actions( $form_slug ); ?>
 							</div>
 						</div>
 						<?php
