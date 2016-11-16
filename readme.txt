@@ -11,8 +11,6 @@ Create new drafts or pending reviews from new or published posts without changin
 
 == Description ==
 
-This is the BuddyForms moderation Extension. You need the BuddyForms plugin installed for the plugin to work. <a href="http:buddyforms.com" target="_blank">Get BuddyForms now!</a>
-
 <b>Problem</b><br>
 In WordPress it is not possible to edit a published post and save it as new draft or pending review without removing the post from the frontend.
 In the moment, if the post status is set to something else as published, it is removed. This makes it impossible to create a private draft or set an edited post to pending review without creating a 404.
