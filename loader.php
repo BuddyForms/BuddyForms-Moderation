@@ -3,7 +3,7 @@
  Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  Plugin URI: http://buddyforms.com/downloads/moderation/
  Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- Version: 1.2.1
+ Version: 1.2.2
  Author: Sven Lehnert
  Author URI: https://profiles.wordpress.org/svenl77
  License: GPLv2 or later
@@ -63,25 +63,30 @@ add_action('init', function(){
 	add_action( 'tgmpa_register', function(){
 
 		// Create the required plugins array
-		$plugins = array(
-			array(
-				'name'              => 'BuddyForms',
-				'slug'              => 'buddyforms',
-				'required'          => true,
-			),
-		);
+		if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
+			$plugins['buddyforms'] = array(
+				'name'     => 'BuddyForms',
+				'slug'     => 'buddyforms',
+				'required' => true,
+			);
 
-		$config = array(
-			'id'           => 'buddyforms-tgmpa',  // Unique ID for hashing notices for multiple instances of TGMPA.
-			'parent_slug'  => 'plugins.php',       // Parent menu slug.
-			'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-			'has_notices'  => true,                // Show admin notices or not.
-			'dismissable'  => false,               // If false, a user cannot dismiss the nag message.
-			'is_automatic' => true,                // Automatically activate plugins after installation or not.
-		);
+			$config = array(
+				'id'           => 'buddyforms-tgmpa',
+				// Unique ID for hashing notices for multiple instances of TGMPA.
+				'parent_slug'  => 'plugins.php',
+				// Parent menu slug.
+				'capability'   => 'manage_options',
+				// Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+				'has_notices'  => true,
+				// Show admin notices or not.
+				'dismissable'  => false,
+				// If false, a user cannot dismiss the nag message.
+				'is_automatic' => true,
+				// Automatically activate plugins after installation or not.
+			);
 
-		// Call the tgmpa function to register the required plugins
-		tgmpa( $plugins, $config );
-
+			// Call the tgmpa function to register the required plugins
+			tgmpa( $plugins, $config );
+		}
 	} );
 }, 1, 1);
