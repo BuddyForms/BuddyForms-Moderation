@@ -1,11 +1,11 @@
 <?php
 /*
  Plugin Name: BuddyForms Moderation ( Former: Review Logic )
- Plugin URI: http://buddyforms.com/downloads/moderation/
+ Plugin URI: https://themekraft.com/products/review/
  Description: Create new drafts or pending moderations from new or published posts without changing the live version.
  Version: 1.2.2
- Author: Sven Lehnert
- Author URI: https://profiles.wordpress.org/svenl77
+ Author: ThemeKraft
+ Author URI: https://themekraft.com/buddyforms/
  License: GPLv2 or later
  Network: false
 
