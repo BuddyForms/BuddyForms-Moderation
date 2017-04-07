@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
 Tested up to: 4.7
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ BuddyForms gives you these possibilities for a wide variety of uses.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.2.3 =
+Added Freemius Integration
 
 = 1.2.2 =
 Fixed and issue with the dependencies check. The function tgmpa does not accepted an empty array.
