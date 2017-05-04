@@ -70,11 +70,6 @@ Activate BuddyPress in the "Plugins" admin panel by using the "Activate" link. I
 You need the BuddyForms plugin installed for the plugin to work.
 <a href="http://buddyforms.com" target="_blank">Get BuddyForms now!</a>
 
-When is BuddyForms the right choice for you?
-
-As soon as you plan a WordPress and BuddyPress powered site, where users should be able to submit content from the frontend.
-BuddyForms gives you these possibilities for a wide variety of uses.
-
 == Screenshots ==
 
 1. **Different Post Status in the Frontend**
