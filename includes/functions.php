@@ -14,15 +14,16 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 		return;
 	}
 
-	$post_parent = $post->ID;
-	$post_type   = $post->post_type;
+	$post_parent    = $post->ID;
+	$post_type      = $post->post_type;
+	$the_author_id  = apply_filters( 'buddyforms_the_loop_author_id', get_current_user_id(), $form_slug );
 
 	$args = array(
 		'post_type'      => $post_type,
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => get_current_user_id()
+		'author'         => $the_author_id
 	);
 
 	// Get all children
@@ -42,7 +43,7 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 
 }
 
-
+add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2 );
 function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;
 
@@ -57,13 +58,15 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 
 	if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
 
+		$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
+
 		$args = array(
 			'post_type'      => $post_type,
 			'form_slug'      => $form_slug,
 			'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 			'posts_per_page' => - 1,
 			'post_parent'    => $post_id,
-			'author'         => get_current_user_id()
+			'author'         => $the_author_id
 		);
 
 		$post_parent = new WP_Query( $args );
@@ -79,8 +82,6 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	return $edit_post_link;
 }
 
-add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2 );
-
 function buddyforms_review_the_table_tr_last( $post_id ) {
 	global $buddyforms;
 
@@ -91,6 +92,7 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 		return;
 
 	$post_type   = $buddyforms[ $form_slug ]['post_type'];
+	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
 
 	$args = array(
 		'post_type'      => $post_type,
@@ -98,21 +100,17 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => get_current_user_id()
+		'author'         => $the_author_id
 	);
 
-	$the_moderation_query = new WP_Query( $args );
-	$current_user         = wp_get_current_user(); ?>
+	$the_moderation_query = new WP_Query( $args ); ?>
 
 	<?php if ( $the_moderation_query->have_posts() ) : while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
 
-		$the_permalink      = get_permalink();
 		$post_status        = get_post_status();
 
 		$post_status_css    = buddyforms_get_post_status_css_class( $post_status, $form_slug );
 		$post_status_name   = buddyforms_get_post_status_readable( $post_status );
-
-
 		?>
 
 		<tr class="tr-sub <?php echo $post_status_css; ?>">
@@ -147,6 +145,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 		return;
 
 	$post_type   = $buddyforms[ $form_slug ]['post_type'];
+	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
 
 	$args = array(
 		'post_type'      => $post_type,
@@ -154,14 +153,14 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => get_current_user_id()
+		'author'         => $the_author_id
 	);
 
-	$the_moderation_query = new WP_Query( $args );
+	$args = apply_filters('buddyforms_the_lp_query', $args );
 
-	$current_user = wp_get_current_user(); ?>
+	$the_moderation_query = new WP_Query( $args ); ?>
 
-	<?php if ( $the_moderation_query->have_posts() ) : ?>
+    <?php if ( $the_moderation_query->have_posts() ) : ?>
 
 		<ul class="buddyforms-list-sub" role="sub">
 
@@ -197,23 +196,15 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 					</div>
 
-					<?php
-					if ( is_user_logged_in() && get_the_author_meta( 'ID' ) == get_current_user_id() ) {
-						ob_start();
-						?>
-						<div class="action">
-							<span><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></span>
-							<div class="meta">
-								<div class="item-status"><?php echo $post_status_name; ?></div>
-								<?php buddyforms_post_entry_actions( $form_slug ); ?>
-							</div>
-						</div>
-						<?php
-						$meta_tmp = ob_get_clean();
-						echo apply_filters( 'buddyforms_the_loop_meta_html', $meta_tmp );
-					}
-					?>
-
+					<?php ob_start(); ?>
+                    <div class="action">
+                        <span><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></span>
+                        <div class="meta">
+                            <div class="item-status"><?php echo $post_status_name; ?></div>
+                            <?php buddyforms_post_entry_actions( $form_slug ); ?>
+                        </div>
+                    </div>
+                    <?php echo apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() ); ?>
 					<div class="clear"></div>
 				</li>
 
