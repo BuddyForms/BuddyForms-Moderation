@@ -136,7 +136,7 @@ add_action( 'wp_ajax_buddyforms_moderation_duplicate_post', 'buddyforms_moderati
  */
 function buddyforms_moderation_duplicate_post_button( $post_id ) {
 	if( is_single() ) {
-		$link = '<a class="button" href="' . get_admin_url() . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post_id, basename(__FILE__), 'duplicate_nonce' ) . '" title="Create new edit draft" rel="permalink">Create new edit draft</a>';
+		$link = '<a class="button" href="' . get_admin_url() . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post_id, basename(__FILE__), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms') . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms') . '</a>';
 		echo $link;
 	}
 }
@@ -147,7 +147,7 @@ function buddyforms_moderation_duplicate_post_button( $post_id ) {
 add_filter( 'page_row_actions', 'buddyforms_moderation_duplicate_post_link', 10, 2 );
 function buddyforms_moderation_duplicate_post_link( $actions, $post ) {
 	if (current_user_can('edit_pages')) {
-		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename(__FILE__), 'duplicate_nonce' ) . '" title="Duplicate this item" rel="permalink">Duplicate this;)</a>';
+		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename(__FILE__), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms') . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms') . '</a>';
 	}
 	return $actions;
 }
@@ -166,7 +166,7 @@ function buddyforms_moderation_admin_bar_mod_button($wp_admin_bar){
 
 	$args = array(
 		'id'    => 'buddyforms-admin-moderation',
-		'title' => 'Create new Edit Draft',
+		'title' => __( 'Create new Edit Draft', 'buddyforms'),
 		'href'  => get_admin_url() . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename(__FILE__), 'duplicate_nonce' ),
 		'meta'  => array(
 			'data-post_id' => $post->ID,
