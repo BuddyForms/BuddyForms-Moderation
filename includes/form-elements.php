@@ -254,7 +254,7 @@ add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10
 function bf_moderation_create_edit_form_post_id( $post_id ) {
 	global $buddyforms;
 
-	$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+	$form_slug = buddyforms_get_form_slug_by_post_id($post_id);
 
 	if ( ! $form_slug ) {
 		return $post_id;

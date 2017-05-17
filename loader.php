@@ -28,13 +28,13 @@
  ****************************************************************************
  */
 
+add_action( 'init', 'bf_moderation_includes', 10 );
 function bf_moderation_includes() {
 	include_once( dirname( __FILE__ ) . '/includes/buddyforms-moderation.php' );
 	include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
+	include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 	include_once( dirname( __FILE__ ) . '/includes/functions.php' );
 }
-
-add_action( 'init', 'bf_moderation_includes', 10 );
 
 //
 // Check the plugin dependencies

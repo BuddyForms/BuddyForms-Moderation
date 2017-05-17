@@ -9,7 +9,7 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 	}
 
 	// Check if the post was created with a BuddyForms Form
-	$form_slug = get_post_meta( $post->ID, '_bf_form_slug', true );
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
 	if ( ! $form_slug ) {
 		return;
 	}
@@ -47,7 +47,7 @@ add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 10
 function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;
 
-	$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
 
 	$post_status = get_post_status( $post_id );
 	$post_type   = get_post_type( $post_id );
@@ -86,7 +86,7 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 	global $buddyforms;
 
 	$post_parent = $post_id;
-	$form_slug   = get_post_meta( $post_parent, '_bf_form_slug', true );
+	$form_slug   = buddyforms_get_form_slug_by_post_id( $post_parent );
 
 	if(!isset($form_slug))
 		return;
@@ -139,7 +139,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 	global $buddyforms;
 
 	$post_parent = $post_id;
-	$form_slug   = get_post_meta( $post_parent, '_bf_form_slug', true );
+	$form_slug   = buddyforms_get_form_slug_by_post_id( $post_parent );
 
 	if(!isset($form_slug))
 		return;

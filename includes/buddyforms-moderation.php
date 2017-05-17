@@ -19,7 +19,7 @@ class BF_Moderation_Update_Post {
 		global $buddyforms;
 		$buddyforms_options = $buddyforms;
 
-		$bf_form_slug = get_post_meta( $postarr['ID'], '_bf_form_slug', true );
+		$bf_form_slug = buddyforms_get_form_slug_by_post_id($postarr['ID']);
 
 		if ( ! isset( $bf_form_slug ) ) {
 			return $data;
@@ -38,8 +38,6 @@ class BF_Moderation_Update_Post {
 			if ( $data['post_type'] == 'revision' ) {
 				return $data;
 			}
-
-			$bf_form_slug = get_post_meta( $postarr['ID'], '_bf_form_slug', true );
 
 			if ( isset( $bf_form_slug ) && $data['post_parent'] != 0 ) {
 
@@ -165,7 +163,7 @@ class BF_Moderation_Update_Post {
 
 		$buddyforms_options = $buddyforms;
 
-		$bf_form_slug = get_post_meta( $post->ID, '_bf_form_slug', true );
+		$bf_form_slug =  buddyforms_get_form_slug_by_post_id( $post->ID );
 
 		if ( ! isset( $bf_form_slug ) ) {
 			return;
@@ -227,7 +225,7 @@ class BF_Moderation_Update_Post {
 
 		$buddyforms_options = $buddyforms;
 
-		$bf_form_slug = get_post_meta( $post->ID, '_bf_form_slug', true );
+		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
 
 		if ( ! isset( $bf_form_slug ) ) {
 			return;
