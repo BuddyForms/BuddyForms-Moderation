@@ -58,6 +58,28 @@ class BF_Moderation_Update_Post {
 				if ( $parent_post_id ) {
 					$this->bf_moderation_copy_post_taxonomies( $parent_post_id, $postarr['ID'] );
 					$this->bf_moderation_copy_post_meta_info( $parent_post_id, $postarr['ID'] );
+
+					$args = array(
+						'post_type'      => $postarr['post_type'],
+						'post_status'    => array( 'edit-draft', 'awaiting-review' ),
+						'posts_per_page' => - 1,
+						'post_parent'    => $postarr['post_parent'],    
+					);
+
+					// Get all children
+					$the_delete_query = new WP_Query( $args );
+
+					// Check if children exits and move them to trash
+					if ( $the_delete_query->have_posts() ) :
+
+						while ( $the_delete_query->have_posts() ) : $the_delete_query->the_post();
+
+							wp_delete_post( get_the_ID() );
+
+						endwhile;
+					endif;
+
+					wp_reset_query();
 				}
 
 			} else {
