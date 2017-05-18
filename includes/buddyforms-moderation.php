@@ -135,9 +135,11 @@ class BF_Moderation_Update_Post {
 
 		foreach ( $post_meta_keys as $meta_key ) {
 			$meta_values = get_post_custom_values( $meta_key, $child_post_id );
-			foreach ( $meta_values as $meta_value ) {
-				$meta_value = maybe_unserialize( $meta_value );
-				update_post_meta( $parent_post_id, $meta_key, $meta_value );
+			if( is_array( $meta_values ) ){
+				foreach ( $meta_values as $meta_value ) {
+					$meta_value = maybe_unserialize( $meta_value );
+					update_post_meta( $parent_post_id, $meta_key, $meta_value );
+				}
 			}
 		}
 	}

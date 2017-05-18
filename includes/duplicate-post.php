@@ -93,7 +93,7 @@ function buddyforms_moderation_duplicate_post(){
 			 * finally, redirect to the new post page
 			 */
 
-			if ( defined('DOING_AJAX') && DOING_AJAX ){
+			if ( defined('DOING_AJAX') && DOING_AJAX    ){
 				$results = array(
 					'error' => false,
 					'error_msg' => '0',
@@ -135,10 +135,8 @@ add_action( 'wp_ajax_buddyforms_moderation_duplicate_post', 'buddyforms_moderati
  * Add the duplicate button in the page template
  */
 function buddyforms_moderation_duplicate_post_button( $post_id ) {
-	if( is_single() ) {
-		$link = '<a class="button" href="' . get_admin_url() . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post_id, basename(__FILE__), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms') . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms') . '</a>';
-		echo $link;
-	}
+	$link = '<a class="button" href="' . get_admin_url() . wp_nonce_url('admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post_id, basename(__FILE__), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms') . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms') . '</a>';
+	echo $link;
 }
 
 /*
