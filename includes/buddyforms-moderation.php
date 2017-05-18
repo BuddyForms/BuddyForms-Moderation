@@ -63,7 +63,7 @@ class BF_Moderation_Update_Post {
 						'post_type'      => $postarr['post_type'],
 						'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 						'posts_per_page' => - 1,
-						'post_parent'    => $postarr['post_parent'],    
+						'post_parent'    => $postarr['post_parent'],
 					);
 
 					// Get all children

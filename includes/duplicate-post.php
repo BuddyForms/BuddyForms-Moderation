@@ -93,7 +93,7 @@ function buddyforms_moderation_duplicate_post(){
 			 * finally, redirect to the new post page
 			 */
 
-			if(is_ajax()){
+			if ( defined('DOING_AJAX') && DOING_AJAX ){
 				$results = array(
 					'error' => false,
 					'error_msg' => '0',
@@ -106,7 +106,7 @@ function buddyforms_moderation_duplicate_post(){
 			}
 
 		} else {
-			if(is_ajax()) {
+			if ( defined('DOING_AJAX') && DOING_AJAX ){
 				$results = array(
 					'error'     => true,
 					'error_msg' => 'Post creation failed, could not find original post: ' . $post_id,
