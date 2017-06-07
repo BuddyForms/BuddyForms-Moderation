@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
 Tested up to: 4.7
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,76 +80,85 @@ You need the BuddyForms plugin installed for the plugin to work.
 
 == Changelog ==
 
+= 1.2.3 07.06.2017 =
+* Added anonymous support to the moderation extension. It is now possible to use anonymous author and moderation together
+* Created new file duplicate-post to create the functionality to duplicate a post as new edit draft
+* Created new function in core buddyforms_get_form_slug_by_post_id to get the form slug by post id and switch to the function all over the plugin
+* Rename the Button Labels
+* make sure old edit drafts and awaiting moderation get delete if the post gets approved
+* fixed the is_ajax issue
+* Added an extra is array check to avoid the issue. Question is now if the merge still works.
+
 = 1.2.3 =
-Added Freemius Integration
+* Added Freemius Integration
 
 = 1.2.2 =
-Fixed and issue with the dependencies check. The function tgmpa does not accepted an empty array.
+* Fixed and issue with the dependencies check. The function tgmpa does not accepted an empty array.
 
 = 1.2.1 =
-Add dependencies management with tgm
+* Add dependencies management with tgm
 
 = 1.2 =
-Rename session bf_ to buddyforms_ wordpress is so huge bf_ can have to many meanings.
-The old moderation logic did not work with the new form submit and validation.
-Hooks rename session
-Fixed some notice of undefined index
-Create new functions to show hide metaboxes work on the conditionals admin ui
-Add postbox_classes to make the postbox visible.
-Use buddyforms_display_field_group_table to display options
-List view actions final design for now
-Modifier the loop action meta
-Remove unneeded pagination
-Create two new functions in the core
-bf_get_post_status_readable to get the status in readable form.
-bf_get_post_status_css_class to get the status in as css class
-Remove the li from the edit post link
-Added a needed class to every sub tr element
-Adjust the loops to use the new functions
-Remove an empty space from the functions.php
-All title tags and aria labels translation ready now
-Fix up edit and delete links for moderation when 2nd version is in edit-draft mode
-Fix up edit and trash links - make them icons and accessible with aria-labels and title-tags (so you have a tooltip notice why you can't edit)
-Add support for the new icon based action system
-Increase the priority to 9999 for the buddyforms_create_edit_form_buton filter to make sure the moderation is always the last ;)
-Add icon support
-Add list item delete support
-Add all needed classes for the listings
+* Rename session bf_ to buddyforms_ wordpress is so huge bf_ can have to many meanings.
+* The old moderation logic did not work with the new form submit and validation.
+* Hooks rename session
+* Fixed some notice of undefined index
+* Create new functions to show hide metaboxes work on the conditionals admin ui
+* Add postbox_classes to make the postbox visible.
+* Use buddyforms_display_field_group_table to display options
+* List view actions final design for now
+* Modifier the loop action meta
+* Remove unneeded pagination
+* Create two new functions in the core
+* bf_get_post_status_readable to get the status in readable form.
+* bf_get_post_status_css_class to get the status in as css class
+* Remove the li from the edit post link
+* Added a needed class to every sub tr element
+* Adjust the loops to use the new functions
+* Remove an empty space from the functions.php
+* All title tags and aria labels translation ready now
+* Fix up edit and delete links for moderation when 2nd version is in edit-draft mode
+* Fix up edit and trash links - make them icons and accessible with aria-labels and title-tags (so you have a tooltip notice why you can't edit)
+* Add support for the new icon based action system
+* Increase the priority to 9999 for the buddyforms_create_edit_form_buton filter to make sure the moderation is always the last ;)
+* Add icon support
+* Add list item delete support
+* Add all needed classes for the listings
 
 = 1.1.1 =
-Spelling correction
-Code cleanup
-UI improvements
+* Spelling correction
+* Code cleanup
+* UI improvements
 
 
 = 1.1 =
-Complete Rewrite. Thanks to Holden for working with me on the new Version.
-Change from form element to global form settings.
-Make the moderation label an options array.
-Rename BuddyForms Review to BuddyForms Moderation (Review System)
-Rename all from review to moderation. Also the Plugin Name. Moderation is more understandable. review was unclear for many users.
-Rebuild the form actions logic to work with global setting, have been a form element before.
-Add a option to disable moderation
-Make it work with the latest version of BuddyForms. The BuddyForms array has changed so I adjust the code too the new structure
-changed default BUDDYFORMS to BUDDYFORMS_VERSION
-Add new options for the review logic and workflow
-Add new label options
-Adjust the ajax
-Rework the post listings templates
-Add new post edit screen meta box option to reject a post and sent a message to the author
-Create new file functions.php
-Fixed Issues
-Clean up the code
+* Complete Rewrite. Thanks to Holden for working with me on the new Version.
+* Change from form element to global form settings.
+* Make the moderation label an options array.
+* Rename BuddyForms Review to BuddyForms Moderation (Review System)
+* Rename all from review to moderation. Also the Plugin Name. Moderation is more understandable. review was unclear for many users.
+* Rebuild the form actions logic to work with global setting, have been a form element before.
+* Add a option to disable moderation
+* Make it work with the latest version of BuddyForms. The BuddyForms array has changed so I adjust the code too the new structure
+* changed default BUDDYFORMS to BUDDYFORMS_VERSION
+* Add new options for the review logic and workflow
+* Add new label options
+* Adjust the ajax
+* Rework the post listings templates
+* Add new post edit screen meta box option to reject a post and sent a message to the author
+* Create new file functions.php
+* Fixed Issues
+* Clean up the code
 
 = 1.0.2 =
-add ajax compatibility
-small code cleanup
-rename session
-change the url to buddyforms.com
+* add ajax compatibility
+* small code cleanup
+* rename session
+* change the url to buddyforms.com
 
 = 1.0.1 =
-small bug fixes
-fixed: form submit not working on mobile
+* small bug fixes
+* fixed: form submit not working on mobile
 
 = 1.0 =
-final 1.0 version
+* final 1.0 version
