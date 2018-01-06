@@ -174,13 +174,13 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 				?>
 
 				<li id="bf_post_li_<?php the_ID() ?>" class="bf-submission-sub <?php echo $post_status_css; ?>">
-					<div class="item-avatar">
+					<div class="item-thumb">
 
 						<?php
 						$post_thumbnail = get_the_post_thumbnail( get_the_ID(), array(
-							70,
-							70
-						), array( 'class' => "avatar" ) );
+							75,
+							75
+						), array( 'class' => "thumb" ) );
 						$post_thumbnail = apply_filters( 'buddyforms_loop_thumbnail', $post_thumbnail );
 						?>
 
@@ -197,15 +197,19 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 					</div>
 
 					<?php ob_start(); ?>
-                    <div class="action">
-                        <span><?php _e( 'Created', 'buddyforms' ); ?> <?php the_time( 'F j, Y' ) ?></span>
-                        <div class="meta">
-                            <div class="item-status"><?php echo $post_status_name; ?></div>
-                            <?php buddyforms_post_entry_actions( $form_slug ); ?>
-                        </div>
-                    </div>
-                    <?php echo apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() ); ?>
+
+					<div class="action">
+						<div class="meta">
+							<div class="item-status"><?php echo $post_status_name; ?></div>
+							<?php buddyforms_post_entry_actions( $form_slug ); ?>
+							<div class="publish-date"><?php _e( 'Created ', 'buddyforms' ); ?><?php the_time( 'M j, Y' ) ?></div>
+						</div>
+					</div>
+
+        	<?php echo apply_filters( 'buddyforms_the_loop_meta_html', ob_get_clean() ); ?>
+
 					<div class="clear"></div>
+
 				</li>
 
 				<?php do_action( 'buddyforms_after_loop_item' ) ?>
