@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 4.7
-Stable tag: 1.2.4
+Tested up to: 4.9.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,12 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.2.5 08.Feb. 2018 =
+* Final clean for sub lists, especially mobile and really small screens
+* Adding the custom post status to the list of all post.
+* Adding a Post states to this new customs statuses.
+* Udated the freemius sdk
 
 = 1.2.3 07.06.2017 =
 * Added anonymous support to the moderation extension. It is now possible to use anonymous author and moderation together
