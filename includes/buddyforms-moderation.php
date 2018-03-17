@@ -13,6 +13,22 @@ class BF_Moderation_Update_Post {
 		add_action( 'post_submitbox_misc_actions', array( $this, 'bf_moderation_submitbox_misc_actions' ) );
 		add_action( 'admin_footer-edit.php', array( $this, 'bf_moderation_append_to_inline_status_dropdown' ), 999 );
 		add_filter( 'buddyforms_get_post_status_array', array( $this, 'bf_moderation_get_post_status_array' ), 10, 1 );
+		add_filter( 'display_post_states', array( $this, "display_post_states" ), 10, 2 );
+	}
+
+	public function display_post_states( $post_states, $post ) {
+		$status = array(
+			'edit-draft'      => 'Edit Draft',
+			'awaiting-review' => 'Awaiting moderation',
+			'approved'        => 'Approved'
+		);
+
+		$add_suffix = array_key_exists( $post->post_status, $status );
+		if ( $add_suffix ) {
+			$post_states = array( $status[ $post->post_status ] );
+		}
+
+		return $post_states;
 	}
 
 	public function modify_post_content( $data, $postarr ) {
@@ -151,7 +167,7 @@ class BF_Moderation_Update_Post {
 			'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms' ),
 			'public'                    => false,
-			'show_in_admin_all_list'    => false,
+			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
 			'exclude_from_search'       => true,
 			'protected'                 => true,
@@ -162,7 +178,7 @@ class BF_Moderation_Update_Post {
 			'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms' ),
 			'public'                    => false,
-			'show_in_admin_all_list'    => false,
+			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
 			'exclude_from_search'       => true,
 			'protected'                 => true,
@@ -173,7 +189,7 @@ class BF_Moderation_Update_Post {
 			'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms' ),
 			'public'                    => false,
-			'show_in_admin_all_list'    => false,
+			'show_in_admin_all_list'    => true,
 			'show_in_admin_status_list' => true,
 			'exclude_from_search'       => true,
 			'protected'                 => true,
