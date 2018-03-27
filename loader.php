@@ -3,7 +3,7 @@
  Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  Plugin URI: https://themekraft.com/products/review/
  Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- Version: 1.2.5
+ Version: 1.2.4
  Author: ThemeKraft
  Author URI: https://themekraft.com/buddyforms/
  License: GPLv2 or later
@@ -28,10 +28,15 @@
  ****************************************************************************
  */
 
-//
-// Check the plugin dependencies
-//
-add_action( 'init', function () {
+add_action( 'init', 'bf_moderation_includes', 10 );
+function bf_moderation_includes() {
+	global $buddyforms_new;
+	if ( ! empty( $buddyforms_new ) ) {
+		include_once( dirname( __FILE__ ) . '/includes/buddyforms-moderation.php' );
+		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
+		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
+		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
+	}
 	
 	// Only Check for requirements in the admin
 	if ( ! is_admin() ) {
@@ -42,35 +47,38 @@ add_action( 'init', function () {
 	require( dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php' );
 	
 	// Hook required plugins function to the tgmpa_register action
-	add_action( 'tgmpa_register', function () {
-		// Create the required plugins array
-		if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
-			$plugins['buddyforms'] = array(
-				'name'     => 'BuddyForms',
-				'slug'     => 'buddyforms',
-				'required' => true,
-			);
-			
-			$config = array(
-				'id'           => 'buddyforms-tgmpa',
-				// Unique ID for hashing notices for multiple instances of TGMPA.
-				'parent_slug'  => 'plugins.php',
-				// Parent menu slug.
-				'capability'   => 'manage_options',
-				// Capability needed to view plugin install page, should be a capability associated with the parent menu used.
-				'has_notices'  => true,
-				// Show admin notices or not.
-				'dismissable'  => false,
-				// If false, a user cannot dismiss the nag message.
-				'is_automatic' => true,
-				// Automatically activate plugins after installation or not.
-			);
-			
-			// Call the tgmpa function to register the required plugins
-			tgmpa( $plugins, $config );
-		}
-	} );
-}, 1, 1 );
+	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
+}
+
+function buddyform_moderation_dependency() {
+	// Create the required plugins array
+	if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
+		$plugins['buddyforms'] = array(
+			'name'     => 'BuddyForms',
+			'slug'     => 'buddyforms',
+			'required' => true,
+		);
+		
+		$config = array(
+			'id'           => 'buddyforms-tgmpa',
+			// Unique ID for hashing notices for multiple instances of TGMPA.
+			'parent_slug'  => 'plugins.php',
+			// Parent menu slug.
+			'capability'   => 'manage_options',
+			// Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+			'has_notices'  => true,
+			// Show admin notices or not.
+			'dismissable'  => false,
+			// If false, a user cannot dismiss the nag message.
+			'is_automatic' => true,
+			// Automatically activate plugins after installation or not.
+		);
+		
+		// Call the tgmpa function to register the required plugins
+		tgmpa( $plugins, $config );
+	}
+}
+
 
 // Create a helper function for easy SDK access.
 function bfmod_fs() {
@@ -113,7 +121,7 @@ function bfmod_fs() {
 
 function bfmod_fs_is_parent_active_and_loaded() {
 	// Check if the parent's init SDK method exists.
-	return method_exists( 'BuddyForms', 'buddyforms_core_fs' );
+	return function_exists( 'buddyforms_core_fs' );
 }
 
 function bfmod_fs_is_parent_active() {
@@ -130,23 +138,13 @@ function bfmod_fs_is_parent_active() {
 	return false;
 }
 
-add_action( 'init', 'bf_moderation_includes', 999 );
-function bf_moderation_includes() {
-	global $buddyforms_new;
-	if ( ! empty( $buddyforms_new ) ) {
-		if ( bfmod_fs_is_parent_active_and_loaded() ) {
-			// If parent already included, init add-on.
-			bfmod_fs();
-		} else if ( bfmod_fs_is_parent_active() ) {
-			// Init add-on only after the parent is loaded.
-			add_action( 'buddyforms_core_fs_loaded', 'bfmod_fs' );
-		} else {
-			// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
-			bfmod_fs();
-		}
-		include_once( dirname( __FILE__ ) . '/includes/buddyforms-moderation.php' );
-		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
-		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
-		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
-	}
+if ( bfmod_fs_is_parent_active_and_loaded() ) {
+	// If parent already included, init add-on.
+	bfmod_fs();
+} else if ( bfmod_fs_is_parent_active() ) {
+	// Init add-on only after the parent is loaded.
+	add_action( 'buddyforms_core_fs_loaded', 'bfmod_fs' );
+} else {
+	// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
+	bfmod_fs();
 }

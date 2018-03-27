@@ -57,8 +57,9 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	}
 
 	if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-
-		$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
+		
+		$current_user_id = get_current_user_id();
+		$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user_id, $form_slug, $post_id );
 
 		$args = array(
 			'post_type'      => $post_type,
@@ -90,9 +91,10 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 
 	if(!isset($form_slug))
 		return;
-
+	
+	$current_user_id = get_current_user_id();
 	$post_type   = $buddyforms[ $form_slug ]['post_type'];
-	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
+	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user_id, $form_slug, $post_id );
 
 	$args = array(
 		'post_type'      => $post_type,
@@ -143,9 +145,10 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 	if(!isset($form_slug))
 		return;
-
+	
+	$current_user_id = get_current_user_id();
 	$post_type   = $buddyforms[ $form_slug ]['post_type'];
-	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user->ID, $form_slug, $post_id );
+	$the_author_id  = apply_filters('buddyforms_the_author_id', $current_user_id, $form_slug, $post_id );
 
 	$args = array(
 		'post_type'      => $post_type,
