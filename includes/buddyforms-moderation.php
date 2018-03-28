@@ -18,9 +18,9 @@ class BF_Moderation_Update_Post {
 
 	public function display_post_states( $post_states, $post ) {
 		$status = array(
-			'edit-draft'      => 'Edit Draft',
-			'awaiting-review' => 'Awaiting moderation',
-			'approved'        => 'Approved'
+			'edit-draft'      => __('Edit Draft', 'buddyform'),
+			'awaiting-review' => __('Awaiting moderation', 'buddyform'),
+			'approved'        => __('Approved', 'buddyform')
 		);
 
 		$add_suffix = array_key_exists( $post->post_status, $status );
@@ -37,7 +37,7 @@ class BF_Moderation_Update_Post {
 
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id($postarr['ID']);
 
-		if ( ! isset( $bf_form_slug ) ) {
+		if ( empty( $bf_form_slug ) ) {
 			return $data;
 		}
 
@@ -86,14 +86,15 @@ class BF_Moderation_Update_Post {
 					$the_delete_query = new WP_Query( $args );
 
 					// Check if children exits and move them to trash
-					if ( $the_delete_query->have_posts() ) :
+					if ( $the_delete_query->have_posts() ) {
 
-						while ( $the_delete_query->have_posts() ) : $the_delete_query->the_post();
-
+						while ( $the_delete_query->have_posts() ) {
+							$the_delete_query->the_post();
+							
 							wp_delete_post( get_the_ID() );
-
-						endwhile;
-					endif;
+							
+						}
+					}
 
 					wp_reset_query();
 				}
@@ -292,9 +293,9 @@ class BF_Moderation_Update_Post {
 	}
 
 	function bf_moderation_get_post_status_array( $status_array ) {
-		$status_array['edit-draft']      = 'Edit Draft';
-		$status_array['awaiting-review'] = 'Awaiting moderation';
-		$status_array['approved']        = 'Approved';
+		$status_array['edit-draft']      = __('Edit Draft', 'buddyform');
+		$status_array['awaiting-review'] = __('Awaiting moderation', 'buddyform');
+		$status_array['approved']        = __('Approved', 'buddyform');
 
 		return $status_array;
 	}
