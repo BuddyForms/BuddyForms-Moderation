@@ -316,8 +316,8 @@ add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2
 add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
 function buddyforms_moderation_create_edit_form_post_status( $post_status, $form_slug ) {
 	global $buddyforms;
-
-	if( !isset( $buddyforms[$form_slug]['moderation_logic'] ) ){
+	
+	if ( empty( $buddyforms[ $form_slug ]['moderation_logic'] ) || ( ! empty( $buddyforms[ $form_slug ]['moderation_logic'] ) && 'default' == $buddyforms[ $form_slug ]['moderation_logic'] ) ) {
 		return $post_status;
 	}
 
