@@ -10,11 +10,17 @@ class BF_Moderation_Update_Post {
 	private $status_edit;
 	private $status_moderation;
 	private $status_approved;
+	private $statuses;
 	
 	public function __construct() {
 		$this->status_edit       = __( 'Edit Draft', 'buddyform' );
 		$this->status_moderation = __( 'Awaiting moderation', 'buddyform' );
 		$this->status_approved   = __( 'Approved', 'buddyform' );
+		$this->statuses          = array(
+			'edit-draft'      => $this->status_edit,
+			'awaiting-review' => $this->status_moderation,
+			'approved'        => $this->status_approved
+		);
 		add_action( 'wp_insert_post_data', array( $this, 'modify_post_content' ), 99, 2 );
 		add_action( 'init', array( $this, 'bf_moderation_post_status' ), 999 );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'bf_moderation_submitbox_misc_actions' ) );
@@ -24,15 +30,11 @@ class BF_Moderation_Update_Post {
 	}
 	
 	public function display_post_states( $post_states, $post ) {
-		$status = array(
-			'edit-draft'      => $this->status_edit,
-			'awaiting-review' => $this->status_moderation,
-			'approved'        => $this->status_approved
-		);
 		
-		$add_suffix = array_key_exists( $post->post_status, $status );
+		
+		$add_suffix = array_key_exists( $post->post_status, $this->statuses );
 		if ( $add_suffix ) {
-			$post_states = array( $status[ $post->post_status ] );
+			$post_states = array( $this->statuses[ $post->post_status ] );
 		}
 		
 		return $post_states;
@@ -252,7 +254,9 @@ class BF_Moderation_Update_Post {
 		}
 		echo '$("select#post_status").append("<option value=\"' . $post->post_status . '\" ' . $complete . '>' . $this->status_approved . '</option>");
             $(".misc-pub-section label").append("' . $label . '");';
-		
+		if ( array_key_exists( $post->post_status, $this->statuses ) ) {
+			echo '$("#post-status-display").text("' . $this->statuses[ $post->post_status ] . '");';
+		}
 		echo ' });</script>';
 		
 	}
@@ -300,9 +304,7 @@ class BF_Moderation_Update_Post {
 	}
 	
 	function bf_moderation_get_post_status_array( $status_array ) {
-		$status_array['edit-draft']      = $this->status_edit;
-		$status_array['awaiting-review'] = $this->status_moderation;
-		$status_array['approved']        = $this->status_approved;
+		$status_array = array_merge($status_array, $this->statuses);
 		
 		return $status_array;
 	}
