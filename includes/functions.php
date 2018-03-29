@@ -77,7 +77,7 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-		$edit_post_link = '<span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" class="dashicons dashicons-edit disabled"></span>';
+		$edit_post_link = '<a title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '"  class="bf_edit_post" href="#" onclick="javascript:return false;"><span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" class="dashicons dashicons-edit disabled"></span> ' . __( 'Edit', 'buddyforms' ) . '</a>';
 	}
 
 	return $edit_post_link;
