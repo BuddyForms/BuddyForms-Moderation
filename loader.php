@@ -86,14 +86,12 @@ function bfmod_fs() {
 	
 	if ( ! isset( $bfmod_fs ) ) {
 		// Include Freemius SDK.
-		if ( file_exists( dirname( __FILE__ ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
+		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
 			// Try to load SDK from parent plugin folder.
-			require_once dirname( __FILE__ ) . '/buddyforms/includes/resources/freemius/start.php';
-		} else if ( file_exists( dirname( __FILE__ ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
+			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
+		} else if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
 			// Try to load SDK from premium parent plugin folder.
-			require_once dirname( __FILE__ ) . '/buddyforms-premium/includes/resources/freemius/start.php';
-		} else {
-			require_once dirname( __FILE__ ) . '/includes/resources/freemius/start.php';
+			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
 		}
 		
 		$bfmod_fs = fs_dynamic_init( array(
