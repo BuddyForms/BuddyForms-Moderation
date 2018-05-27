@@ -113,9 +113,10 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 
 		// This is an existing post
 		$post_status = get_post_status( $post_id ); // Get the Posts
+		$post_type = get_post_type( $post_id ); // Get the Posts
 
 		// Check Post Status
-		if ( $post_status == 'edit-draft' || $post_status == 'draft' || $post_status == 'submitted'  ) {
+		if ( $post_status == 'edit-draft' || ($post_status == 'auto-draft' && $post_type == 'product' )|| $post_status == 'draft' || $post_status == 'submitted'  ) {
 			$form->addElement( $label_save );
 			$form->addElement( $label_moderation );
 		}
