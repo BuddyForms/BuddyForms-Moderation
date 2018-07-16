@@ -38,19 +38,19 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
-	$label_submit                        = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : 'Submit';
+	$label_submit                        = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __('Submit', 'buddyforms');
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
 
-	$label_save                        = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : 'Save';
+	$label_save                        = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __('Save', 'buddyforms');
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
 
-	$label_review                        = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : 'Submit for moderation';
+	$label_review                        = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __('Submit for moderation', 'buddyforms');
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
 
-	$label_new_draft                        = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : 'Create new Draft';
+	$label_new_draft                        = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __('Create new Draft', 'buddyforms');
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
 
-	$label_no_edit                        = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : 'This Post is waiting for approval and can not be changed until it gets approved';
+	$label_no_edit                        = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __('This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms');
 	$form_setup[] = new Element_Textarea( '<b>' . __( 'If the form is displayed but edeting is disabled', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
 
 	if ( ! isset( $field_id ) ) {
@@ -66,9 +66,14 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 }
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );
 
-/*
+/**
  * Display the new Form Element in the Frontend Form
  *
+ * @param Form $form
+ * @param $form_slug
+ * @param $post_id
+ *
+ * @return mixed
  */
 function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id ) {
 	global $buddyforms, $bf_submit_button;
@@ -78,23 +83,23 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 	}
 
 	$bf_submit_button = false;
-	$label_moderation = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_review'], 'buddyforms' ), 'submit', array(
+	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'awaiting-review'
 	) );
-	$label_submit     = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'buddyforms' ), 'submit', array(
+	$label_submit     = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'edit-draft'
 	) );
-	$label_save       = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_save'], 'buddyforms' ), 'submit', array(
+	$label_save       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'edit-draft'
 	) );
-	$label_new_draft  = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'buddyforms' ), 'submit', array(
+	$label_new_draft  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'new-draft'
 	) );
-	$label_no_edit    = new Element_HTML( '<p>' . __( $buddyforms[ $form_slug ]['moderation']['label_no_edit'], 'buddyforms' ) . '</p>' );
+	$label_no_edit    = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
 
 
 	//	Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
@@ -165,23 +170,23 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		return $json_args;
 	}
 
-	$label_moderation = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_review'], 'buddyforms' ), 'submit', array(
+	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'awaiting-review'
 	) );
-	$label_submit     = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'buddyforms' ), 'submit', array(
+	$label_submit     = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'edit-draft'
 	) );
-	$label_save       = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_save'], 'buddyforms' ), 'submit', array(
+	$label_save       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'edit-draft'
 	) );
-	$label_new_draft  = new Element_Button( __( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'buddyforms' ), 'submit', array(
+	$label_new_draft  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
 		'class' => 'bf-submit',
 		'name'  => 'new-draft'
 	) );
-	$label_no_edit    = new Element_HTML( '<p>' . __( $buddyforms[ $form_slug ]['moderation']['label_no_edit'], 'buddyforms' ) . '</p>' );
+	$label_no_edit    = new Element_HTML( '<p>' .  $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
 
 	// Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
 	// $status = new Element_Hidden( "status", 'edit-draft' );
