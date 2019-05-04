@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 4.9.4
-Stable tag: 1.2.5
+Tested up to: 5.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,23 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+
+= 1.3 04 May 2019 =
+* Changing the order of the loader to include freemius in the plugin.
+* Adding the custom post status to the list of all post.
+* Adding a Post states to this new customs statuses.
+* Fixing the loader to work correctly.
+* Fix some notice about missing var values.
+* Cleaning the code and adding localization.
+* Disabling moderation for post creation if the option is disabled.
+* Adding localization in jquery functions.
+* Adding the disable edit button when the post is awaitting for moderation.
+* Improving the code.
+* Fixing the metabox in the admin edit post screen, the moderation status was not showing.
+* Removing freemius dependency, now it load from buddyforms
+* Including post status for types of products in case of woocommerce elements is used
+* Adding translation function in correct places.
+* Code cleaning.
 
 = 1.2.5 08.Feb. 2018 =
 * Final clean for sub lists, especially mobile and really small screens
