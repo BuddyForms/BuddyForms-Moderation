@@ -1,0 +1,31 @@
+{
+  "name": "themekraft/buddyforms-moderations",
+  "description": "Create new drafts or pending moderations from new or published posts without changing the live version.",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "buddypress",
+    "user",
+    "members",
+    "profiles",
+    "custom post types",
+    "taxonomy",
+    "frontend editing",
+    "frontend posting",
+    "revision",
+    "review",
+    "moderation",
+    "frontend editor"
+  ],
+  "homepage": "https://themekraft.com/buddyforms//",
+  "license": "Apache-2.0",
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.6"
+  },
+  "scripts": {
+    "package": "sh .tk/package.sh loader",
+    "wp-release": "sh .tk/wp_release.sh",
+    "beta-release": "sh .tk/full-deploy.sh loader 409 false beta",
+    "full-release": "sh .tk/full-deploy.sh loader 409 false released"
+  }
+}

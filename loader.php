@@ -1,14 +1,15 @@
 <?php
 /*
- Plugin Name: BuddyForms Moderation ( Former: Review Logic )
- Plugin URI: https://themekraft.com/products/review/
- Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- Version: 1.3
- Author: ThemeKraft
- Author URI: https://themekraft.com/buddyforms/
- License: GPLv2 or later
- Network: false
-
+ * Plugin Name: BuddyForms Moderation ( Former: Review Logic )
+ * Plugin URI: https://themekraft.com/products/review/
+ * Description: Create new drafts or pending moderations from new or published posts without changing the live version.
+ * Version: 1.3.1
+ * Author: ThemeKraft
+ * Author URI: https://themekraft.com/buddyforms/
+ * License: GPLv2 or later
+ * Network: false
+ * Svn: buddyforms-review
+ *
  *****************************************************************************
  *
  * This script is free software; you can redistribute it and/or modify
@@ -37,15 +38,15 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
 	}
-	
+
 	// Only Check for requirements in the admin
 	if ( ! is_admin() ) {
 		return;
 	}
-	
+
 	// Require TGM
 	require( dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php' );
-	
+
 	// Hook required plugins function to the tgmpa_register action
 	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
 }
@@ -58,7 +59,7 @@ function buddyform_moderation_dependency() {
 			'slug'     => 'buddyforms',
 			'required' => true,
 		);
-		
+
 		$config = array(
 			'id'           => 'buddyforms-tgmpa',
 			// Unique ID for hashing notices for multiple instances of TGMPA.
@@ -73,7 +74,7 @@ function buddyform_moderation_dependency() {
 			'is_automatic' => true,
 			// Automatically activate plugins after installation or not.
 		);
-		
+
 		// Call the tgmpa function to register the required plugins
 		tgmpa( $plugins, $config );
 	}
@@ -83,7 +84,7 @@ function buddyform_moderation_dependency() {
 // Create a helper function for easy SDK access.
 function bfmod_fs() {
 	global $bfmod_fs;
-	
+
 	if ( ! isset( $bfmod_fs ) ) {
 		// Include Freemius SDK.
 		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
@@ -93,7 +94,7 @@ function bfmod_fs() {
 			// Try to load SDK from premium parent plugin folder.
 			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
 		}
-		
+
 		$bfmod_fs = fs_dynamic_init( array(
 			'id'             => '409',
 			'slug'           => 'buddyforms-review',
@@ -113,7 +114,7 @@ function bfmod_fs() {
 			),
 		) );
 	}
-	
+
 	return $bfmod_fs;
 }
 
@@ -124,7 +125,7 @@ function bfmod_fs_is_parent_active_and_loaded() {
 
 function bfmod_fs_is_parent_active() {
 	$active_plugins_basenames = get_option( 'active_plugins' );
-	
+
 	foreach ( $active_plugins_basenames as $plugin_basename ) {
 		if ( 0 === strpos( $plugin_basename, 'buddyforms/' ) ||
 		     0 === strpos( $plugin_basename, 'buddyforms-premium/' )
@@ -132,7 +133,7 @@ function bfmod_fs_is_parent_active() {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
