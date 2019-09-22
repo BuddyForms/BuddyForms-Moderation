@@ -157,8 +157,8 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
  * Save Fields
  *
  */
-add_action( 'buddyforms_update_post_meta', 'buddyforms_cpublishing_update_post_meta', 10, 2 );
-function buddyforms_cpublishing_update_post_meta( $customfield, $post_id ) {
+add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_meta', 10, 2 );
+function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
 	if ( $customfield['type'] == 'moderators' ) {
 
