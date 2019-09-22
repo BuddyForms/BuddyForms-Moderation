@@ -37,6 +37,9 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
+		include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
+		include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
+		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 	}
 
 	// Only Check for requirements in the admin

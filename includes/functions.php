@@ -454,3 +454,28 @@ function buddyforms_reject_now() {
 
 	die();
 }
+
+
+/**
+ *
+ * Get all forms with collaborative publishing functionality
+ *
+ * @return array
+ *
+ */
+function buddyforms_moderators_get_forms() {
+	global $buddyforms;
+
+	$teams = array();
+	foreach ( $buddyforms as $form_slug => $buddyform ) {
+		if ( isset( $buddyform['form_fields'] ) ) {
+			foreach ( $buddyform['form_fields'] as $key => $form_field ) {
+				if ( $form_field['type'] == 'moderators' ) {
+					$teams[ $form_slug ] = $buddyform['name'];
+				}
+			}
+		}
+	}
+
+	return $teams;
+}
