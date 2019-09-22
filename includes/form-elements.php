@@ -83,6 +83,43 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 		return $form;
 	}
 
+
+
+
+	//
+	// todo: Think of the best solution
+	//
+	$elements = $form->getElements();
+	$keys     = array();
+	foreach ( $elements as $key => $element ) {
+
+		$name = $element->getName();
+
+		if ( $name == 'draft' ) {
+			//$form->removeElement( $key );
+			array_push( $keys, $key );
+//			$keys[ $key ] = $key;
+
+		}
+
+		if ( $name == 'submitted' ) {
+			//$form->removeElement( $key );
+			//unset( $elements[ $key ] );
+			array_push( $keys, $key );
+//			$keys[ $key ] = $key;
+		}
+	}
+
+	rsort($keys);
+	foreach ( $keys as $key ) {
+		$form->removeElement( $key );
+	}
+
+
+	//$form->overrideAllExistingElements($elements);
+
+
+
 	$bf_submit_button = false;
 	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
 		'class' => 'bf-submit',
@@ -125,6 +162,7 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 			$form->addElement( $label_moderation );
 		} else {
 			$form->addElement( $label_submit );
+			$form->addElement( $label_moderation );
 		}
 
 	} else {
