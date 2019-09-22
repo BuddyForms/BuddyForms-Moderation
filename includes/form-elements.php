@@ -3,9 +3,9 @@
 
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
 	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
-	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_class');
-	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_form_type_post');
-	add_filter('postbox_classes_buddyforms_buddyforms_moderation','buddyforms_metabox_show_if_post_type_none');
+	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_class' );
+	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_show_if_form_type_post' );
+	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_show_if_post_type_none' );
 }
 
 function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
@@ -38,20 +38,20 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
-	$label_submit                        = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __('Submit', 'buddyforms');
+	$label_submit = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __( 'Submit', 'buddyforms' );
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
 
-	$label_save                        = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __('Save', 'buddyforms');
+	$label_save   = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __( 'Save', 'buddyforms' );
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
 
-	$label_review                        = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __('Submit for moderation', 'buddyforms');
+	$label_review = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __( 'Submit for moderation', 'buddyforms' );
 	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
 
-	$label_new_draft                        = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __('Create new Draft', 'buddyforms');
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
+	$label_new_draft = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __( 'Create new Draft', 'buddyforms' );
+	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
 
-	$label_no_edit                        = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __('This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms');
-	$form_setup[] = new Element_Textarea( '<b>' . __( 'If the form is displayed but edeting is disabled', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
+	$label_no_edit = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __( 'This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms' );
+	$form_setup[]  = new Element_Textarea( '<b>' . __( 'If the form is displayed but edeting is disabled', 'buddyforms' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
 
 	if ( ! isset( $field_id ) ) {
 		$field_id = $mod5 = substr( md5( time() * rand() ), 0, 10 );
@@ -64,6 +64,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	<?php
 
 }
+
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );
 
 /**
@@ -105,8 +106,20 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 	//	Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
 //	$status = new Element_Hidden( 'status', 'edit-draft' );
 
+	//Remove exiting Submit button
+	$submit_key = '';
+	foreach ( $form->getElements() as $key => $element ) {
+		if ( $element instanceof Element_Button && $element->getAttribute( 'type' ) === 'submit' ) {
+			$submit_key = $key;
+		}
+	}
+	if ( ! empty( $submit_key ) ) {
+		$form->removeElement( intval( $submit_key ) );
+	}
+
 	// If post_id is 0 we have a new posts
-	if ( $post_id == 0 ) {
+	$post_status = get_post_status( $post_id ); // Get the Posts
+	if ( $post_status === 'auto-draft' ) {
 
 		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
 			$form->addElement( $label_moderation );
@@ -115,13 +128,11 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 		}
 
 	} else {
-
 		// This is an existing post
-		$post_status = get_post_status( $post_id ); // Get the Posts
 		$post_type = get_post_type( $post_id ); // Get the Posts
 
 		// Check Post Status
-		if ( $post_status == 'edit-draft' || ($post_status == 'auto-draft' && $post_type == 'product' )|| $post_status == 'draft' || $post_status == 'submitted'  ) {
+		if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
 			$form->addElement( $label_save );
 			$form->addElement( $label_moderation );
 		}
@@ -136,10 +147,12 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 			$form->addElement( $label_new_draft );
 		}
 	}
+
 //	$form->addElement( $status );
 
 	return $form;
 }
+
 add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
 
 
@@ -154,10 +167,8 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		extract( $json_args );
 	}
 
-	if ( isset( $post_id ) && $post_id != 0 ) {
+	if ( isset( $post_id ) ) {
 		$post = get_post( $post_id );
-	} else {
-		$post_id = 0;
 	}
 
 	if ( ! isset( $_POST['form_slug'] ) ) {
@@ -186,13 +197,15 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		'class' => 'bf-submit',
 		'name'  => 'new-draft'
 	) );
-	$label_no_edit    = new Element_HTML( '<p>' .  $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
+	$label_no_edit    = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
 
 	// Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
 	// $status = new Element_Hidden( "status", 'edit-draft' );
 
+	$post_status = get_post_status( $post_id ); // Get the Posts Status
+
 	// If post_id is 0 we have a new posts
-	if ( $post_id == 0 ) {
+	if ( $post_status === 'auto-draft' ) {
 
 		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
 			$formelements[] = $label_moderation;
@@ -201,9 +214,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		}
 
 	} else {
-
 		// This is an existing post
-		$post_status = get_post_status( $post_id ); // Get the Posts Status
 
 		// Check Post Status
 		if ( $post_status == 'edit-draft' ) {
@@ -236,6 +247,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 	return $json_args;
 
 }
+
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 
 function bf_moderation_post_control_args( $args ) {
@@ -254,13 +266,14 @@ function bf_moderation_post_control_args( $args ) {
 
 	return $args;
 }
+
 add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10, 1 );
 
 
 function bf_moderation_create_edit_form_post_id( $post_id ) {
 	global $buddyforms;
 
-	$form_slug = buddyforms_get_form_slug_by_post_id($post_id);
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
 
 	if ( ! $form_slug ) {
 		return $post_id;
@@ -276,7 +289,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 		'post_status'    => 'edit-draft'
 	);
 
-	$children = get_posts( $args, 'ARRAY_N' );
+	$children = get_post( $args, 'ARRAY_N' );
 
 	if ( count( $children ) != 0 ) {
 		$post_id = $children[0]->ID;
@@ -285,6 +298,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	return $post_id;
 
 }
+
 add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
 function bf_create_post_status_to_display( $query_args ) {
@@ -297,6 +311,7 @@ function bf_create_post_status_to_display( $query_args ) {
 	return $query_args;
 
 }
+
 add_filter( 'buddyforms_post_to_display_args', 'bf_create_post_status_to_display', 9999, 1 );
 
 function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
@@ -316,19 +331,20 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 
 	return $post_status_css;
 }
+
 add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
 
 
 add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
 function buddyforms_moderation_create_edit_form_post_status( $post_status, $form_slug ) {
 	global $buddyforms;
-	
+
 	if ( empty( $buddyforms[ $form_slug ]['moderation_logic'] ) || ( ! empty( $buddyforms[ $form_slug ]['moderation_logic'] ) && 'default' == $buddyforms[ $form_slug ]['moderation_logic'] ) ) {
 		return $post_status;
 	}
 
-	if( isset( $_POST['status'] ) ){
-		if( $_POST['status'] == 'submitted' ||  $_POST['status'] == 'publish'  ){
+	if ( isset( $_POST['status'] ) ) {
+		if ( $_POST['status'] == 'submitted' || $_POST['status'] == 'publish' ) {
 			return 'edit-draft';
 		}
 
