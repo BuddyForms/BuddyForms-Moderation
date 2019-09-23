@@ -247,7 +247,7 @@ function buddyforms_moderators_the_loop_actions( $post_id ) {
 	if ( in_array( $post_id, $user_posts ) ) {
 		echo '<ul class="edit_links">';
 		echo '<li>';
-		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="bf_remove_as_editor" href="#"><span aria-label="' . __( 'Approve', 'buddyforms' ) . '" title="' . __( 'Approve', 'buddyforms' ) . '" class="dashicons dashicons-trash"> </span> ' . __( 'Approve', 'buddyforms' ) . '</a></li>';
+		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve" href="#"><span aria-label="' . __( 'Approve', 'buddyforms' ) . '" title="' . __( 'Approve', 'buddyforms' ) . '" class="dashicons dashicons-trash"> </span> ' . __( 'Approve', 'buddyforms' ) . '</a></li>';
 		echo '</li>';
 		echo '<li>';
 		buddyforms_moderators_reject_post( $post_id, $form_slug );
@@ -270,22 +270,21 @@ function buddyforms_moderators_ajax_approve_post() {
 	if ( ! $form_slug ) {
 		_e( 'You are not allowed to delete this entry! What are you doing here?', 'buddyforms' );
 		die();
-
-
-		$approve = wp_update_post( array(
-			'ID'          => $post_id,
-			'post_status' => 'approved',
-		) );
-
-
-		// Remove the post from the user posts taxonomy
-		wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts', true );
-
-		// Remove the user from the post editors
-		wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators', true );
-
-
 	}
+
+	$approve = wp_update_post( array(
+		'ID'          => $post_id,
+		'post_status' => 'approved',
+	) );
+
+
+	// Remove the post from the user posts taxonomy
+	wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts', true );
+
+	// Remove the user from the post editors
+	wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators', true );
+
+
 
 	die();
 }

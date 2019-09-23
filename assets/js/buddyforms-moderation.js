@@ -37,30 +37,32 @@ jQuery(document).ready(function () {
         BuddyFormsHooks.addAction('bf-moderation:submit:enable', enableModerationFormSubmit);
         BuddyFormsHooks.addAction('bf-moderation:submit:disable', disableModerationFormSubmit);
     }
-});
+    jQuery(document.body).on('click', '.buddyforms_moderators_approve', function () {
 
+        var post_id = jQuery(this).attr('id');
 
-jQuery(document.body).on('click', '.buddyforms_moderators_approve', function () {
-    var post_id = jQuery(this).attr('id');
-
-    if (confirm( 'Approve this Post' )) { // todo need il18n
-        jQuery.ajax({
-            type: 'POST',
-            url: buddyformsGlobal.admin_url,
-            data: {"action": "buddyforms_moderators_ajax_approve_post", "post_id": post_id},
-            success: function (data) {
-                if (isNaN(data)) {
-                    alert(data);
-                } else {
-                    location.reload();
+        if (confirm( 'Approve this Post' )) { // todo need il18n
+            jQuery.ajax({
+                type: 'POST',
+                url: buddyformsGlobal.admin_url,
+                data: {"action": "buddyforms_moderators_ajax_approve_post", "post_id": post_id},
+                success: function (data) {
+                    if (isNaN(data)) {
+                        alert(data);
+                    } else {
+                        location.reload();
+                    }
+                },
+                error: function (request) {
+                    alert(request.responseText);
                 }
-            },
-            error: function (request) {
-                alert(request.responseText);
-            }
-        });
-    } else {
+            });
+        } else {
+            return false;
+        }
         return false;
-    }
-    return false;
+    });
 });
+
+
+
