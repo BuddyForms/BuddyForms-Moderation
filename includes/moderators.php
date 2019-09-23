@@ -11,8 +11,8 @@ function buddyforms_moderators_select( $elements_select_options ) {
 	if ( $post->post_type != 'buddyforms' ) {
 		return;
 	}
-	$elements_select_options['moderators']['label']                              = 'Colaburative Publishing';
-	$elements_select_options['moderators']['class']                              = 'bf_show_if_f_type_post';
+	$elements_select_options['moderators']['label']                = 'Colaburative Publishing';
+	$elements_select_options['moderators']['class']                = 'bf_show_if_f_type_post';
 	$elements_select_options['moderators']['fields']['moderators'] = array(
 		'label' => __( 'Select Moderators ', 'buddyforms' ),
 	);
@@ -46,7 +46,7 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 			if ( isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['moderators'] ) ) {
 				$moderators = $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['moderators'];
 			}
-			$form_fields['general']['moderators']       = new Element_Select( '<b>' . __( 'Moderators', 'buddyforms' ) . '</b>', "buddyforms_options[form_fields][" . $field_id . "][moderators]", $roles_array, array(
+			$form_fields['general']['moderators'] = new Element_Select( '<b>' . __( 'Moderators', 'buddyforms' ) . '</b>', "buddyforms_options[form_fields][" . $field_id . "][moderators]", $roles_array, array(
 				'value'         => $moderators,
 				'data-field_id' => $field_id,
 				'shortDesc'     => 'You can enable all users or filter the select for a specific user role'
@@ -160,7 +160,14 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_meta', 10, 2 );
 function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
+	$global_error = ErrorHandler::get_instance();
+
 	if ( $customfield['type'] == 'moderators' ) {
+
+		$form_slug = get_post_meta( $post_id, '_bf_form_slug' );
+
+		$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, 'Just a test', '', $form_slug ) );
+
 
 		// Create a editors array to store all editors.
 		$moderators     = array();
@@ -180,14 +187,48 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 		// Loop through the old moderators and remove them from the buddyforms_moderators_posts taxonomy
 		foreach ( $old_moderators as $post_moderator ) {
 			if ( ! array_key_exists( $post_moderator, $moderators ) ) {
-				wp_remove_object_terms( $post_moderator, strval($post_id), 'buddyforms_moderators_posts', true );
+				wp_remove_object_terms( $post_moderator, strval( $post_id ), 'buddyforms_moderators_posts', true );
 			}
 		}
 
 		// Loop thru all moderators and add the post to the buddyforms_moderators_posts taxonomy
 		foreach ( $moderators as $moderators_id ) {
-			$moderator_posts = wp_set_object_terms( $moderators_id, strval($post_id), 'buddyforms_moderators_posts', true );
+			$moderator_posts = wp_set_object_terms( $moderators_id, strval( $post_id ), 'buddyforms_moderators_posts', true );
 		}
 
 	}
+}
+
+
+add_filter( 'buddyforms_form_custom_validation', 'buddyforms_moderators_server_validation', 2, 2 );
+
+function buddyforms_moderators_server_validation( $valid, $form_slug ) {
+	global $buddyforms;
+
+	$form = $buddyforms[ $form_slug ];
+
+	if ( isset( $form['form_fields'] ) ) {
+		$global_error = ErrorHandler::get_instance();
+		foreach ( $form['form_fields'] as $key => $form_field ) {
+
+
+			// here I like to ask for the post status
+
+
+			if ( $form_field['type'] == 'moderators' ) {
+
+				if ( ! isset( $_POST[ $form_field['slug'] ] ) ) {
+					$valid                    = false;
+					$validation_error_message = __( 'Please select a Moderator!', 'buddyforms' ) . $form_field['validation_min'];
+					$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	return $valid;
 }

@@ -97,26 +97,27 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 
 		if ( $name == 'draft' ) {
 			//$form->removeElement( $key );
-			array_push( $keys, $key );
-//			$keys[ $key ] = $key;
+//			array_push( $keys, $key );
+			unset($elements[$key]);
 
 		}
 
 		if ( $name == 'submitted' ) {
 			//$form->removeElement( $key );
 			//unset( $elements[ $key ] );
-			array_push( $keys, $key );
+//			array_push( $keys, $key );
 //			$keys[ $key ] = $key;
+			unset($elements[$key]);
 		}
 	}
 
-	rsort($keys);
-	foreach ( $keys as $key ) {
-		$form->removeElement( $key );
-	}
+//	rsort($keys);
+//	foreach ( $keys as $key ) {
+//		$form->removeElement( $key );
+//	}
 
 
-	//$form->overrideAllExistingElements($elements);
+	$form->overrideAllExistingElements($elements);
 
 
 
@@ -248,7 +249,8 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
 			$formelements[] = $label_moderation;
 		} else {
-			$formelements[] = $label_submit;
+			//$formelements[] = $label_submit;
+			$formelements[] = $label_moderation;
 		}
 
 	} else {
