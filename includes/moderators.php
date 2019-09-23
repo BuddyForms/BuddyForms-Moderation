@@ -236,3 +236,24 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 
 	return $valid;
 }
+
+
+add_action( 'buddyforms_the_loop_after_actions', 'buddyforms_moderators_the_loop_actions' );
+function buddyforms_moderators_the_loop_actions( $post_id ) {
+
+	$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
+	$form_slug  = get_post_meta( $post_id, '_bf_form_slug', true );
+
+	if ( in_array( $post_id, $user_posts ) ) {
+		echo '<ul class="edit_links">';
+		echo '<li>';
+		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="bf_remove_as_editor" href="#"><span aria-label="' . __( 'Approve', 'buddyforms' ) . '" title="' . __( 'Approve', 'buddyforms' ) . '" class="dashicons dashicons-trash"> </span> ' . __( 'Approve', 'buddyforms' ) . '</a></li>';
+		echo '</li>';
+		echo '<li>';
+		buddyforms_moderators_reject_post( $post_id, $form_slug );
+		echo '</li>';
+		echo '</ul>';
+
+	}
+
+}

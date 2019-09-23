@@ -11,7 +11,7 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 
 	$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
 
-	print_r( $user_posts );
+//	print_r( $user_posts );
 
 
 	if ( $user_posts ) {

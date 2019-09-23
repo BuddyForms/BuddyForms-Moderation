@@ -39,6 +39,7 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
 		include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
 		include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
+		include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 	}
 
