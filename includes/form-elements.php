@@ -68,6 +68,74 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );
 
 /**
+ * Display correct form action buttons
+ *
+ * @param Form $form
+ * @param string $form_slug
+ * @param int $post_id
+ *
+ * @return mixed
+ */
+function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id ) {
+	global $buddyforms;
+
+	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
+		return $form;
+	}
+
+	$submit_moderation_button = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
+		'class' => 'bf-submit',
+		'name'  => 'awaiting-review'
+	) );
+	$submit_button            = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
+		'class' => 'bf-submit',
+		'name'  => 'edit-draft'
+	) );
+	$submit_save_button       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
+		'class' => 'bf-submit',
+		'name'  => 'edit-draft'
+	) );
+	$submit_new_draft_button  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
+		'class' => 'bf-submit',
+		'name'  => 'new-draft'
+	) );
+	$label_no_edit            = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
+
+	// If post_id is 0 we have a new posts
+	$post_status = get_post_status( $post_id ); // Get the Posts
+	if ( $post_status === 'auto-draft' ) {
+
+		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
+			$form->addElement( $submit_moderation_button );
+		} else {
+			$form->addElement( $submit_save_button );
+			$form->addElement( $submit_moderation_button );
+		}
+
+	} else {
+		// This is an existing post
+		$post_type = get_post_type( $post_id ); // Get the Posts
+
+		// Check Post Status
+		if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
+			$form->addElement( $submit_save_button );
+			$form->addElement( $submit_moderation_button );
+		}
+		if ( $post_status == 'awaiting-review' ) {
+			if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
+				$form->addElement( $label_no_edit );
+			} else {
+				$form->addElement( $submit_new_draft_button );
+			}
+		}
+		if ( $post_status == 'publish' ) {
+			$form->addElement( $submit_new_draft_button );
+		}
+	}
+
+	return $form;
+}
+/**
  * Display the new Form Element in the Frontend Form
  *
  * @param Form $form
@@ -77,117 +145,7 @@ add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_meta
  * @return mixed
  */
 function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id ) {
-	global $buddyforms, $bf_submit_button;
-
-	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
-		return $form;
-	}
-
-
-
-
-	//
-	// todo: Think of the best solution
-	//
-	$elements = $form->getElements();
-	$keys     = array();
-	foreach ( $elements as $key => $element ) {
-
-		$name = $element->getName();
-
-		if ( $name == 'draft' ) {
-			//$form->removeElement( $key );
-//			array_push( $keys, $key );
-			unset($elements[$key]);
-
-		}
-
-		if ( $name == 'submitted' ) {
-			//$form->removeElement( $key );
-			//unset( $elements[ $key ] );
-//			array_push( $keys, $key );
-//			$keys[ $key ] = $key;
-			unset($elements[$key]);
-		}
-	}
-
-//	rsort($keys);
-//	foreach ( $keys as $key ) {
-//		$form->removeElement( $key );
-//	}
-
-
-	$form->overrideAllExistingElements($elements);
-
-
-
-	$bf_submit_button = false;
-	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
-		'class' => 'bf-submit',
-		'name'  => 'awaiting-review'
-	) );
-	$label_submit     = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
-		'class' => 'bf-submit',
-		'name'  => 'edit-draft'
-	) );
-	$label_save       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
-		'class' => 'bf-submit',
-		'name'  => 'edit-draft'
-	) );
-	$label_new_draft  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
-		'class' => 'bf-submit',
-		'name'  => 'new-draft'
-	) );
-	$label_no_edit    = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
-
-
-	//	Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
-//	$status = new Element_Hidden( 'status', 'edit-draft' );
-
-	//Remove exiting Submit button
-	$submit_key = '';
-	foreach ( $form->getElements() as $key => $element ) {
-		if ( $element instanceof Element_Button && $element->getAttribute( 'type' ) === 'submit' ) {
-			$submit_key = $key;
-		}
-	}
-	if ( ! empty( $submit_key ) ) {
-		$form->removeElement( intval( $submit_key ) );
-	}
-
-	// If post_id is 0 we have a new posts
-	$post_status = get_post_status( $post_id ); // Get the Posts
-	if ( $post_status === 'auto-draft' ) {
-
-		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
-			$form->addElement( $label_moderation );
-		} else {
-			$form->addElement( $label_submit );
-			$form->addElement( $label_moderation );
-		}
-
-	} else {
-		// This is an existing post
-		$post_type = get_post_type( $post_id ); // Get the Posts
-
-		// Check Post Status
-		if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
-			$form->addElement( $label_save );
-			$form->addElement( $label_moderation );
-		}
-		if ( $post_status == 'awaiting-review' ) {
-			if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-				$form->addElement( $label_no_edit );
-			} else {
-				$form->addElement( $label_new_draft );
-			}
-		}
-		if ( $post_status == 'publish' ) {
-			$form->addElement( $label_new_draft );
-		}
-	}
-
-//	$form->addElement( $status );
+	$form = buddyforms_moderation_form_action_elements($form, $form_slug, $post_id);
 
 	return $form;
 }
@@ -195,9 +153,9 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
 
 
-function bf_moderation_buddyforms_create_edit_form_button( $form_button ) {
-	return false;
-}
+add_filter('buddyforms_include_form_draft_button', '__return_false');
+add_filter('buddyforms_include_form_submit_button', '__return_false');
+
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
 	global $buddyforms;
@@ -249,8 +207,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
 			$formelements[] = $label_moderation;
 		} else {
-			//$formelements[] = $label_submit;
-			$formelements[] = $label_moderation;
+			$formelements[] = $label_submit;
 		}
 
 	} else {
@@ -326,13 +283,15 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	$args = array(
 		'post_parent'    => $post_id,
 		'posts_per_page' => 1,
-		'post_status'    => 'edit-draft'
+		'post_status'    => 'edit-draft',
+		'orderby '       => 'date',
+		'order '         => 'DESC'
 	);
 
-	$children = get_post( $args, 'ARRAY_N' );
+	$children = new WP_Query( $args );
 
-	if ( count( $children ) != 0 ) {
-		$post_id = $children[0]->ID;
+	if ( $children->have_posts() ) {
+		$post_id = $children->posts[0]->ID;
 	}
 
 	return $post_id;
