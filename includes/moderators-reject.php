@@ -39,9 +39,8 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
                     success: function (data) {
 
                         console.log(data);
+                        location.reload();
 
-                        alert('Delete Request has been send successfully!');
-                        tb_remove();
 
                     },
                     error: function (request, status, error) {
@@ -167,6 +166,13 @@ function buddyforms_reject_post_as_moderator() {
 		'ID'          => $post_id,
 		'post_status' => 'edit-draft',
 	) );
+
+
+	// Remove the post from the user posts taxonomy
+	wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts', true );
+
+	// Remove the user from the post editors
+	wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators', true );
 
 	if ( ! $result ) {
 		$json['test'] .= __( 'There has been an error sending the message!', 'buddyforms' );

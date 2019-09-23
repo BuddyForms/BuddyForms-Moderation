@@ -257,3 +257,35 @@ function buddyforms_moderators_the_loop_actions( $post_id ) {
 	}
 
 }
+
+add_action( 'wp_ajax_buddyforms_moderators_ajax_approve_post', 'buddyforms_moderators_ajax_approve_post' );
+function buddyforms_moderators_ajax_approve_post() {
+	global $current_user, $buddyforms;
+	$current_user = wp_get_current_user();
+
+	$post_id  = intval( $_POST['post_id'] );
+	$the_post = get_post( $post_id );
+
+	$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+	if ( ! $form_slug ) {
+		_e( 'You are not allowed to delete this entry! What are you doing here?', 'buddyforms' );
+		die();
+
+
+		$approve = wp_update_post( array(
+			'ID'          => $post_id,
+			'post_status' => 'approved',
+		) );
+
+
+		// Remove the post from the user posts taxonomy
+		wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts', true );
+
+		// Remove the user from the post editors
+		wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators', true );
+
+
+	}
+
+	die();
+}
