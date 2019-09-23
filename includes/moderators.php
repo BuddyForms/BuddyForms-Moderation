@@ -212,19 +212,23 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 		foreach ( $form['form_fields'] as $key => $form_field ) {
 
 
-			// here I like to ask for the post status
+			// Here I like to ask for the post status
 
+			if(isset($_POST['status']) && $_POST['status'] == 'awaiting-review'){
+				if ( $form_field['type'] == 'moderators' ) {
 
-			if ( $form_field['type'] == 'moderators' ) {
+					if ( ! isset( $_POST[ 'buddyforms_moderators' ] ) ) {
+						$valid                    = false;
+						$validation_error_message = __( 'Please select a Moderator!', 'buddyforms' ) . $form_field['validation_min'];
+						$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
 
-				if ( ! isset( $_POST[ $form_field['slug'] ] ) ) {
-					$valid                    = false;
-					$validation_error_message = __( 'Please select a Moderator!', 'buddyforms' ) . $form_field['validation_min'];
-					$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
+					}
 
 				}
-
 			}
+
+
+
 
 		}
 
