@@ -41,6 +41,7 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
 		include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
+		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 	}
 
 	// Only Check for requirements in the admin

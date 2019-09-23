@@ -84,19 +84,19 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 	}
 
 	$submit_moderation_button = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'awaiting-review'
 	) );
 	$submit_button            = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'edit-draft'
 	) );
 	$submit_save_button       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'edit-draft'
 	) );
 	$submit_new_draft_button  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'new-draft'
 	) );
 	$label_no_edit            = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
@@ -135,6 +135,16 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 
 	return $form;
 }
+
+/**
+ * Include assets after buddyforms
+ */
+function buddyforms_moderation_include_assets(){
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array('jquery','buddyforms-js') );
+}
+
+add_action('buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets');
+
 /**
  * Display the new Form Element in the Frontend Form
  *
