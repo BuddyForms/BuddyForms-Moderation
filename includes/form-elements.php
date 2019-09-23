@@ -139,11 +139,11 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 /**
  * Include assets after buddyforms
  */
-function buddyforms_moderation_include_assets(){
-	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array('jquery','buddyforms-js') );
+function buddyforms_moderation_include_assets() {
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ) );
 }
 
-add_action('buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets');
+add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
 
 /**
  * Display the new Form Element in the Frontend Form
@@ -155,7 +155,7 @@ add_action('buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_inclu
  * @return mixed
  */
 function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id ) {
-	$form = buddyforms_moderation_form_action_elements($form, $form_slug, $post_id);
+	$form = buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id );
 
 	return $form;
 }
@@ -163,8 +163,8 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
 
 
-add_filter('buddyforms_include_form_draft_button', '__return_false');
-add_filter('buddyforms_include_form_submit_button', '__return_false');
+add_filter( 'buddyforms_include_form_draft_button', '__return_false' );
+add_filter( 'buddyforms_include_form_submit_button', '__return_false' );
 
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
@@ -174,8 +174,12 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		extract( $json_args );
 	}
 
-	if ( isset( $post_id ) ) {
-		$post = get_post( $post_id );
+	if ( isset( $_POST['post_id'] ) ) {
+		$post_id = absint( $_POST['post_id'] );
+	}
+
+	if ( empty( $post_id ) ) {
+		return $json_args;
 	}
 
 	if ( ! isset( $_POST['form_slug'] ) ) {

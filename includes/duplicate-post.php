@@ -2,6 +2,9 @@
 
 /*
  * Function creates post duplicate as a draft and redirects then to the edit post screen
+ *
+ * todo @gfirem this is trigger from the post list action but need to be trigger by the from submit. need to look why is not triggering
+ *
  */
 add_action( 'admin_action_buddyforms_moderation_duplicate_post', 'buddyforms_moderation_duplicate_post' );
 function buddyforms_moderation_duplicate_post() {
@@ -75,18 +78,15 @@ function buddyforms_moderation_duplicate_post() {
 			/*
 			 * duplicate all post meta just in two SQL queries
 			 */
-			$post_meta_infos                 = $wpdb->get_results( "SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id=$post_id" );
-			$post_meta_infos['orig_author']  = $orig_author;
-			$post_meta_infos['orig_post_id'] = $orig_post_id;
-			if ( count( $post_meta_infos ) != 0 ) {
-				$sql_query = "INSERT INTO $wpdb->postmeta (post_id, meta_key, meta_value) ";
-				foreach ( $post_meta_infos as $meta_info ) {
-					$meta_key        = $meta_info->meta_key;
-					$meta_value      = addslashes( $meta_info->meta_value );
-					$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
+			$post_meta_infos                   = get_metadata( 'post', $post_id );
+			$post_meta_infos['orig_author'][]  = $orig_author;
+			$post_meta_infos['orig_post_id'][] = $orig_post_id;
+			if ( ! empty( $post_meta_infos ) ) {
+				foreach ( $post_meta_infos as $meta_info_key => $meta_info ) {
+					if ( ! empty( $meta_info_key ) && ! empty( $meta_info ) && ! empty( $meta_info[0] ) ) {
+						update_metadata( 'post', $new_post_id, $meta_info_key, addslashes( $meta_info[0] ) );
+					}
 				}
-				$sql_query .= implode( " UNION ALL ", $sql_query_sel );
-				$wpdb->query( $sql_query );
 			}
 
 			/*
@@ -134,31 +134,48 @@ add_action( 'wp_ajax_buddyforms_moderation_duplicate_post', 'buddyforms_moderati
 
 /*
  * Add the duplicate button in the page template
+ *
+ * todo review with @sven this is not used in any place
  */
 function buddyforms_moderation_duplicate_post_button( $post_id ) {
 	$link = '<a class="button" href="' . get_admin_url() . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post_id, basename( __FILE__ ), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms' ) . '</a>';
 	echo $link;
 }
 
-/*
- * Add the duplicate link to action list for post_row_actions
+/**
+ * Add an action to the post list to create a new draft from a published post
+ *
+ * @param array $actions
+ * @param WP_Post $post
+ *
+ * @return array
+ * @since 1.4.0 Added the action to the post list and validate to show the action only to the published posts
+ *
  */
-add_filter( 'page_row_actions', 'buddyforms_moderation_duplicate_post_link', 10, 2 );
 function buddyforms_moderation_duplicate_post_link( $actions, $post ) {
-	if ( current_user_can( 'edit_pages' ) ) {
+	if ( current_user_can( 'edit_pages' ) && $post->post_status === 'publish' ) {
 		$actions['duplicate'] = '<a data-post_id="' . $post->ID . '" href="' . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ) . '" title="' . __( 'Create new Edit Draft', 'buddyforms' ) . '" rel="permalink">' . __( 'Create new Edit Draft', 'buddyforms' ) . '</a>';
 	}
 
 	return $actions;
 }
 
+add_filter( 'post_row_actions', 'buddyforms_moderation_duplicate_post_link', 10, 2 );
 
-/*
- * Add the duplicate link to admin bar
+
+/**
+ * Add the duplicate link to admin bar only when the post is published
+ *
+ * @param WP_Admin_Bar $wp_admin_bar
+ *
+ * @since 1.4.0 Added the condition to check if the user have the capability to edit pages
  */
-add_action( 'admin_bar_menu', 'buddyforms_moderation_admin_bar_mod_button', 50 );
 function buddyforms_moderation_admin_bar_mod_button( $wp_admin_bar ) {
 	global $post;
+
+	if ( ! current_user_can( 'edit_pages' ) ) {
+		return;
+	}
 
 	if ( ! $post || isset( $post ) && $post->post_status != 'publish' ) {
 		return;
@@ -175,3 +192,5 @@ function buddyforms_moderation_admin_bar_mod_button( $wp_admin_bar ) {
 	);
 	$wp_admin_bar->add_node( $args );
 }
+
+add_action( 'admin_bar_menu', 'buddyforms_moderation_admin_bar_mod_button', 50 );
