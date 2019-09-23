@@ -8,7 +8,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 
 	<script>
         jQuery(document).ready(function () {
-            jQuery(document).on("click", '#buddyforms_reject_post_as_editor_<?php echo $post_id ?>', function (evt) {
+            jQuery(document).on("click", '#buddyforms_reject_post_as_moderator_<?php echo $post_id ?>', function (evt) {
 
                 var post_reject_email_subject = jQuery('#post_reject_email_subject_<?php echo $post_id ?>').val();
                 var post_reject_email_message = jQuery('#post_reject_email_message_<?php echo $post_id ?>').val();
@@ -30,7 +30,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
                     dataType: "json",
                     url: ajaxurl,
                     data: {
-                        "action": "buddyforms_reject_post_as_editor",
+                        "action": "buddyforms_reject_post_as_moderator",
                         "post_id": post_id,
                         "form_slug": form_slug,
                         "post_reject_email_subject": post_reject_email_subject,
@@ -82,16 +82,9 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 				"prevent" => array( "bootstrap", "jQuery", "focus" ),
 				'method'  => 'post'
 			) );
-			$reject_form->addElement( new Element_Textbox( 'Subject', 'post_reject_email_subject_' . $post_id, array( 'value' => 'Delete Post Request' ) ) );
+			$reject_form->addElement( new Element_Textbox( 'Subject', 'post_reject_email_subject_' . $post_id, array( 'value' => 'Your submission got rejected' ) ) );
 
-			$reject_request_message = '';
-			if ( isset( $buddyforms[$form_slug]['form_fields'] ) ) {
-				foreach ( $buddyforms[$form_slug]['form_fields'] as $key => $form_field ) {
-					if ( $form_field['type'] == 'collaborative-publishing' ) {
-						$reject_request_message = $form_field['reject_request_message'];
-					}
-				}
-			}
+			$reject_request_message = 'Hi [user_login], Your submitted post [published_post_title] has ben rejected.';
 
 			$reject_form->addElement( new Element_Textarea( 'Add a Message', 'post_reject_email_message_' . $post_id , array( 'value' => $reject_request_message, 'class' => 'collaburative-publishiing-message' ) ) );
 
@@ -101,10 +94,10 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 			?>
 
 			<br>
-			<a id="buddyforms_reject_post_as_editor_<?php echo $post_id ?>"
+			<a id="buddyforms_reject_post_as_moderator_<?php echo $post_id ?>"
 			   data-post_id="<?php echo $post_id ?>"
 			   data-form_slug="<?php echo $form_slug ?>"
-			   href="#" class="button">Sent Delete Request</a>
+			   href="#" class="button">Reject Submission and send Message</a>
 		</div>
 	</div>
 
@@ -112,100 +105,84 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 
 }
 
-add_action( 'wp_ajax_buddyforms_reject_post_as_editor', 'buddyforms_reject_post_as_editor' );
-function buddyforms_reject_post_as_editor() {
+add_action( 'wp_ajax_buddyforms_reject_post_as_moderator', 'buddyforms_reject_post_as_moderator' );
+function buddyforms_reject_post_as_moderator() {
 	global $buddyforms;
 
 	if ( ! isset( $_POST['post_id'] ) ) {
-		echo __( 'There has been an error sending the message.', 'buddyforms' );
+		echo __( 'There has been an error sending the message!', 'buddyforms' );
 		die();
 
 		return;
 	}
 
+	$post_id = $_POST['post_id'];
 
-	global $current_user, $buddyforms;
-	$current_user = wp_get_current_user();
+	$post       = get_post( $post_id );
+	$post_title = $post->post_title;
+	$postperma  = get_permalink( $post->ID );
 
-	$post_id  = intval( $_POST['post_id'] );
-	$the_post = get_post( $post_id );
+	$user_info = get_userdata( $post->post_author );
 
-	$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+	$usernameauth  = $user_info->user_login;
+	$user_nicename = $user_info->user_nicename;
+	$first_name    = $user_info->user_firstname;
+	$last_name     = $user_info->user_lastname;
 
-	$post_editors = wp_get_post_terms( $post_id, 'buddyforms_editors' );
+	$blog_title  = get_bloginfo( 'name' );
+	$siteurl     = get_bloginfo( 'wpurl' );
+	$siteurlhtml = "<a href='$siteurl' target='_blank' >$siteurl</a>";
 
 
-	$post_editors_array = array();
-	foreach ($post_editors as $editor){
-		$post_editors_array[$editor->slug] = $editor->slug;
+	$mail_to = $_POST['user_email'];
+	$subject = $_POST['bf_reject_mail_subject'];
+
+	$from_email = $_POST['bf_reject_mail_from'];
+	$emailBody  = $_POST['bf_reject_mail_message'];
+
+	$emailBody    = str_replace( '[user_login]', $usernameauth, $emailBody );
+	$emailBody    = str_replace( '[first_name]', $first_name, $emailBody );
+	$emailBody    = str_replace( '[last_name]', $last_name, $emailBody );
+	$emailBody    = str_replace( '[published_post_link_plain]', $postperma, $emailBody );
+	$postlinkhtml = "<a href='$postperma' target='_blank'>$postperma</a>";
+	$emailBody    = str_replace( '[published_post_link_html]', $postlinkhtml, $emailBody );
+	$emailBody    = str_replace( '[published_post_title]', $post_title, $emailBody );
+	$emailBody    = str_replace( '[site_name]', $blog_title, $emailBody );
+	$emailBody    = str_replace( '[site_url]', $siteurl, $emailBody );
+	$emailBody    = str_replace( '[site_url_html]', $siteurlhtml, $emailBody );
+
+	$emailBody = stripslashes( htmlspecialchars_decode( $emailBody ) );
+
+	$mailheaders = "MIME-Version: 1.0\n";
+	$mailheaders .= "X-Priority: 1\n";
+	$mailheaders .= "Content-Type: text/html; charset=\"UTF-8\"\n";
+	$mailheaders .= "Content-Transfer-Encoding: 7bit\n\n";
+	$mailheaders .= "From: " . $from_email . "<" . $from_email . ">" . "\r\n";
+
+	$message = '<html><head></head><body>' . $emailBody . '</body></html>';
+
+	$result = wp_mail( $mail_to, $subject, $message, $mailheaders );
+
+	$result_update = wp_update_post( array(
+		'ID'          => $post_id,
+		'post_status' => 'edit-draft',
+	) );
+
+	if ( ! $result ) {
+		$json['test'] .= __( 'There has been an error sending the message!', 'buddyforms' );
 	}
 
-	$author_id = get_post_field( 'post_author', $post_id );
-
-	$post_editors_array[$author_id] = $author_id;
-
-	foreach ( $post_editors_array as $post_editor ) {
-
-		$code = sha1( $post_editor . time() );
-		update_user_meta( $post_editor, 'buddyform_reject_post_editor_key_' . $post_id, $code );
-
-
-		$permalink = get_permalink( $post_id );
-		//$permalink = apply_filters( 'buddyforms_the_loop_edit_permalink', $permalink, $buddyforms[ $form_slug ]['attached_page'] );
-
-//		$edit_post_link = buddyforms_edit_post_link( $text = null, $before = '', $after = '', $post_id, $echo = false );
-//		$edit_post_link  = apply_filters( 'buddyforms_loop_edit_post_link', buddyforms_edit_post_link( '<span aria-label="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"> </span> ' . __( 'Edit', 'buddyforms' ), '', '', 0, false), $post_id, $form_slug );
-//      $edit_post_link = apply_filters( 'buddyforms_loop_edit_post_link', '<a title="' . __( 'Edit', 'buddyforms' ) . '" id="' . $post_id . '" class="bf_edit_post" href="' . $permalink . 'edit/' . $form_slug . '/' . $post_id . '"><span aria-label="' . __( 'Edit', 'buddyforms' ) . '" class="dashicons dashicons-edit"> </span> ' . __( 'Edit', 'buddyforms' ) . '</a>', $post_id );
-
-		//$reject_post_link = $permalink . '?bf_reject_post_request=' . $post_id;
-		$reject_post_link = add_query_arg( array(
-			'bf_reject_post_request' => $post_id,
-			'key'                    => $code,
-			'user'                   => $post_editor,
-			'nonce'                  => buddyforms_create_nonce( 'buddyform_reject_post_editor_keys', $post_editor )
-		), $permalink );
-
-
-		// Now let us send the mail
-		$subject = $_POST['post_reject_email_subject'];
-
-		$post_editor_info = get_userdata( $post_editor );
-
-
-		$mail_to = $post_editor_info->user_email;
-
-		$emailBody = $_POST['post_reject_email_message'];
-
-		//$emailBody .= ' ' . $edit_post_link;
-
-
-		$emailBody .= ' <br>Link to the post: <a href="' . $permalink . '">' . $the_post->post_title . '</a><br>';
-		$emailBody .= ' Approve reject Request: <a href="' . $reject_post_link . '">Yes, Delete Now</a>';
-
-
-//	$post       = get_post( $post_id );
-//	$post_title = $post->post_title;
-//	$postperma  = get_permalink( $post->ID );
-
-
-		$from_email = get_option( 'admin_email' );
-
-
-		$mailheaders = "MIME-Version: 1.0\n";
-		$mailheaders .= "X-Priority: 1\n";
-		$mailheaders .= "Content-Type: text/html; charset=\"UTF-8\"\n";
-		$mailheaders .= "Content-Transfer-Encoding: 7bit\n\n";
-		$mailheaders .= "From: " . $from_email . "<" . $from_email . ">" . "\r\n";
-
-		$message = '<html><head></head><body>' . $emailBody . '</body></html>';
-
-		$result = wp_mail( $mail_to, $subject, $message, $mailheaders );
-//		}
-
+	if ( is_wp_error( $result_update ) ) {
+		$json['test'] .= __( 'There has been an error changing the post status!', 'buddyforms' );
 	}
 
+	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
 
-	$json['test'] = 'step by step it will become a nice and powerful solution';
+	$bf_moderation_message_history[] = the_date( 'l, F j, Y' ) . $emailBody;
+	update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
+
+
+	$json['test'] .= 'Post Rejected andn message send to the user';
 
 	echo json_encode( $json );
 
@@ -225,23 +202,23 @@ function buddyforms_reject_post_request() {
 		$nonce   = $_GET['nonce'];
 
 
-		if ( ! wp_verify_nonce( $nonce, 'buddyform_reject_post_editor_keys' ) ) {
+		if ( ! wp_verify_nonce( $nonce, 'buddyform_reject_post_moderator_keys' ) ) {
 			//	return false;
 		}
 
 
-		$buddyform_reject_post_editor = get_user_meta( $user_id, 'buddyform_reject_post_editor_key_' . $post_id, true );
+		$buddyform_reject_post_moderator = get_user_meta( $user_id, 'buddyform_reject_post_moderator_key_' . $post_id, true );
 
 
-		if ( isset( $buddyform_reject_post_editor) ) {
-			if ( $key == $buddyform_reject_post_editor ) {
-				// Delete editor from meta and taxonomies
+		if ( isset( $buddyform_reject_post_moderator) ) {
+			if ( $key == $buddyform_reject_post_moderator ) {
+				// Delete moderator from meta and taxonomies
 				buddyforms_cpublishing_reject_post( $post_id, $user_id );
 
 
-				$post_editors = wp_get_post_terms( $post_id, 'buddyforms_editors' );
+				$post_moderators = wp_get_post_terms( $post_id, 'buddyforms_moderators' );
 
-				$post_count = count($post_editors);
+				$post_count = count($post_moderators);
 				if($post_count == 0){
 					do_action( 'buddyforms_reject_post', $post_id );
 					wp_reject_post( $post_id );
