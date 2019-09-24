@@ -162,9 +162,27 @@ function bf_moderation_create_frontend_form_element( $form, $form_slug, $post_id
 
 add_filter( 'buddyforms_create_edit_form_button', 'bf_moderation_create_frontend_form_element', 9999, 3 );
 
+/**
+ * @param $include
+ * @param $form_slug
+ * @param $form
+ * @param $post_id
+ *
+ * @return mixed
+ * @since 1.4.0 Only remove the button when the moderation is enabled
+ */
+function bf_moderation_include_form_action_button( $include, $form_slug, $form, $post_id ) {
+	global $buddyforms;
 
-add_filter( 'buddyforms_include_form_draft_button', '__return_false' );
-add_filter( 'buddyforms_include_form_submit_button', '__return_false' );
+	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
+		return $include;
+	}
+
+	return false;
+}
+
+add_filter( 'buddyforms_include_form_draft_button', 'bf_moderation_include_form_action_button', 10, 4 );
+add_filter( 'buddyforms_include_form_submit_button', 'bf_moderation_include_form_action_button', 10, 4 );
 
 
 function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args ) {
