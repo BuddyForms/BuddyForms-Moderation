@@ -211,25 +211,22 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 	}
 
 	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'awaiting-review'
 	) );
 	$label_submit     = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'edit-draft'
 	) );
 	$label_save       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'edit-draft'
 	) );
 	$label_new_draft  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
-		'class' => 'bf-submit',
+		'class' => 'bf-submit bf-moderation',
 		'name'  => 'new-draft'
 	) );
 	$label_no_edit    = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
-
-	// Set the post status to edit-draft if edit screen is displayed. This will make sure we never save public post
-	// $status = new Element_Hidden( "status", 'edit-draft' );
 
 	$post_status = get_post_status( $post_id ); // Get the Posts Status
 
@@ -239,14 +236,15 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
 			$formelements[] = $label_moderation;
 		} else {
-			$formelements[] = $label_submit;
+			$formelements[] = $label_save;
+			$formelements[] = $label_moderation;
 		}
 
 	} else {
 		// This is an existing post
-
+		$post_type = get_post_type( $post_id ); // Get the Posts
 		// Check Post Status
-		if ( $post_status == 'edit-draft' ) {
+		if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
 			$formelements[] = $label_save;
 			$formelements[] = $label_moderation;
 		}
@@ -261,8 +259,6 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 			$formelements[] = $label_new_draft;
 		}
 	}
-//	$formelements[] = $status;
-
 
 	ob_start();
 	foreach ( $formelements as $key => $formelement ) {
@@ -283,10 +279,14 @@ function bf_moderation_post_control_args( $args ) {
 
 	if ( $_POST['status'] == 'new-draft' ) {
 		$args['action'] = 'new-post';
-		if ( $_POST['post_id'] != 0 ) {
-			$args['post_parent'] = $_POST['post_id'];
+		if ( $args['post_id'] != 0 ) {
+			$args['post_parent'] = $args['post_id'];
 		}
 		$args['post_status'] = 'edit-draft';
+		$old_status = get_post_status( $args['post_id'] );
+		if ( $old_status === 'awaiting-review' || $old_status === 'publish' || $old_status === 'approved' ) {
+			$args['post_id'] = buddyforms_moderation_duplicate_post_from_original( $args['post_id'] );
+		}
 	}
 
 	if ( $_POST['status'] == 'awaiting-review' ) {
