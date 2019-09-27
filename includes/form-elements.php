@@ -140,7 +140,7 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
  * Include assets after buddyforms
  */
 function buddyforms_moderation_include_assets() {
-	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ) );
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), '1.4.0' );
 }
 
 add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
