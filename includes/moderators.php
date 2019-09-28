@@ -214,10 +214,10 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 
 			// Here I like to ask for the post status
 
-			if(isset($_POST['status']) && $_POST['status'] == 'awaiting-review'){
+			if ( isset( $_POST['status'] ) && $_POST['status'] == 'awaiting-review' ) {
 				if ( $form_field['type'] == 'moderators' ) {
 
-					if ( ! isset( $_POST[ 'buddyforms_moderators' ] ) ) {
+					if ( ! isset( $_POST['buddyforms_moderators'] ) ) {
 						$valid                    = false;
 						$validation_error_message = __( 'Please select a Moderator!', 'buddyforms' ) . $form_field['validation_min'];
 						$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
@@ -226,8 +226,6 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 
 				}
 			}
-
-
 
 
 		}
@@ -283,7 +281,6 @@ function buddyforms_moderators_ajax_approve_post() {
 
 	// Remove the user from the post editors
 	wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators', true );
-
 
 
 	die();

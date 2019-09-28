@@ -10,6 +10,8 @@
  * Network: false
  * Svn: buddyforms-review
  *
+ * @fs_premium_only /includes/moderators.php, /includes/moderators-taxonomy.php, /includes/moderators-reject.php
+ *
  *****************************************************************************
  *
  * This script is free software; you can redistribute it and/or modify
@@ -37,9 +39,13 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
-		include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
-		include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
-		include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
+		if ( bfmod_fs()->is__premium_only() ) {
+			if ( bfmod_fs()->is_plan( 'professional', true ) ) {
+				include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
+				include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
+				include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
+			}
+		}
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 	}
@@ -101,22 +107,29 @@ function bfmod_fs() {
 		}
 
 		$bfmod_fs = fs_dynamic_init( array(
-			'id'             => '409',
-			'slug'           => 'buddyforms-review',
-			'type'           => 'plugin',
-			'public_key'     => 'pk_b92e3b1876e342874bdc7f6e80d05',
-			'is_premium'     => false,
-			'has_paid_plans' => false,
-			'parent'         => array(
+			'id'                  => '409',
+			'slug'                => 'buddyforms-review',
+			'type'                => 'plugin',
+			'public_key'          => 'pk_b92e3b1876e342874bdc7f6e80d05',
+			'is_premium'          => true,
+			'premium_suffix'      => 'Professional',
+			// If your addon is a serviceware, set this option to false.
+			'has_premium_version' => true,
+			'has_paid_plans'      => true,
+			'trial'               => array(
+				'days'               => 14,
+				'is_require_payment' => true,
+			),
+			'parent'              => array(
 				'id'         => '391',
 				'slug'       => 'buddyforms',
 				'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
 				'name'       => 'BuddyForms',
 			),
-			'menu'           => array(
+			'menu'                => array(
 				'slug'    => 'buddyforms',
 				'support' => false,
-			),
+			)
 		) );
 	}
 
