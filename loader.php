@@ -42,7 +42,7 @@ function bf_moderation_includes() {
 		if ( bfmod_fs()->is__premium_only() ) {
 			if ( bfmod_fs()->is_plan( 'professional', true ) ) {
 				include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
-				include_once( dirname( __FILE__ ) . '/includes/moderators.php' );
+				include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
 				include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
 			}
 		}

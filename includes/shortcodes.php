@@ -20,7 +20,7 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 			if ( $user_posts ) {
 				$the_lp_query = new WP_Query( array(
 					'post__in'    => $user_posts,
-					'post_status' => 'awaiting-review',
+					'post_status' => 'any',
 					'post_type'   => 'any'
 				) );
 				buddyforms_locate_template( 'the-loop' );

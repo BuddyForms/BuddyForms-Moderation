@@ -11,7 +11,7 @@ function buddyforms_moderators_select( $elements_select_options ) {
 	if ( $post->post_type != 'buddyforms' ) {
 		return;
 	}
-	$elements_select_options['moderators']['label']                = 'Colaburative Publishing';
+	$elements_select_options['moderators']['label']                = 'Moderation';
 	$elements_select_options['moderators']['class']                = 'bf_show_if_f_type_post';
 	$elements_select_options['moderators']['fields']['moderators'] = array(
 		'label' => __( 'Select Moderators ', 'buddyforms' ),
@@ -89,40 +89,23 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 	switch ( $customfield['type'] ) {
 		case 'moderators':
 
-//			$post_editors = wp_get_object_terms( $post_id, 'buddyforms_editors' );
-//			$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_user_posts' );
-
-//			ob_start();
-//			echo 'Post Editors:<pre>';
-//			print_r( $post_editors );
-//			echo '</pre>';
-
-//			echo '<br>User Posts<pre>';
-//			print_r( $user_posts );
-//			echo '</pre>';
-//			$JHG = ob_get_clean();
-
-//			$form->addElement( new Element_HTML( $JHG ) );
-
-
 			if ( $customfield['moderators'] == 'all' ) {
-				$blogusers = get_users();
+				$blogusers = get_users( array(
+					'exclude' => array( get_current_user_id() ),
+				) );
 			} else {
 				$blogusers = get_users( array(
-					'role' => $customfield['moderators']
+					'exclude' => array( get_current_user_id() ),
+					'role'    => $customfield['moderators']
 				) );
 			}
-			// Array of WP_User objects.
 
 			$options['none'] = __( 'Select an Editor' );
 
 			foreach ( $blogusers as $user ) {
 				$options[ $user->ID ] = $user->user_nicename;
 			}
-
-
-			$element_attr['data-reset'] = 'true';
-
+			BuddyFormsAssets::load_select2_assets();
 
 			$label = __( 'Select Editors', 'buddyforms' );
 			if ( isset ( $customfield['moderators_label'] ) ) {
@@ -133,14 +116,12 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 			$element_attr['value'] = get_post_meta( $post_id, 'buddyforms_moderators', true );
 			$element_attr['id']    = 'col-lab-moderators';
 
-
 			$element = new Element_Select( $label, 'buddyforms_moderators', $options, $element_attr );
 
-			//if ( isset( $customfield['multiple_editors'] ) && is_array( $customfield['multiple_editors'] ) ) {
 			$element->setAttribute( 'multiple', 'multiple' );
-			//}
 
-			BuddyFormsAssets::load_select2_assets();
+			$element->unsetAttribute( 'data-tags' );
+
 
 			$form->addElement( $element );
 
