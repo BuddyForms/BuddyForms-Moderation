@@ -165,3 +165,15 @@ if ( bfmod_fs_is_parent_active_and_loaded() ) {
 	// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
 	bfmod_fs();
 }
+
+
+function buddyforms_modertaion_scripts() {
+	//
+	// todo: This is a hack to avoid issues with the jQuery in the form. Its conflicting if loaded in the loop. buddyforms/includes/resources/pfbc/Form.php Line 463
+	//
+	// @gfirem Why not always load jquery in the core?
+
+	wp_enqueue_script("jquery");
+}
+
+add_action( 'wp_enqueue_scripts', 'buddyforms_modertaion_scripts' );

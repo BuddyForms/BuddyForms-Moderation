@@ -14,19 +14,22 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 
 			$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
 
-//	print_r( $user_posts );
-
+			$errormessage = "No posts to moderate at the moment.";
 
 			if ( $user_posts ) {
 				$the_lp_query = new WP_Query( array(
 					'post__in'    => $user_posts,
-					'post_status' => 'any',
+					'post_status' => 'awaiting-review',
 					'post_type'   => 'any'
 				) );
-				buddyforms_locate_template( 'the-loop' );
+				if($the_lp_query->have_posts()){
+					buddyforms_locate_template( 'the-loop' );
+				} else {
+					echo '<p>' . $errormessage . '</p>';
+				}
 				wp_reset_postdata();
 			} else {
-				echo '<p>There are no collaborative posts for you to edit.</p>';
+				echo '<p>' . $errormessage . '</p>';
 			}
 
 
