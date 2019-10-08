@@ -1,14 +1,17 @@
 <?php
 /*
- Plugin Name: BuddyForms Moderation ( Former: Review Logic )
- Plugin URI: https://themekraft.com/products/review/
- Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- Version: 1.3
- Author: ThemeKraft
- Author URI: https://themekraft.com/buddyforms/
- License: GPLv2 or later
- Network: false
-
+ * Plugin Name: BuddyForms Moderation ( Former: Review Logic )
+ * Plugin URI: https://themekraft.com/products/review/
+ * Description: Create new drafts or pending moderations from new or published posts without changing the live version.
+ * Version: 1.4.1
+ * Author: ThemeKraft
+ * Author URI: https://themekraft.com/buddyforms/
+ * License: GPLv2 or later
+ * Network: false
+ * Svn: buddyforms-review
+ *
+ * @fs_premium_only /includes/moderators.php, /includes/moderators-taxonomy.php, /includes/moderators-reject.php
+ *
  *****************************************************************************
  *
  * This script is free software; you can redistribute it and/or modify
@@ -36,16 +39,25 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
+		if ( bfmod_fs()->is__premium_only() ) {
+			if ( bfmod_fs()->is_plan( 'professional', true ) ) {
+				include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
+				include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
+				include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
+			}
+		}
+		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
+		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 	}
-	
+
 	// Only Check for requirements in the admin
 	if ( ! is_admin() ) {
 		return;
 	}
-	
+
 	// Require TGM
 	require( dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php' );
-	
+
 	// Hook required plugins function to the tgmpa_register action
 	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
 }
@@ -58,7 +70,7 @@ function buddyform_moderation_dependency() {
 			'slug'     => 'buddyforms',
 			'required' => true,
 		);
-		
+
 		$config = array(
 			'id'           => 'buddyforms-tgmpa',
 			// Unique ID for hashing notices for multiple instances of TGMPA.
@@ -73,7 +85,7 @@ function buddyform_moderation_dependency() {
 			'is_automatic' => true,
 			// Automatically activate plugins after installation or not.
 		);
-		
+
 		// Call the tgmpa function to register the required plugins
 		tgmpa( $plugins, $config );
 	}
@@ -83,7 +95,7 @@ function buddyform_moderation_dependency() {
 // Create a helper function for easy SDK access.
 function bfmod_fs() {
 	global $bfmod_fs;
-	
+
 	if ( ! isset( $bfmod_fs ) ) {
 		// Include Freemius SDK.
 		if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
@@ -93,27 +105,34 @@ function bfmod_fs() {
 			// Try to load SDK from premium parent plugin folder.
 			require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
 		}
-		
+
 		$bfmod_fs = fs_dynamic_init( array(
-			'id'             => '409',
-			'slug'           => 'buddyforms-review',
-			'type'           => 'plugin',
-			'public_key'     => 'pk_b92e3b1876e342874bdc7f6e80d05',
-			'is_premium'     => false,
-			'has_paid_plans' => false,
-			'parent'         => array(
+			'id'                  => '409',
+			'slug'                => 'buddyforms-review',
+			'type'                => 'plugin',
+			'public_key'          => 'pk_b92e3b1876e342874bdc7f6e80d05',
+			'is_premium'          => true,
+			'premium_suffix'      => 'Professional',
+			// If your addon is a serviceware, set this option to false.
+			'has_premium_version' => true,
+			'has_paid_plans'      => true,
+			'trial'               => array(
+				'days'               => 14,
+				'is_require_payment' => true,
+			),
+			'parent'              => array(
 				'id'         => '391',
 				'slug'       => 'buddyforms',
 				'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
 				'name'       => 'BuddyForms',
 			),
-			'menu'           => array(
+			'menu'                => array(
 				'slug'    => 'buddyforms',
 				'support' => false,
-			),
+			)
 		) );
 	}
-	
+
 	return $bfmod_fs;
 }
 
@@ -124,7 +143,7 @@ function bfmod_fs_is_parent_active_and_loaded() {
 
 function bfmod_fs_is_parent_active() {
 	$active_plugins_basenames = get_option( 'active_plugins' );
-	
+
 	foreach ( $active_plugins_basenames as $plugin_basename ) {
 		if ( 0 === strpos( $plugin_basename, 'buddyforms/' ) ||
 		     0 === strpos( $plugin_basename, 'buddyforms-premium/' )
@@ -132,7 +151,7 @@ function bfmod_fs_is_parent_active() {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -146,3 +165,15 @@ if ( bfmod_fs_is_parent_active_and_loaded() ) {
 	// Even though the parent is not activated, execute add-on for activation / uninstall hooks.
 	bfmod_fs();
 }
+
+
+function buddyforms_modertaion_scripts() {
+	//
+	// todo: This is a hack to avoid issues with the jQuery in the form. Its conflicting if loaded in the loop. buddyforms/includes/resources/pfbc/Form.php Line 463
+	//
+	// @gfirem Why not always load jquery in the core?
+
+	wp_enqueue_script("jquery");
+}
+
+add_action( 'wp_enqueue_scripts', 'buddyforms_modertaion_scripts' );
