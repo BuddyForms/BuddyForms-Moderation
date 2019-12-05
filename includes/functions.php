@@ -43,7 +43,7 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 
 }
 
-add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2 );
+add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 50, 2 );
 function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;
 
