@@ -149,6 +149,9 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 	}
 
 	$current_user_id = get_current_user_id();
+	if ( ! empty( $buddyforms[ $form_slug ] ) ) {
+		return;
+	}
 	$post_type       = $buddyforms[ $form_slug ]['post_type'];
 	$the_author_id   = apply_filters( 'buddyforms_the_author_id', $current_user_id, $form_slug, $post_id );
 
