@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 5.2
-Stable tag: 1.4.1
+Tested up to: 5.3
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,11 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.2 - 10 Dec 2019 =
+* Improved compatibility with WP 5.3
+* Fixed the hook priority for the post list actions.
+* Improved compatibility with the last version of BuddyForms.
+
 = 1.4.1 08 Oct 2019 =
 * Create new features and functionality
 * Changed from free only to a free/ pro model to generate more development time for the extension.

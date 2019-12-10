@@ -43,7 +43,7 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 
 }
 
-add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 10, 2 );
+add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 50, 2 );
 function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;
 
@@ -149,6 +149,9 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 	}
 
 	$current_user_id = get_current_user_id();
+	if ( ! empty( $buddyforms[ $form_slug ] ) ) {
+		return;
+	}
 	$post_type       = $buddyforms[ $form_slug ]['post_type'];
 	$the_author_id   = apply_filters( 'buddyforms_the_author_id', $current_user_id, $form_slug, $post_id );
 
