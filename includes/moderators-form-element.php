@@ -147,7 +147,7 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
 		$form_slug = get_post_meta( $post_id, '_bf_form_slug' );
 
-		$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, 'Just a test', '', $form_slug ) );
+		$global_error->add_error( new BuddyForms_Error( 'buddyforms_form_' . $form_slug, 'Just a test', '', $form_slug ) );
 
 
 		// Create a editors array to store all editors.
@@ -201,7 +201,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 					if ( ! isset( $_POST['buddyforms_moderators'] ) ) {
 						$valid                    = false;
 						$validation_error_message = __( 'Please select a Moderator!', 'buddyforms' ) . $form_field['validation_min'];
-						$global_error->add_error( new BF_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
+						$global_error->add_error( new BuddyForms_Error( 'buddyforms_form_' . $form_slug, $validation_error_message, $form_field['name'] ) );
 
 					}
 
