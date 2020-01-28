@@ -69,6 +69,9 @@ function BuddyFormsModeration() {
     }
 
     return {
+        onFormActionClick: function(e){
+          return onFormActionClick(e);
+        },
         init: function () {
             BuddyFormsHooks.addAction('buddyforms:submit', onSubmit, 10);
             BuddyFormsHooks.addAction('bf-moderation:submit:enable', enableModerationFormSubmit);
