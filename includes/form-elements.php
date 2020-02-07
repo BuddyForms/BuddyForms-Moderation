@@ -90,21 +90,25 @@ function buddyforms_moderation_form_action_elements($form, $form_slug, $post_id)
         'class' => 'bf-submit bf-moderation',
         'name' => 'awaiting-review',
         'data-target' => $form_slug,
+        'data-status' => 'awaiting-review',
     ));
     $submit_button = new Element_Button($buddyforms[$form_slug]['moderation']['label_submit'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'edit-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'edit-draft',
     ));
     $submit_save_button = new Element_Button($buddyforms[$form_slug]['moderation']['label_save'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'edit-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'edit-draft',
     ));
     $submit_new_draft_button = new Element_Button($buddyforms[$form_slug]['moderation']['label_new_draft'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'new-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'new-draft',
     ));
     $label_no_edit = new Element_HTML('<p>' . $buddyforms[$form_slug]['moderation']['label_no_edit'] . '</p>');
 
@@ -225,21 +229,25 @@ function buddyforms_moderation_ajax_process_edit_post_json_response($json_args)
         'class' => 'bf-submit bf-moderation',
         'name' => 'awaiting-review',
         'data-target' => $form_slug,
+	    'data-status' => 'awaiting-review',
     ));
     $label_submit = new Element_Button($buddyforms[$form_slug]['moderation']['label_submit'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'edit-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'edit-draft',
     ));
     $label_save = new Element_Button($buddyforms[$form_slug]['moderation']['label_save'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'edit-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'edit-draft',
     ));
     $label_new_draft = new Element_Button($buddyforms[$form_slug]['moderation']['label_new_draft'], 'submit', array(
         'class' => 'bf-submit bf-moderation',
         'name' => 'new-draft',
         'data-target' => $form_slug,
+	    'data-status' => 'new-draft',
     ));
     $label_no_edit = new Element_HTML('<p>' . $buddyforms[$form_slug]['moderation']['label_no_edit'] . '</p>');
 

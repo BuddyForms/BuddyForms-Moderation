@@ -46,7 +46,7 @@ function BuddyFormsModeration() {
         }
     }
 
-    function onSubmit(form) {
+    function onSubmit([form, event]) {
         BuddyFormsHooks.doAction('bf-moderation:submit:disable');
         var elementStatus = jQuery(form).find('input[name="status"]');
         var clicked = jQuery(form).data('submit-clicked');
@@ -58,13 +58,14 @@ function BuddyFormsModeration() {
 
     function onFormActionClickWrapper(event) {
         var target = jQuery(this).data('target');
+        var status = jQuery(this).data('status');
         var targetForms = jQuery('form#buddyforms_form_' + target);
-        BuddyFormsHooks.doAction('bf-moderation:submit:click', [targetForms, target, event]);
+        BuddyFormsHooks.doAction('bf-moderation:submit:click', [targetForms, target, status, event]);
     }
 
     function onFormActionClick(args) {
         var targetForms = args[0];
-        var status = jQuery(this).attr('name');
+        var status = args[2];
         targetForms.data('submit-clicked', status);
     }
 
@@ -77,7 +78,7 @@ function BuddyFormsModeration() {
             BuddyFormsHooks.addAction('bf-moderation:submit:enable', enableModerationFormSubmit);
             BuddyFormsHooks.addAction('bf-moderation:submit:disable', disableModerationFormSubmit);
             jQuery(document.body).on('click', '.buddyforms_moderators_approve', buddyforms_moderators_approve);
-            jQuery(document.body).on('click', 'form[id^="buddyforms_form_"] button[type="submit"].bf-moderation', onFormActionClickWrapper);
+            jQuery(document.body).on('click', 'button[type="submit"].bf-moderation', onFormActionClickWrapper);
             BuddyFormsHooks.addAction('bf-moderation:submit:click', onFormActionClick);
         }
     }
