@@ -7,7 +7,7 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 	global $the_lp_query;
 	$tmp = '';
 
-	$bfmod_fs = bfmod_fs();
+	$bfmod_fs = buddyforms_moderation_freemius();
 	if ( ! empty( $bfmod_fs ) && $bfmod_fs->is__premium_only() ) {
 		if ( $bfmod_fs->is_plan( 'professional', true ) ) {
 			ob_start();
