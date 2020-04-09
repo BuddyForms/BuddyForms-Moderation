@@ -220,13 +220,16 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 add_action( 'buddyforms_the_loop_after_actions', 'buddyforms_moderators_the_loop_actions' );
 function buddyforms_moderators_the_loop_actions( $post_id ) {
 
-	$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
-	$form_slug  = get_post_meta( $post_id, '_bf_form_slug', true );
-
-	if ( in_array( $post_id, $user_posts ) ) {
+	$user_posts                  = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
+	$form_slug                   = get_post_meta( $post_id, '_bf_form_slug', true );
+	$post_status                 = get_post_status( $post_id );
+	$user_is_moderation          = in_array( $post_id, $user_posts );
+	$is_post_awaiting_moderation = $post_status === 'awaiting-review';
+	$can_see_all_post            = bf_user_can( get_current_user_id(), 'buddyforms_' . $form_slug . '_all', array(), $form_slug );
+	if ( $user_is_moderation || ( $is_post_awaiting_moderation && $can_see_all_post ) ) {
 		echo '<ul class="edit_links">';
 		echo '<li>';
-		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve" href="#"><span aria-label="' . __( 'Approve', 'buddyforms' ) . '" title="' . __( 'Approve', 'buddyforms' ) . '" class="dashicons dashicons-trash"> </span> ' . __( 'Approve', 'buddyforms' ) . '</a></li>';
+		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve" href="#">' . __( 'Approve', 'buddyforms' ) . '</a></li>';
 		echo '</li>';
 		echo '<li>';
 		buddyforms_moderators_reject_post( $post_id, $form_slug );
@@ -255,7 +258,6 @@ function buddyforms_moderators_ajax_approve_post() {
 		'ID'          => $post_id,
 		'post_status' => 'approved',
 	) );
-
 
 	// Remove the post from the user posts taxonomy
 	wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts' );
