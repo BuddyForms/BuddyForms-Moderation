@@ -111,8 +111,6 @@ function buddyforms_reject_post_as_moderator() {
 	if ( ! isset( $_POST['post_id'] ) ) {
 		echo __( 'There has been an error sending the message!', 'buddyforms' );
 		die();
-
-		return;
 	}
 
 	$post_id = $_POST['post_id'];

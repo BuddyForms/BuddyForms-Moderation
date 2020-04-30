@@ -136,7 +136,7 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 				}
 			}
 			if ( $post_status == 'publish' ) {
-				$form->addElement( $submit_moderation_button );
+				$form->addElement( $submit_new_draft_button );
 			}
 		}
 	} else {
@@ -248,34 +248,38 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 	$post_status = get_post_status( $post_id ); // Get the Posts Status
 
-	// If post_id is 0 we have a new posts
-	if ( $post_status === 'auto-draft' ) {
+	if ( is_user_logged_in() ) {
+		// If post_id is 0 we have a new posts
+		if ( $post_status === 'auto-draft' ) {
 
-		if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
-			$formelements[] = $label_moderation;
-		} else {
-			$formelements[] = $label_save;
-			$formelements[] = $label_moderation;
-		}
-
-	} else {
-		// This is an existing post
-		$post_type = get_post_type( $post_id ); // Get the Posts
-		// Check Post Status
-		if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
-			$formelements[] = $label_save;
-			$formelements[] = $label_moderation;
-		}
-		if ( $post_status == 'awaiting-review' ) {
-			if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-				$formelements[] = $label_no_edit;
+			if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
+				$formelements[] = $label_moderation;
 			} else {
+				$formelements[] = $label_save;
+				$formelements[] = $label_moderation;
+			}
+
+		} else {
+			// This is an existing post
+			$post_type = get_post_type( $post_id ); // Get the Posts
+			// Check Post Status
+			if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
+				$formelements[] = $label_save;
+				$formelements[] = $label_moderation;
+			}
+			if ( $post_status == 'awaiting-review' ) {
+				if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
+					$formelements[] = $label_no_edit;
+				} else {
+					$formelements[] = $label_new_draft;
+				}
+			}
+			if ( $post_status == 'publish' ) {
 				$formelements[] = $label_new_draft;
 			}
 		}
-		if ( $post_status == 'publish' ) {
-			$formelements[] = $label_new_draft;
-		}
+	} else {
+		$formelements[] = $label_submit;
 	}
 
 	ob_start();
@@ -290,6 +294,17 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 	return $json_args;
 
 }
+
+function buddyforms_remove_private_prefix( $title, $post_id ) {
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
+	if ( ! empty( $form_slug ) ) {
+		$title = str_replace( 'Private: ', '', $title );
+	}
+
+	return $title;
+}
+
+add_filter( 'the_title', 'buddyforms_remove_private_prefix', 10, 2 );
 
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 

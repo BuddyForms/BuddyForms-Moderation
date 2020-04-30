@@ -1,0 +1,58 @@
+version: '2'
+
+services:
+  codeception:
+    image: gravityflow/codeception:latest
+    #build: .
+    depends_on:
+      - wordpress
+      - browserstacklocal
+    environment:
+      - GITHUB_TOKEN=$GITHUB_TOKEN
+      - GF_KEY=$GF_KEY
+      - BROWSERSTACK_USER=$BROWSERSTACK_USER
+      - BROWSERSTACK_KEY=$BROWSERSTACK_KEY
+      - CIRCLE_NODE_INDEX=$CIRCLE_NODE_INDEX
+    volumes:
+      - ./:/project
+      - wp-core:/wp-core
+      - ./:/wp-core/wp-content/plugins/gravityflow
+    entrypoint: /docker-entrypoint.sh
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - mysql
+      - chrome
+    volumes:
+      - wp-core:/var/www/html
+      - ./:/var/www/html/wp-content/plugins/gravityflow
+    ports:
+      - 8080:80
+      - 80:80
+    environment:
+      WORDPRESS_DB_PASSWORD: wordpress
+
+  mysql:
+    image: mariadb
+    environment:
+       MYSQL_ROOT_PASSWORD: wordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+  chrome:
+    environment:
+      - DBUS_SESSION_BUS_ADDRESS=/dev/null
+    volumes:
+      - /dev/shm:/dev/shm
+    image: selenium/standalone-chrome-debug:3.141.59-dubnium
+    ports:
+      - "4444:4444"
+      - '5900:5900'
+
+  browserstacklocal:
+    image: mtsmfm/browserstacklocal
+    command: --key $BROWSERSTACK_KEY --local-identifier gravityflow-$CIRCLE_NODE_INDEX
+
+volumes:
+  wp-core:

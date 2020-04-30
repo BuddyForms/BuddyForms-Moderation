@@ -222,11 +222,8 @@ function buddyforms_moderators_the_loop_actions( $post_id ) {
 
 	$user_posts                  = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
 	$form_slug                   = get_post_meta( $post_id, '_bf_form_slug', true );
-	$post_status                 = get_post_status( $post_id );
 	$user_is_moderation          = in_array( $post_id, $user_posts );
-	$is_post_awaiting_moderation = $post_status === 'awaiting-review';
-	$can_see_all_post            = bf_user_can( get_current_user_id(), 'buddyforms_' . $form_slug . '_all', array(), $form_slug );
-	if ( $user_is_moderation || ( $is_post_awaiting_moderation && $can_see_all_post ) ) {
+	if ( $user_is_moderation ) {
 		echo '<ul class="edit_links">';
 		echo '<li>';
 		echo '<a title="' . __( 'Approve', 'buddyforms' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve" href="#">' . __( 'Approve', 'buddyforms' ) . '</a></li>';
