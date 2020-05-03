@@ -60,6 +60,15 @@ function bf_moderation_includes() {
 
 	// Hook required plugins function to the tgmpa_register action
 	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
+
+	add_action( 'plugins_loaded', 'buddyforms_moderation_load_plugin_textdomain' );
+}
+
+/**
+ * Load the textdomain for the plugin
+ */
+function buddyforms_moderation_load_plugin_textdomain() {
+	load_plugin_textdomain( 'buddyforms-moderation', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 function buddyforms_moderation_error_log( $message ) {
@@ -215,7 +224,7 @@ function bfmod_fs_init() {
 		// Signal that the add-on's SDK was initiated.
 		do_action( 'bfmod_fs_loaded' );
 	} else {
-		add_action( 'admin_notices', 'buddyforms_moderation_need_buddyforms');
+		add_action( 'admin_notices', 'buddyforms_moderation_need_buddyforms' );
 	}
 }
 
