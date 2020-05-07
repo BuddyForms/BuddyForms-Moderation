@@ -692,3 +692,41 @@ function buddyforms_moderation_process_shortcode( $string, $post_id, $form_slug 
 
 	return apply_filters( 'buddyforms_contact_author_process_shortcode', $string, $post_id, $form_slug );
 }
+
+/**
+ * Get the html for the helper to insert shortcode inside the textarea
+ *
+ * @param $buddyform
+ * @param $element_name
+ *
+ * @return string
+ * @since 1.4.5
+ */
+function buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name ) {
+	$all_shortcodes       = array();
+	$available_shortcodes = buddyforms_available_shortcodes( $buddyform['slug'], $element_name );
+	if ( ! empty( $buddyform['form_fields'] ) ) {
+		foreach ( $buddyform['form_fields'] as $form_field ) {
+			if ( ! in_array( $form_field['type'], buddyforms_unauthorized_shortcodes_field_type( $buddyform['slug'], $element_name ) ) ) {
+				$all_shortcodes[] = '[' . $form_field['slug'] . ']';
+			}
+		}
+	}
+	$shortcodes_html = '';
+	if ( ! empty( $all_shortcodes ) ) {
+		$all_shortcodes  = array_merge( $all_shortcodes, $available_shortcodes );
+		$shortcodes_html = buddyforms_get_shortcode_string( $all_shortcodes, $element_name );
+	}
+
+	return $shortcodes_html;
+}
+
+function buddyforms_moderation_unauthorized_shortcodes_field_type($fields, $form_slug, $element_name){
+	$moderation_field    = buddyforms_get_form_field_by( $form_slug, 'moderators', 'type' );
+	if(!empty($moderation_field)){
+		$fields = array_merge($fields, array('moderators'));
+	}
+	return $fields;
+}
+
+add_filter('buddyforms_unauthorized_shortcodes_field_type', 'buddyforms_moderation_unauthorized_shortcodes_field_type', 10, 3);

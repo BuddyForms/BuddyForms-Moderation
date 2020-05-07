@@ -77,6 +77,52 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		'shortDesc' => __( 'Filter the moderators that will have access to post send to moderate in the frontend. You can select one role or all users.', 'buddyforms-moderation' )
 	) );
 
+
+	$element_name    = 'buddyforms_options[moderation][reject_subject]';
+	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
+
+	$reject_subject = ! empty( $buddyform['moderation']['reject_subject'] ) ? $buddyform['moderation']['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-moderation' );
+	$form_setup[]   = new Element_Textbox( '<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+		array(
+			'value'     => $reject_subject,
+			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+		)
+	);
+
+	$element_name    = 'buddyforms_options[moderation][reject_message]';
+	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
+
+	$reject_message = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post <strong>[published_post_title]</strong> has ben rejected.', 'buddyforms-moderation' );
+	$form_setup[]   = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+		array(
+			'value'     => $reject_message,
+			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+		)
+	);
+
+	$element_name    = 'buddyforms_options[moderation][approve_subject]';
+	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
+
+	$approve_subject = ! empty( $buddyform['moderation']['approve_subject'] ) ? $buddyform['moderation']['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
+	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+		array(
+			'value'     => $approve_subject,
+			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+		)
+	);
+
+	$element_name    = 'buddyforms_options[moderation][approve_message]';
+	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
+
+	$approve_message = ! empty( $buddyform['moderation']['approve_message'] ) ? $buddyform['moderation']['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
+	$form_setup[]    = new Element_Textarea( '<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+		array(
+			'value'     => $approve_message,
+			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+		)
+	);
+
+
 	if ( ! isset( $field_id ) ) {
 		$field_id = $mod5 = substr( md5( time() * rand() ), 0, 10 );
 	}
@@ -164,7 +210,6 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 
 	return $form;
 }
-
 
 
 /**

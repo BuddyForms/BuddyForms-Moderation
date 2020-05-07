@@ -25,11 +25,17 @@ function buddyforms_moderators_select( $elements_select_options ) {
 
 add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_select', 1, 2 );
 
-/*
- * Create the new CPUBLISHING Form Builder Form Elements
+
+/**
+ * Create the new Builder Form Elements
  *
+ * @param $form_fields
+ * @param $form_slug
+ * @param $field_type
+ * @param $field_id
+ *
+ * @return mixed
  */
-add_filter( 'buddyforms_form_element_add_field', 'buddyforms_moderators_form_builder_form_elements', 1, 5 );
 function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_slug, $field_type, $field_id ) {
 	global $buddyforms;
 
@@ -75,6 +81,7 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 	return $form_fields;
 }
 
+add_filter( 'buddyforms_form_element_add_field', 'buddyforms_moderators_form_builder_form_elements', 1, 5 );
 
 /**
  * Display the new Moderator Fields in the frontend form
@@ -179,11 +186,12 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 
 add_filter( 'buddyforms_create_edit_form_display_element', 'buddyforms_moderators_frontend_form_elements', 1, 2 );
 
-/*
+/**
  * Save Fields
  *
+ * @param $customfield
+ * @param $post_id
  */
-add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_meta', 10, 2 );
 function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
 	$global_error = ErrorHandler::get_instance();
@@ -225,6 +233,8 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 		}
 	}
 }
+
+add_action( 'buddyforms_update_post_meta', 'buddyforms_moderators_update_post_meta', 10, 2 );
 
 
 add_filter( 'buddyforms_form_custom_validation', 'buddyforms_moderators_server_validation', 2, 2 );
@@ -361,10 +371,13 @@ function buddyforms_moderators_ajax_approve_post() {
 			} else {
 				$from_name = $from_email;
 			}
-			$email_body = __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
-			$email_body = buddyforms_moderation_process_shortcode( $email_body, $post_id, $form_slug );
-			$subject    = __( 'Your submission got Approve', 'buddyforms-moderation' );
-			$result     = buddyforms_email( $mail_to, $subject, $from_name, $from_email, $email_body, array(), array(), $form_slug, $post_id );
+			$moderation_options = buddyforms_get_form_option( $form_slug, 'moderation' );
+			$subject            = ! empty( $moderation_options['approve_subject'] ) ? $moderation_options['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
+			$subject            = buddyforms_moderation_process_shortcode( $subject, $post_id, $form_slug );
+			$email_body         = ! empty( $moderation_options['approve_message'] ) ? $moderation_options['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
+			$email_body         = buddyforms_moderation_process_shortcode( $email_body, $post_id, $form_slug );
+			$email_body         = nl2br( $email_body );
+			$result             = buddyforms_email( $mail_to, $subject, $from_name, $from_email, $email_body, array(), array(), $form_slug, $post_id );
 			if ( ! $result ) {
 				buddyforms_moderation_error_log( 'Error sending the approve email for the post ' . $post_id );
 			}
