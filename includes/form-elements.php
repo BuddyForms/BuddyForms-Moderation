@@ -72,9 +72,9 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	if ( isset( $buddyform['moderation']['frontend-moderators'] ) ) {
 		$frontend_moderators = $buddyform['moderation']['frontend-moderators'];
 	}
-	$form_setup[]  = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
-		'value'         => $frontend_moderators,
-		'shortDesc'     => __( 'Filter the moderators that will have access to post send to moderate in the frontend. You can select one role or all users.', 'buddyforms-moderation' )
+	$form_setup[] = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
+		'value'     => $frontend_moderators,
+		'shortDesc' => __( 'Filter the moderators that will have access to post send to moderate in the frontend. You can select one role or all users.', 'buddyforms-moderation' )
 	) );
 
 	if ( ! isset( $field_id ) ) {
@@ -103,64 +103,59 @@ add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_meta
 function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id ) {
 	global $buddyforms;
 
-	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+
+	if ( empty( $is_moderation_enabled ) ) {
 		return $form;
 	}
 
-	$submit_moderation_button = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'awaiting-review',
-		'data-target' => $form_slug,
-		'data-status' => 'awaiting-review',
-	) );
-	$submit_button            = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'edit-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'edit-draft',
-	) );
-	$submit_save_button       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'edit-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'edit-draft',
-	) );
-	$submit_new_draft_button  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'new-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'new-draft',
-	) );
-	$label_no_edit            = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
+	$moderation_logic = buddyforms_get_form_option( $form_slug, 'moderation_logic' );
+
+	$moderation = buddyforms_get_form_option( $form_slug, 'moderation' );
+
+	$submit_moderation_button = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_review'] ), 'awaiting-review' );
+	$submit_button            = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_submit'] ), 'edit-draft' );
+	$submit_save_button       = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_save'] ), 'edit-draft' );
+	$submit_new_draft_button  = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
+
+	$label_no_edit = new Element_HTML( '<div style="text-align: center; padding: 1rem;"><p>' . wp_kses_post( $moderation['label_no_edit'] ) . '</p></div>' );
 
 	if ( is_user_logged_in() ) {
 		// If post_id is 0 we have a new posts
 		$post_status = get_post_status( $post_id ); // Get the Posts status
-		if ( $post_status === 'auto-draft' ) {
-			if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
+		if ( 'auto-draft' === $post_status ) {//New post
+			if ( 'hidden_draft' == $moderation_logic ) {
 				$form->addElement( $submit_moderation_button );
 			} else {
 				$form->addElement( $submit_save_button );
 				$form->addElement( $submit_moderation_button );
 			}
-
-		} else {
-			// This is an existing post
-			$post_type = get_post_type( $post_id ); // Get the Posts type
-			// Check Post Status
-			if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
-				$form->addElement( $submit_save_button );
-				$form->addElement( $submit_moderation_button );
-			}
-			if ( $post_status == 'awaiting-review' ) {
-				if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
+		} else { //Existing posts
+			if ( 'one_draft' === $moderation_logic ) {
+				if ( 'awaiting-review' == $post_status ) {
 					$form->addElement( $label_no_edit );
 				} else {
-					$form->addElement( $submit_new_draft_button );
+					$form->addElement( $submit_save_button );
+					$form->addElement( $submit_moderation_button );
 				}
-			}
-			if ( $post_status == 'publish' ) {
-				$form->addElement( $submit_new_draft_button );
+			} else if ( 'hidden_draft' === $moderation_logic ) {
+				if ( 'awaiting-review' == $post_status ) {
+					$form->addElement( $label_no_edit );
+				} else {
+					$form->addElement( $submit_moderation_button );
+				}
+			} else if ( 'many_drafts' === $moderation_logic ) {
+				if ( 'awaiting-review' === $post_status || 'publish' === $post_status ) {
+					$parent_id = wp_get_post_parent_id( $post_id );
+					if ( empty( $parent_id ) ) {
+						$form->addElement( $submit_new_draft_button );
+					} else {
+						$form->addElement( $label_no_edit );
+					}
+				} else {
+					$form->addElement( $submit_save_button );
+					$form->addElement( $submit_moderation_button );
+				}
 			}
 		}
 	} else {
@@ -170,14 +165,7 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 	return $form;
 }
 
-/**
- * Include assets after buddyforms
- */
-function buddyforms_moderation_include_assets() {
-	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), '1.4.0' );
-}
 
-add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
 
 /**
  * Display the new Form Element in the Frontend Form
@@ -238,77 +226,75 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		return $json_args;
 	}
 
-	$form_slug = $_POST['form_slug'];
+	$form_slug = buddyforms_sanitize_slug( $_POST['form_slug'] );
 
-	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+
+	if ( empty( $is_moderation_enabled ) ) {
 		return $json_args;
 	}
 
-	$label_moderation = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_review'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'awaiting-review',
-		'data-target' => $form_slug,
-		'data-status' => 'awaiting-review',
-	) );
-	$label_submit     = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_submit'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'edit-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'edit-draft',
-	) );
-	$label_save       = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_save'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'edit-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'edit-draft',
-	) );
-	$label_new_draft  = new Element_Button( $buddyforms[ $form_slug ]['moderation']['label_new_draft'], 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => 'new-draft',
-		'data-target' => $form_slug,
-		'data-status' => 'new-draft',
-	) );
-	$label_no_edit    = new Element_HTML( '<p>' . $buddyforms[ $form_slug ]['moderation']['label_no_edit'] . '</p>' );
+	$moderation_logic = buddyforms_get_form_option( $form_slug, 'moderation_logic' );
+
+	if ( empty( $moderation_logic ) ) {
+		return $json_args;
+	}
+
+	$moderation = buddyforms_get_form_option( $form_slug, 'moderation' );
+
+	$label_moderation = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_review'] ), 'awaiting-review' );
+	$label_submit     = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_submit'] ), 'edit-draft' );
+	$label_save       = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_save'] ), 'edit-draft' );
+	$label_new_draft  = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
+
+	$label_no_edit = new Element_HTML( '<div style="text-align: center; padding: 1rem;"><p>' . wp_kses_post( $moderation['label_no_edit'] ) . '</p></div>' );
 
 	$post_status = get_post_status( $post_id ); // Get the Posts Status
 
 	if ( is_user_logged_in() ) {
 		// If post_id is 0 we have a new posts
-		if ( $post_status === 'auto-draft' ) {
-
-			if ( $buddyforms[ $form_slug ]['moderation_logic'] == 'hidden_draft' ) {
-				$formelements[] = $label_moderation;
+		if ( 'auto-draft' === $post_status ) {//New post
+			if ( 'hidden_draft' == $moderation_logic ) {
+				$form_elements[] = $label_moderation;
 			} else {
-				$formelements[] = $label_save;
-				$formelements[] = $label_moderation;
+				$form_elements[] = $label_save;
+				$form_elements[] = $label_moderation;
 			}
-
-		} else {
-			// This is an existing post
-			$post_type = get_post_type( $post_id ); // Get the Posts
-			// Check Post Status
-			if ( $post_status == 'edit-draft' || ( $post_status == 'auto-draft' && $post_type == 'product' ) || $post_status == 'draft' || $post_status == 'submitted' ) {
-				$formelements[] = $label_save;
-				$formelements[] = $label_moderation;
-			}
-			if ( $post_status == 'awaiting-review' ) {
-				if ( $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-					$formelements[] = $label_no_edit;
+		} else { //Existing posts
+			if ( 'one_draft' === $moderation_logic ) {
+				if ( 'awaiting-review' == $post_status ) {
+					$form_elements[] = $label_no_edit;
 				} else {
-					$formelements[] = $label_new_draft;
+					$form_elements[] = $label_save;
+					$form_elements[] = $label_moderation;
 				}
-			}
-			if ( $post_status == 'publish' ) {
-				$formelements[] = $label_new_draft;
+			} else if ( 'hidden_draft' === $moderation_logic ) {
+				if ( 'awaiting-review' == $post_status ) {
+					$form_elements[] = $label_no_edit;
+				} else {
+					$form_elements[] = $label_moderation;
+				}
+			} else if ( 'many_drafts' === $moderation_logic ) {
+				if ( 'awaiting-review' === $post_status || 'publish' === $post_status ) {
+					$parent_id = wp_get_post_parent_id( $post_id );
+					if ( empty( $parent_id ) ) {
+						$form_elements[] = $label_new_draft;
+					} else {
+						$form_elements[] = $label_no_edit;
+					}
+				} else {
+					$form_elements[] = $label_save;
+					$form_elements[] = $label_moderation;
+				}
 			}
 		}
 	} else {
-		$formelements[] = $label_submit;
+		$form_elements[] = $label_submit;
 	}
 
 	ob_start();
-	foreach ( $formelements as $key => $formelement ) {
-		$formelement->render();
+	foreach ( $form_elements as $key => $form_element ) {
+		$form_element->render();
 	}
 	$field_html = ob_get_contents();
 	ob_end_clean();
@@ -333,8 +319,13 @@ add_filter( 'the_title', 'buddyforms_remove_private_prefix', 10, 2 );
 add_filter( 'buddyforms_ajax_process_edit_post_json_response', 'buddyforms_moderation_ajax_process_edit_post_json_response', 10, 1 );
 
 function bf_moderation_post_control_args( $args ) {
+	if ( ! isset( $_POST['status'] ) ) {
+		return $args;
+	}
 
-	if ( $_POST['status'] == 'new-draft' ) {
+	$post_status = sanitize_text_field( $_POST['status'] );
+
+	if ( $post_status == 'new-draft' ) {
 		$args['action'] = 'new-post';
 		if ( $args['post_id'] != 0 ) {
 			$args['post_parent'] = $args['post_id'];
@@ -346,7 +337,7 @@ function bf_moderation_post_control_args( $args ) {
 		}
 	}
 
-	if ( $_POST['status'] == 'awaiting-review' ) {
+	if ( $post_status == 'awaiting-review' ) {
 		$args['post_status'] = 'awaiting-review';
 	}
 
@@ -354,7 +345,6 @@ function bf_moderation_post_control_args( $args ) {
 }
 
 add_filter( 'buddyforms_update_post_args', 'bf_moderation_post_control_args', 10, 1 );
-
 
 function bf_moderation_create_edit_form_post_id( $post_id ) {
 	global $buddyforms;
@@ -364,7 +354,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	if ( ! $form_slug ) {
 		return $post_id;
 	}
-
+	//todo check if moderation is enabled or not
 	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
 		return $post_id;
 	}
@@ -387,7 +377,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 
 }
 
-add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
+//add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
 function bf_create_post_status_to_display( $query_args ) {
 	global $buddyforms;
@@ -422,8 +412,14 @@ function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 
 add_filter( 'buddyforms_post_status_css', 'bf_moderation_post_status_css', 10, 2 );
 
-
-add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
+/**
+ * New post status
+ *
+ * @param $post_status
+ * @param $form_slug
+ *
+ * @return mixed|string
+ */
 function buddyforms_moderation_create_edit_form_post_status( $post_status, $form_slug ) {
 	global $buddyforms;
 
@@ -431,6 +427,7 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 		return $post_status;
 	}
 
+	//todo hay que revisar que pasa aqui y pq objetivo tiene esto
 	if ( isset( $_POST['status'] ) ) {
 		if ( $_POST['status'] == 'submitted' || $_POST['status'] == 'publish' ) {
 			return 'edit-draft';
@@ -441,5 +438,7 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 	}
 
 	return $post_status;
-
 }
+
+add_filter( 'buddyforms_create_edit_form_post_status', 'buddyforms_moderation_create_edit_form_post_status', 2, 101 );
+

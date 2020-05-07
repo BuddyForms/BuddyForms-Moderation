@@ -4,10 +4,11 @@ function BuddyFormsModeration() {
         if (confirm('Approve this Post')) { // todo need il18n
             jQuery.ajax({
                 type: 'POST',
-                url: buddyformsGlobal.admin_url,
+                url: buddyformsModeration.ajax,
                 data: {
                     "action": "buddyforms_moderators_ajax_approve_post",
-                    "post_id": post_id
+                    "post_id": post_id,
+                    "nonce": buddyformsModeration.nonce
                 },
                 success: function (data) {
                     if (isNaN(data)) {

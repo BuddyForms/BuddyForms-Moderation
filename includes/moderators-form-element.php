@@ -257,7 +257,6 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 }
 
 
-add_action( 'buddyforms_the_loop_after_actions', 'buddyforms_moderators_the_loop_actions' );
 function buddyforms_moderators_the_loop_actions( $post_id ) {
 	$post_status = get_post_status( $post_id );
 	if ( $post_status !== 'awaiting-review' ) {
@@ -295,31 +294,90 @@ function buddyforms_moderators_the_loop_actions( $post_id ) {
 	}
 }
 
+add_action( 'buddyforms_the_loop_after_actions', 'buddyforms_moderators_the_loop_actions' );
+
+/**
+ * Include assets after buddyforms
+ */
+function buddyforms_moderation_include_assets() {
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), '1.4.0' );
+	wp_localize_script( 'buddyforms-moderation', 'buddyformsModeration', array(
+		'ajax'  => admin_url( 'admin-ajax.php' ),
+		'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
+	) );
+}
+
+add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
+
 add_action( 'wp_ajax_buddyforms_moderators_ajax_approve_post', 'buddyforms_moderators_ajax_approve_post' );
 function buddyforms_moderators_ajax_approve_post() {
-	global $current_user, $buddyforms;
-	$current_user = wp_get_current_user();
+	try {
+		if ( ! ( is_array( $_POST ) && defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			die();
+		}
 
-	$post_id  = intval( $_POST['post_id'] );
-	$the_post = get_post( $post_id );
+		if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) ) {
+			die();
+		}
+		if ( ! wp_verify_nonce( $_POST['nonce'], __DIR__ . 'buddyforms_moderation' ) ) {
+			die();
+		}
 
-	$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
-	if ( ! $form_slug ) {
-		_e( 'You are not allowed to delete this entry! What are you doing here?', 'buddyforms-moderation' );
-		die();
+		if ( ! isset( $_POST['post_id'] ) ) {
+			echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
+			die();
+		}
+
+		global $current_user, $buddyforms;
+		$current_user = wp_get_current_user();
+
+		$post_id = intval( $_POST['post_id'] );
+
+		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
+		if ( ! $form_slug ) {
+			_e( 'You are not allowed to delete this entry! What are you doing here?', 'buddyforms-moderation' );
+			die();
+		}
+
+		$approve = wp_update_post( array(
+			'ID'          => $post_id,
+			'post_status' => 'approved',
+		) );
+
+		if ( ! is_wp_error( $approve ) ) {
+			$post      = get_post( $post_id );
+			$user_info = get_userdata( $post->post_author );
+
+			$mail_to        = $user_info->user_email;
+			$moderator_user = get_userdata( get_current_user_id() );
+			$from_email     = $moderator_user->user_email;
+			$from_name      = $moderator_user->user_firstname;
+			$from_last      = $moderator_user->user_lastname;
+
+			if ( ! empty( $from_name ) ) {
+				if ( ! empty( $from_last ) ) {
+					$from_name .= ' ' . $from_last;
+				}
+			} else {
+				$from_name = $from_email;
+			}
+			$email_body = __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
+			$email_body = buddyforms_moderation_process_shortcode( $email_body, $post_id, $form_slug );
+			$subject    = __( 'Your submission got Approve', 'buddyforms-moderation' );
+			$result     = buddyforms_email( $mail_to, $subject, $from_name, $from_email, $email_body, array(), array(), $form_slug, $post_id );
+			if ( ! $result ) {
+				buddyforms_moderation_error_log( 'Error sending the approve email for the post ' . $post_id );
+			}
+		}
+
+		// Remove the post from the user posts taxonomy
+		wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts' );
+
+		// Remove the user from the post editors
+		wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators' );
+
+	} catch ( Exception $ex ) {
+		buddyforms_moderation_error_log( $ex->getMessage() );
 	}
-
-	$approve = wp_update_post( array(
-		'ID'          => $post_id,
-		'post_status' => 'approved',
-	) );
-
-	// Remove the post from the user posts taxonomy
-	wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts' );
-
-	// Remove the user from the post editors
-	wp_remove_object_terms( $post_id, strval( get_current_user_id() ), 'buddyforms_moderators' );
-
-
 	die();
 }

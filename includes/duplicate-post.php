@@ -71,17 +71,19 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
 	 * if post data exists, create the post duplicate
 	 */
 	if ( isset( $post ) && $post != null ) {
-		$args = array(
+		$post_title   = ! empty( $_POST['buddyforms_form_title'] ) ? sanitize_title( $_POST['buddyforms_form_title'] ) : $post->post_title;
+		$post_content = ! empty( $_POST['buddyforms_form_content'] ) ? sanitize_textarea_field( $_POST['buddyforms_form_content'] ) : $post->post_content;
+		$args         = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
 			'post_author'    => $new_post_author,
-			'post_content'   => $post->post_content,
+			'post_content'   => $post_content,
 			'post_excerpt'   => $post->post_excerpt,
 			'post_name'      => $post->post_name,
 			'post_parent'    => $post->ID,
 			'post_password'  => $post->post_password,
 			'post_status'    => 'edit-draft',
-			'post_title'     => $post->post_title,
+			'post_title'     => $post_title,
 			'post_type'      => $post->post_type,
 			'to_ping'        => $post->to_ping,
 			'menu_order'     => $post->menu_order

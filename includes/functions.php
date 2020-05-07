@@ -40,7 +40,36 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 	}
 
 	wp_reset_query();
+}
 
+/**
+ * Check if moderation is enabled
+ *
+ * @param $form_slug
+ *
+ * @return bool
+ */
+function buddyforms_moderation_is_enabled( $form_slug ) {
+	$moderation_logic = buddyforms_get_form_option( $form_slug, 'moderation_logic' );
+
+	return ! empty( $moderation_logic ) && $moderation_logic !== 'default';
+}
+
+/**
+ * Get moderation Logic. Return false if is disabled;
+ *
+ * @param $form_slug
+ *
+ * @return bool|string
+ */
+function buddyforms_moderation_get_logic( $form_slug ) {
+	$moderation_logic = buddyforms_get_form_option( $form_slug, 'moderation_logic' );
+	$logic            = false;
+	if ( ! empty( $moderation_logic ) && $moderation_logic !== 'default' ) {
+		$logic = $moderation_logic;
+	}
+
+	return $logic;
 }
 
 add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 50, 2 );
@@ -504,9 +533,19 @@ function buddyforms_moderators_get_forms() {
 }
 
 function buddyforms_moderators_avoid_edit_moderation_post( $continue, $form_slug, $post_id ) {
+	if ( ! is_user_logged_in() ) {
+		return $continue;
+	}
+
 	$post = get_post( $post_id );
 
-	if ( $post->post_status === 'awaiting-review' ) {
+	$moderation_option = buddyforms_get_form_option( $form_slug, 'moderation_logic' );
+
+	if ( empty( $moderation_option ) ) {
+		return $continue;
+	}
+
+	if ( $post->post_status === 'awaiting-review' && $moderation_option !== 'many_drafts' ) {
 		return false;
 	}
 
@@ -571,3 +610,85 @@ function buddyforms_moderation_get_forced_moderator_role_by_form_slug( $form_slu
 	return $forced_role;
 }
 
+/**
+ * Return a form button
+ *
+ * @param $form_slug
+ * @param $label
+ * @param $status
+ *
+ * @return Element_Button
+ */
+function buddyforms_moderation_submit_button( $form_slug, $label, $status ) {
+	return new Element_Button( $label, 'submit', array(
+		'class'       => 'bf-submit bf-moderation',
+		'name'        => $status,
+		'data-target' => $form_slug,
+		'data-status' => $status,
+	) );
+}
+
+function buddyforms_moderation_process_shortcode( $string, $post_id, $form_slug ) {
+	if ( ! empty( $string ) && ! empty( $post_id ) && ! empty( $form_slug ) ) {
+		$post = get_post( $post_id );
+		if ( ! empty( $post ) ) {
+			$post_title = get_the_title( $post_id );
+			$postperma  = get_permalink( $post_id );
+
+			global $authordata;
+
+			if ( ! empty( $authordata ) ) {
+				$user_info = $authordata;
+			} else {
+				$user_id   = get_the_author_meta( 'ID' );
+				$user_info = get_userdata( $user_id );
+			}
+
+			$usernameauth = '';
+			if ( ! empty( $user_info->user_login ) ) {
+				$usernameauth = $user_info->user_login;
+			}
+			$user_nicename = '';
+			if ( ! empty( $user_info->user_nicename ) ) {
+				$user_nicename = $user_info->user_nicename;
+			}
+			$first_name = '';
+			if ( ! empty( $user_info->user_firstname ) ) {
+				$first_name = $user_info->user_firstname;
+			}
+			$last_name = '';
+			if ( ! empty( $user_info->user_lastname ) ) {
+				$last_name = $user_info->user_lastname;
+			}
+
+			$post_link_html = ! empty( $postperma ) ? sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $postperma ), $postperma ) : '';
+
+			$blog_title  = get_bloginfo( 'name' );
+			$siteurl     = get_bloginfo( 'wpurl' );
+			$siteurlhtml = "<a href='" . esc_url( $siteurl ) . "' target='_blank' >$siteurl</a>";
+
+			$short_codes_and_values = array(
+				'[user_login]'                => $usernameauth,
+				'[user_nicename]'             => $user_nicename,
+				'[first_name]'                => $first_name,
+				'[last_name]'                 => $last_name,
+				'[published_post_link_plain]' => $postperma,
+				'[published_post_link_html]'  => $post_link_html,
+				'[published_post_title]'      => $post_title,
+				'[site_name]'                 => $blog_title,
+				'[site_url]'                  => $siteurl,
+				'[site_url_html]'             => $siteurlhtml,
+			);
+
+			// If we have content let us check if there are any tags we need to replace with the correct values.
+			$string = stripslashes( $string );
+			$string = buddyforms_get_field_value_from_string( $string, $post_id, $form_slug, true );
+
+			foreach ( $short_codes_and_values as $shortcode => $short_code_value ) {
+				$string = buddyforms_replace_shortcode_for_value( $string, $shortcode, $short_code_value );
+			}
+		}
+	}
+
+	return apply_filters( 'buddyforms_contact_author_process_shortcode', $string, $post_id, $form_slug );
+}
