@@ -8,12 +8,12 @@ function buddyforms_moderators_register_posts_taxonomy() {
 	 */
 
 	$labels = array(
-		"name"          => __( "Moderators Posts", "buddyforms" ),
-		"singular_name" => __( "Moderator Post", "buddyforms" ),
+		"name"          => __( "Moderators Posts", "buddyforms-moderation" ),
+		"singular_name" => __( "Moderator Post", "buddyforms-moderation" ),
 	);
 
 	$args = array(
-		"label"                 => __( "Moderators Posts", "buddyforms" ),
+		"label"                 => __( "Moderators Posts", "buddyforms-moderation" ),
 		"labels"                => $labels,
 		"public"                => false,
 		"publicly_queryable"    => false,

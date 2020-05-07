@@ -10,11 +10,11 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 				var post_reject_email_message = jQuery('#post_reject_email_message_<?php echo $post_id ?>').val();
 
 				if (post_reject_email_subject == '') {
-					alert('Mail Subject is a required field');
+					alert('<?php _e('Mail Subject is a required field', 'buddyforms-moderation')?>');
 					return false;
 				}
 				if (post_reject_email_message == '') {
-					alert('Message is a required field');
+					alert('<?php _e('Message is a required field', 'buddyforms-moderation')?>');
 					return false;
 				}
 
@@ -50,7 +50,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 		}
 	</style>
 
-	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . $post_id . '" title="' . __( 'Reject Post', 'buddyforms' ) . '" class="bf-thickbox">' . __( 'Reject', 'buddyforms' ) . '</a>'; ?>
+	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . $post_id . '" title="' . __( 'Reject Post', 'buddyforms-moderation' ) . '" class="bf-thickbox">' . __( 'Reject', 'buddyforms-moderation' ) . '</a>'; ?>
 
 	<div id="buddyforms_reject_modal_<?php echo $post_id ?>" style="display:none;">
 		<div id="buddyforms_reject_wrap">

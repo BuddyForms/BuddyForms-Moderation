@@ -314,6 +314,10 @@ function buddyforms_moderation_include_assets() {
 	wp_localize_script( 'buddyforms-moderation', 'buddyformsModeration', array(
 		'ajax'  => admin_url( 'admin-ajax.php' ),
 		'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
+		'il18n' =>array(
+			'approve' => __( 'Approve this Post', 'buddyforms-moderation' ),
+			'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
+		),
 	) );
 }
 

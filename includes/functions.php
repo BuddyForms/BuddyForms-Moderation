@@ -102,11 +102,11 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		$post_parent = new WP_Query( $args );
 
 		if ( $post_parent->have_posts() ) {
-			$edit_post_link = '<span style="margin-right: 10px; cursor: not-allowed;" aria-label="' . __( 'New Version in Process', 'buddyforms' ) . '" title="' . __( 'New Version in Process', 'buddyforms' ) . '" class="dashicons dashicons-lock disabled"></span>';
+			$edit_post_link = '<span style="margin-right: 10px; cursor: not-allowed;" aria-label="' . __( 'New Version in Process', 'buddyforms-moderation' ) . '" title="' . __( 'New Version in Process', 'buddyforms-moderation' ) . '" class="dashicons dashicons-lock disabled"></span>';
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-		$edit_post_link = '<a title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '"  class="bf_edit_post" href="#" onclick="javascript:return false;"><span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms' ) . '" class="dashicons dashicons-edit disabled"></span> ' . __( 'Edit', 'buddyforms' ) . '</a>';
+		$edit_post_link = '<a title="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '"  class="bf_edit_post" href="#" onclick="javascript:return false;"><span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '" class="dashicons dashicons-edit disabled"></span> ' . __( 'Edit', 'buddyforms-moderation' ) . '</a>';
 	}
 
 	return $edit_post_link;
@@ -147,15 +147,15 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 
 		<tr class="tr-sub <?php echo $post_status_css; ?>">
 			<td>
-				<span class="mobile-th"><?php _e( 'Status', 'buddyforms' ); ?></span>
+				<span class="mobile-th"><?php _e( 'Status', 'buddyforms-moderation' ); ?></span>
 				<div class="status-item">
 					<div class="table-item-status"><?php echo $post_status_name ?></div>
-					<div class="item-status-action"><?php _e( 'Created', 'buddyforms' ); ?><?php the_time( 'F j, Y' ) ?></div>
+					<div class="item-status-action"><?php _e( 'Created', 'buddyforms-moderation' ); ?><?php the_time( 'F j, Y' ) ?></div>
 				</div>
 			</td>
 			<td>
 				<div class="meta">
-					<span class="mobile-th"><?php _e( 'Actions', 'buddyforms' ); ?></span>
+					<span class="mobile-th"><?php _e( 'Actions', 'buddyforms-moderation' ); ?></span>
 					<?php buddyforms_post_entry_actions( $form_slug ); ?>
 				</div>
 			</td>
@@ -244,7 +244,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 					<div class="item">
 						<div class="item-title">
-							<a href="<?php echo $the_permalink; ?>" rel="bookmark" title="<?php _e( 'Permanent Link to', 'buddyforms' ) ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
+							<a href="<?php echo $the_permalink; ?>" rel="bookmark" title="<?php _e( 'Permanent Link to', 'buddyforms-moderation' ) ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
 						</div>
 
 						<div class="item-desc"><?php echo get_the_excerpt(); ?></div>
@@ -257,7 +257,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						<div class="meta">
 							<div class="item-status"><?php echo $post_status_name; ?></div>
 							<?php buddyforms_post_entry_actions( $form_slug ); ?>
-							<div class="publish-date"><?php _e( 'Created ', 'buddyforms' ); ?><?php the_time( 'M j, Y' ) ?></div>
+							<div class="publish-date"><?php _e( 'Created ', 'buddyforms-moderation' ); ?><?php the_time( 'M j, Y' ) ?></div>
 						</div>
 					</div>
 
@@ -433,7 +433,7 @@ function buddyforms_reject_now() {
 
 
 	if ( ! isset( $_POST['post_id'] ) ) {
-		echo __( 'There has been an error sending the message!', 'buddyforms' );
+		echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
 		die();
 
 		return;
@@ -492,11 +492,11 @@ function buddyforms_reject_now() {
 	) );
 
 	if ( ! $result ) {
-		echo __( 'There has been an error sending the message!', 'buddyforms' );
+		echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
 	}
 
 	if ( is_wp_error( $result_update ) ) {
-		echo __( 'There has been an error changing the post status!', 'buddyforms' );
+		echo __( 'There has been an error changing the post status!', 'buddyforms-moderation' );
 	}
 
 	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
@@ -555,8 +555,13 @@ function buddyforms_moderators_avoid_edit_moderation_post( $continue, $form_slug
 add_filter( 'buddyforms_process_submission_ok', 'buddyforms_moderators_avoid_edit_moderation_post', 99, 3 );
 
 function buddyforms_moderators_avoid_edit_error_message_moderation_post( $message, $form_slug, $post_id ) {
-	//Check if moderation is enabled to change the message.
-	return __( 'You are not allowed to edit this post after it is send to moderation. What are you doing here? <span>MSA</span>', 'buddyforms' );
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+
+	if ( empty( $is_moderation_enabled ) ) {
+		return $message;
+	}
+
+	return __( 'You are not allowed to edit this post after it is send to moderation. What are you doing here?', 'buddyforms-moderation' );
 }
 
 add_filter( 'buddyforms_process_submission_ok_error_message', 'buddyforms_moderators_avoid_edit_error_message_moderation_post', 99, 3 );

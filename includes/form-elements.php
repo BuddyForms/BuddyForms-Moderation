@@ -399,7 +399,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 	if ( ! $form_slug ) {
 		return $post_id;
 	}
-	//todo check if moderation is enabled or not
+
 	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
 		return $post_id;
 	}
@@ -472,7 +472,6 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 		return $post_status;
 	}
 
-	//todo hay que revisar que pasa aqui y pq objetivo tiene esto
 	if ( isset( $_POST['status'] ) ) {
 		if ( $_POST['status'] == 'submitted' || $_POST['status'] == 'publish' ) {
 			return 'edit-draft';

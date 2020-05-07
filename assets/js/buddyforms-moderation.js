@@ -1,7 +1,7 @@
 function BuddyFormsModeration() {
     function buddyforms_moderators_approve() {
         var post_id = jQuery(this).attr('id');
-        if (confirm('Approve this Post')) { // todo need il18n
+        if (confirm(buddyformsModeration.il18n.approve)) {
             jQuery.ajax({
                 type: 'POST',
                 url: buddyformsModeration.ajax,
@@ -70,16 +70,6 @@ function BuddyFormsModeration() {
         targetForms.data('submit-clicked', status);
     }
 
-    function moderationFieldSlug(fieldData, arguments) {
-        if (arguments[0] && arguments[1] && arguments[2] && buddyformsGlobal[arguments[0]] && buddyformsGlobal[arguments[0]]['form_fields'][arguments[1]]) {
-            var targetField = buddyformsGlobal[arguments[0]]['form_fields'][arguments[1]];
-            if (targetField && targetField.type === 'moderators') {
-                return 'buddyforms_moderators';
-            }
-        }
-        return fieldData;
-    }
-
     function moderationFieldValidation(result, arguments) {
         if (arguments[0] && arguments[1] && arguments[2] && buddyformsGlobal[arguments[0]]) {
             var targetField = arguments[2];
@@ -100,7 +90,7 @@ function BuddyFormsModeration() {
                 return true;
             }
 
-            var msjString = 'Please select a Moderator!';
+            var msjString = buddyformsModeration.il18n.select_moderator;
             var isRequired = false;
             var currentFieldSlug = jQuery(element).attr('name');
             if (currentFieldSlug && formSlug) {
@@ -126,30 +116,6 @@ function BuddyFormsModeration() {
         }, "");
     }
 
-    //[fieldSlug, formSlug, fieldData]
-    function moderationFieldData(fieldData, arguments) {
-        if (arguments[0] && arguments[1] && buddyformsGlobal[arguments[1]]) {
-            if (arguments[2]) {
-                return arguments[2];
-            } else {
-                fieldData = fncBuddyForms.getFieldFrom('moderators', arguments[1], 'type');
-                return fieldData;
-            }
-        }
-        return fieldData;
-    }
-
-    function moderationFieldValidationIgnore(ignore, arguments) {
-        if (arguments[0] && arguments[1] && arguments[2] && buddyformsGlobal[arguments[2]]) {
-            var targetElement = arguments[0][0];
-            var targetElementId = jQuery(targetElement).attr('id');
-            if (targetElementId && targetElementId.indexOf('buddyforms_moderators') >= 0) {
-                return true;
-            }
-        }
-        return ignore;
-    }
-
     return {
         onFormActionClick: function (e) {
             return onFormActionClick(e);
@@ -161,9 +127,6 @@ function BuddyFormsModeration() {
             jQuery(document.body).on('click', '.buddyforms_moderators_approve', buddyforms_moderators_approve);
             jQuery(document.body).on('click', 'button[type="submit"].bf-moderation', onFormActionClickWrapper);
             BuddyFormsHooks.addAction('bf-moderation:submit:click', onFormActionClick);
-            // BuddyFormsHooks.addFilter('buddyforms:field:slug', moderationFieldSlug, 10);
-            // BuddyFormsHooks.addFilter('buddyforms:validation:ignore', moderationFieldValidationIgnore, 20);
-            // BuddyFormsHooks.addFilter('buddyforms:validation:field:data', moderationFieldData, 20);
             if (jQuery && jQuery.validator && fncBuddyForms) {
                 addModerationValidation();
             }
