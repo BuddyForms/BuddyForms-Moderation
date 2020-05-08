@@ -748,8 +748,8 @@ add_filter( 'buddyforms_unauthorized_shortcodes_field_type', 'buddyforms_moderat
  * @param $post_id
  * @param $source
  *
- * @since 1.4.5
  * @return bool|string|void
+ * @since 1.4.5
  */
 function buddyforms_moderation_form_display_message( $display_message, $form_slug, $post_id, $source ) {
 	if ( empty( $form_slug ) || empty( $post_id ) ) {
@@ -769,3 +769,27 @@ function buddyforms_moderation_form_display_message( $display_message, $form_slu
 }
 
 add_filter( 'buddyforms_form_display_message', 'buddyforms_moderation_form_display_message', 10, 4 );
+
+function buddyforms_moderation_disable_comment( $open, $post_id ) {
+	if ( empty( $post_id ) ) {
+		return $open;
+	}
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
+	if ( empty( $form_slug ) ) {
+		return $open;
+	}
+
+	$is_ultimate_members_profiles_integration = buddyforms_get_form_option( $form_slug, 'ultimate_members_profiles_integration' );
+	if ( empty( $is_ultimate_members_profiles_integration ) ) {
+		return $open;
+	}
+
+	$post_status = get_post_status( $post_id );
+	if ( $post_status === 'awaiting-review' ) {
+		return false;
+	}
+
+	return $open;
+}
+
+add_filter( 'comments_open', 'buddyforms_moderation_disable_comment', 10, 2 );
