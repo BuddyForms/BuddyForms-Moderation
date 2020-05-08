@@ -115,10 +115,7 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 
 			//Check if moderation is not forced from the form settings
 			$moderation_options  = $buddyforms[ $form_slug ]['moderation'];
-			$is_moderation_force = ( ! empty( $moderation_options )
-			                         && ! empty( $moderation_options['frontend-force-editors'] )
-			                         && ! empty( $moderation_options['frontend-force-editors'][0] )
-			                         && $moderation_options['frontend-force-editors'][0] === 'force-editors' );
+			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) );
 
 			if ( $is_moderation_force ) {
 				return $form;
@@ -246,10 +243,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 		if ( isset( $_POST['status'] ) && $_POST['status'] == 'awaiting-review' ) {
 			$form                = buddyforms_get_form_by_slug( $form_slug );
 			$moderation_options  = $form['moderation'];
-			$is_moderation_force = ( ! empty( $moderation_options )
-			                         && ! empty( $moderation_options['frontend-force-editors'] )
-			                         && ! empty( $moderation_options['frontend-force-editors'][0] )
-			                         && $moderation_options['frontend-force-editors'][0] === 'force-editors' );
+			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) );
 
 			if ( $is_moderation_force ) {
 				return $valid;

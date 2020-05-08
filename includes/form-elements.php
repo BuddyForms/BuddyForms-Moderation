@@ -53,14 +53,6 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$label_no_edit = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __( 'This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms-moderation' );
 	$form_setup[]  = new Element_Textarea( '<b>' . __( 'If the form is displayed but editing is disabled', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
 
-	$frontend_force_editors = isset( $buddyform['moderation']['frontend-force-editors'] ) ? $buddyform['moderation']['frontend-force-editors'] : false;
-	$form_setup[]           = new Element_Checkbox( '<b>' . __( 'Force Frontend Editors', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-force-editors]", array(
-		'force-editors' => '<b>' . __( 'Force Moderators', 'buddyforms-moderation' ) . '</b>'
-	), array(
-		'value'     => $frontend_force_editors,
-		'shortDesc' => __( 'With this option you can force the moderators to be one of the selected role in the option <i>Frontend Moderators Role</i> option. This option will disabled the moderation field in the form.', 'buddyforms-moderation' )
-	) );
-
 	$roles = get_editable_roles();
 
 	$roles_array = array( 'all' => __( 'All Roles', 'buddyforms-moderation' ) );
@@ -74,7 +66,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	}
 	$form_setup[] = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
 		'value'     => $frontend_moderators,
-		'shortDesc' => __( 'Filter the moderators that will have access to post send to moderate in the frontend. You can select one role or all users.', 'buddyforms-moderation' )
+		'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' )
 	) );
 
 
@@ -85,7 +77,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$form_setup[]   = new Element_Textbox( '<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $reject_subject,
-			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
 		)
 	);
 
@@ -96,7 +88,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$form_setup[]   = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $reject_message,
-			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
 		)
 	);
 
@@ -107,7 +99,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $approve_subject,
-			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
 		)
 	);
 
@@ -118,7 +110,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$form_setup[]    = new Element_Textarea( '<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $approve_message,
-			'shortDesc' => '<strong>' . __( 'Click on one of the available shortcode to insert on the above element at caret position:', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
 		)
 	);
 

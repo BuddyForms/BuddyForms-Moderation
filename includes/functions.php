@@ -106,7 +106,7 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 		}
 	}
 	if ( $post_status == 'awaiting-review' && $buddyforms[ $form_slug ]['moderation_logic'] != 'many_drafts' ) {
-		$edit_post_link = '<a title="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '"  class="bf_edit_post" href="#" onclick="javascript:return false;"><span aria-label="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '" title="' . __( 'Edit is Disabled during moderation', 'buddyforms-moderation' ) . '" class="dashicons dashicons-edit disabled"></span> ' . __( 'Edit', 'buddyforms-moderation' ) . '</a>';
+		$edit_post_link = '';
 	}
 
 	return $edit_post_link;
@@ -435,8 +435,6 @@ function buddyforms_reject_now() {
 	if ( ! isset( $_POST['post_id'] ) ) {
 		echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
 		die();
-
-		return;
 	}
 
 	$post_id = $_POST['post_id'];
@@ -600,11 +598,8 @@ function buddyforms_moderation_get_forced_moderator_role_by_form_slug( $form_slu
 		global $buddyforms;
 		if ( isset( $buddyforms[ $form_slug ] ) ) {
 			$buddyform = $buddyforms[ $form_slug ];
-			if ( isset( $buddyform['moderation'] ) && isset( $buddyform['moderation']['frontend-force-editors'] )
-			     && isset( $buddyform['moderation']['frontend-force-editors'][0] ) && $buddyform['moderation']['frontend-force-editors'][0] === 'force-editors' ) {
-				if ( ! empty( $buddyform['moderation']['frontend-moderators'] ) ) {
-					$forced_role = $buddyform['moderation']['frontend-moderators'];
-				}
+			if ( isset( $buddyform['moderation'] ) && ! empty( $buddyform['moderation']['frontend-moderators'] ) ) {
+				$forced_role = $buddyform['moderation']['frontend-moderators'];
 			}
 		}
 		if ( ! empty( $forced_role ) ) {
@@ -793,3 +788,46 @@ function buddyforms_moderation_disable_comment( $open, $post_id ) {
 }
 
 add_filter( 'comments_open', 'buddyforms_moderation_disable_comment', 10, 2 );
+
+/**
+ * Output the moderation html
+ *
+ * @param $form_slug
+ * @param $post_id
+ */
+function buddyforms_moderators_actions_html( $form_slug, $post_id ) {
+	echo '<ul class="edit_links">';
+	echo '<li>';
+	echo '<a title="' . __( 'Approve', 'buddyforms-moderation' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . __( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
+	echo '</li>';
+	echo '<li>';
+	buddyforms_moderators_reject_post( $post_id, $form_slug );
+	echo '</li>';
+	echo '</ul>';
+}
+
+function buddyforms_moderators_actions_attachment( $content ) {
+	global $post;
+
+	if ( empty( $post ) ) {
+		return $content;
+	}
+
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
+	if ( empty( $form_slug ) ) {
+		return $content;
+	}
+
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+	if ( empty( $is_moderation_enabled ) ) {
+		return $content;
+	}
+
+	remove_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888 );
+	$content .= do_shortcode( '[buddyforms_moderator_action]' );
+	add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+
+	return $content;
+}
+
+add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
