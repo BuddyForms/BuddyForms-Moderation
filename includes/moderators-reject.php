@@ -2,6 +2,7 @@
 
 function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	buddyforms_add_bf_thickbox();
+	ob_start();
 	?>
 	<script>
 		jQuery(document).ready(function () {
@@ -50,7 +51,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 		}
 	</style>
 
-	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . $post_id . '" title="' . __( 'Reject Post', 'buddyforms-moderation' ) . '" class="bf-thickbox">' . __( 'Reject', 'buddyforms-moderation' ) . '</a>'; ?>
+	<?php echo '<a id="buddyforms_reject" href="#TB_inline?width=800&height=600&inlineId=buddyforms_reject_modal_' . $post_id . '" title="' . __( 'Reject Post', 'buddyforms-moderation' ) . '" class="bf-thickbox buddyforms_moderators_reject buddyforms_moderators_action">' . __( 'Reject', 'buddyforms-moderation' ) . '</a>'; ?>
 
 	<div id="buddyforms_reject_modal_<?php echo $post_id ?>" style="display:none;">
 		<div id="buddyforms_reject_wrap">
@@ -73,7 +74,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 			$reject_request_subject = buddyforms_moderation_process_shortcode( $reject_request_subject, $post_id, $form_slug );
 			$reject_form->addElement( new Element_Textbox( __( 'Subject', 'buddyforms-moderation' ), 'post_reject_email_subject_' . $post_id, array( 'value' => wp_kses_post( $reject_request_subject ) ) ) );
 
-			$reject_request_message = ! empty( $moderation_options['reject_message'] ) ? $moderation_options['reject_message'] : __( 'Hi [user_login], your submitted post <strong>[published_post_title]</strong> has ben rejected.', 'buddyforms-moderation' );
+			$reject_request_message = ! empty( $moderation_options['reject_message'] ) ? $moderation_options['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
 			$reject_request_message = buddyforms_moderation_process_shortcode( $reject_request_message, $post_id, $form_slug );
 			$reject_form->addElement( new Element_Textarea( 'Add a Message', 'post_reject_email_message_' . $post_id, array( 'value' => wp_kses_post( $reject_request_message ), 'class' => 'collaborative-publishing-message' ) ) );
 
@@ -84,9 +85,9 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 			<a id="buddyforms_reject_post_as_moderator_<?php echo $post_id ?>" data-post_id="<?php echo $post_id ?>" data-form_slug="<?php echo $form_slug ?>" href="#" class="button btn-primary btn"><?php _e( 'Reject Submission and send Message', 'buddyforms-moderation' ); ?></a>
 		</div>
 	</div>
-
 	<?php
-
+	$content = ob_get_clean();
+	echo $content;
 }
 
 add_action( 'wp_ajax_buddyforms_reject_post_as_moderator', 'buddyforms_reject_post_as_moderator' );
@@ -198,7 +199,7 @@ function buddyforms_reject_post_as_moderator() {
 
 		update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
 
-		$json['result'] = __( 'Post Rejected and message send to the user', 'buddyforms-moderation' );
+		$json['result'] = __( 'Post Rejected and your message has been sent.', 'buddyforms-moderation' );
 
 		wp_send_json( $json );
 

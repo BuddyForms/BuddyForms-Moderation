@@ -1,0 +1,29 @@
+.buddyforms_moderators_action_container{
+    display: block;
+    text-align: center;
+}
+.buddyforms_moderators_action_container ul {
+    margin: unset;
+}
+.buddyforms_moderators_action_container li {
+    display: inline-block;
+    padding: 1em;
+    border: none;
+}
+
+.buddyforms_moderators_action_container .edit_links a {
+    padding: 1em;
+    margin: 0 5px 5px 0;
+    display: inline-block;
+    text-decoration: none;
+    background: #f9f9f9;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    text-shadow: none;
+    box-shadow: none;
+    border-radius: 3px;
+    line-height: 14px;
+    color: #888;
+}
+.buddyforms_moderators_action {
+
+}

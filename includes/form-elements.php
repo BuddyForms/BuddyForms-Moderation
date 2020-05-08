@@ -92,7 +92,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$element_name    = 'buddyforms_options[moderation][reject_message]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
-	$reject_message = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post <strong>[published_post_title]</strong> has ben rejected.', 'buddyforms-moderation' );
+	$reject_message = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
 	$form_setup[]   = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $reject_message,

@@ -50,6 +50,7 @@ function bf_moderation_includes() {
 		}
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
+		define( 'BUDDYFORMS_MODERATION_VERSION', '1.4.5' );
 	}
 
 	// Only Check for requirements in the admin

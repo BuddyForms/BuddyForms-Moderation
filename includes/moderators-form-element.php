@@ -270,7 +270,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 function buddyforms_moderators_the_loop_actions( $post_id ) {
 	$post_status = get_post_status( $post_id );
 	if ( $post_status !== 'awaiting-review' ) {
-		return '';
+		return;
 	}
 	$moderation_posts   = array();
 	$user               = wp_get_current_user();
@@ -293,14 +293,7 @@ function buddyforms_moderators_the_loop_actions( $post_id ) {
 	}
 	$user_is_moderator = in_array( $post_id, $moderation_posts );
 	if ( $user_is_moderator || $current_user_belong_to_moderation_role ) {
-		echo '<ul class="edit_links">';
-		echo '<li>';
-		echo '<a title="' . __( 'Approve', 'buddyforms-moderation' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve" href="#">' . __( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
-		echo '</li>';
-		echo '<li>';
-		buddyforms_moderators_reject_post( $post_id, $form_slug );
-		echo '</li>';
-		echo '</ul>';
+		buddyforms_moderators_actions_html( $form_slug, $post_id );
 	}
 }
 
@@ -310,12 +303,13 @@ add_action( 'buddyforms_the_loop_after_actions', 'buddyforms_moderators_the_loop
  * Include assets after buddyforms
  */
 function buddyforms_moderation_include_assets() {
-	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), '1.4.0' );
+	wp_enqueue_style( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'css/buddyforms-moderation.css', array(), BUDDYFORMS_MODERATION_VERSION );
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), BUDDYFORMS_MODERATION_VERSION );
 	wp_localize_script( 'buddyforms-moderation', 'buddyformsModeration', array(
 		'ajax'  => admin_url( 'admin-ajax.php' ),
 		'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
-		'il18n' =>array(
-			'approve' => __( 'Approve this Post', 'buddyforms-moderation' ),
+		'il18n' => array(
+			'approve'          => __( 'Approve this Post', 'buddyforms-moderation' ),
 			'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
 		),
 	) );

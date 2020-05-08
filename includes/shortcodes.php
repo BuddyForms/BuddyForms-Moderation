@@ -96,3 +96,89 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 }
 
 add_shortcode( 'buddyforms_list_posts_to_moderate', 'buddyforms_moderators_list_posts_to_moderate' );
+
+function buddyforms_moderators_actions_shortcode() {
+	$output   = '';
+	$bfmod_fs = buddyforms_moderation_freemius();
+	if ( ! empty( $bfmod_fs ) && $bfmod_fs->is_paying_or_trial__premium_only() ) {
+		global $post;
+
+		if ( empty( $post ) ) {
+			return $output;
+		}
+
+		$form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
+		if ( empty( $form_slug ) ) {
+			return $output;
+		}
+
+		$form = buddyforms_get_form_by_slug( $form_slug );
+		if ( empty( $form ) ) {
+			return $output;
+		}
+
+		$user                    = wp_get_current_user();
+		$current_user_roles      = (array) $user->roles;
+		$forced_moderators_roles = buddyforms_moderation_all_form_forcing_moderators_by_role();
+		$is_moderation_by_role   = ( isset( $forced_moderators_roles[ $form_slug ] ) && in_array( $forced_moderators_roles[ $form_slug ], $current_user_roles ) );
+
+		$user_posts                 = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
+		$is_moderation_by_selection = in_array( $post->ID, $user_posts );
+
+		if ( $is_moderation_by_role || $is_moderation_by_selection ) {
+			ob_start();
+			echo '<div class="buddyforms_moderators_action_container buddyforms-list">';
+			buddyforms_moderators_actions_html( $form_slug, $post->ID );
+			echo '</div>';
+			$output = ob_get_clean();
+		}
+	}
+
+	return $output;
+}
+
+add_shortcode( 'buddyforms_moderator_action', 'buddyforms_moderators_actions_shortcode' );
+
+function buddyforms_moderators_actions_attachment( $content ) {
+	global $post;
+
+	if ( empty( $post ) ) {
+		return $content;
+	}
+
+	$form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
+	if ( empty( $form_slug ) ) {
+		return $content;
+	}
+
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+	if ( empty( $is_moderation_enabled ) ) {
+		return $content;
+	}
+
+	remove_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888 );
+	$content .= do_shortcode( '[buddyforms_moderator_action]' );
+	add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+
+	return $content;
+}
+
+add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+
+/**
+ * Output the moderation html
+ *
+ * @param $form_slug
+ * @param $post_id
+ */
+function buddyforms_moderators_actions_html( $form_slug, $post_id ) {
+	echo '<ul class="edit_links">';
+	echo '<li>';
+	echo '<a title="' . __( 'Approve', 'buddyforms-moderation' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . __( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
+	echo '</li>';
+	echo '<li>';
+	buddyforms_moderators_reject_post( $post_id, $form_slug );
+	echo '</li>';
+	echo '</ul>';
+
+}

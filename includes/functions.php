@@ -708,6 +708,9 @@ function buddyforms_moderation_process_shortcode( $string, $post_id, $form_slug 
  * @since 1.4.5
  */
 function buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name ) {
+	if ( empty( $buddyform ) || empty( $buddyform['slug'] ) ) {
+		return '';
+	}
 	$all_shortcodes       = array();
 	$available_shortcodes = buddyforms_available_shortcodes( $buddyform['slug'], $element_name );
 	if ( ! empty( $buddyform['form_fields'] ) ) {
@@ -726,12 +729,43 @@ function buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_n
 	return $shortcodes_html;
 }
 
-function buddyforms_moderation_unauthorized_shortcodes_field_type($fields, $form_slug, $element_name){
-	$moderation_field    = buddyforms_get_form_field_by( $form_slug, 'moderators', 'type' );
-	if(!empty($moderation_field)){
-		$fields = array_merge($fields, array('moderators'));
+function buddyforms_moderation_unauthorized_shortcodes_field_type( $fields, $form_slug, $element_name ) {
+	$moderation_field = buddyforms_get_form_field_by( $form_slug, 'moderators', 'type' );
+	if ( ! empty( $moderation_field ) ) {
+		$fields = array_merge( $fields, array( 'moderators' ) );
 	}
+
 	return $fields;
 }
 
-add_filter('buddyforms_unauthorized_shortcodes_field_type', 'buddyforms_moderation_unauthorized_shortcodes_field_type', 10, 3);
+add_filter( 'buddyforms_unauthorized_shortcodes_field_type', 'buddyforms_moderation_unauthorized_shortcodes_field_type', 10, 3 );
+
+/**
+ * Customize the submit message for the case of save a post
+ *
+ * @param $display_message
+ * @param $form_slug
+ * @param $post_id
+ * @param $source
+ *
+ * @since 1.4.5
+ * @return bool|string|void
+ */
+function buddyforms_moderation_form_display_message( $display_message, $form_slug, $post_id, $source ) {
+	if ( empty( $form_slug ) || empty( $post_id ) ) {
+		return $display_message;
+	}
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+	if ( empty( $is_moderation_enabled ) ) {
+		return $is_moderation_enabled;
+	}
+
+	$post_status = get_post_status( $post_id );
+	if ( $post_status === 'edit-draft' ) {
+		$display_message = __( 'Form Saved Successfully.', 'buddyforms' );
+	}
+
+	return $display_message;
+}
+
+add_filter( 'buddyforms_form_display_message', 'buddyforms_moderation_form_display_message', 10, 4 );
