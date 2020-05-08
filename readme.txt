@@ -92,6 +92,9 @@ You need the BuddyForms plugin installed for the plugin to work.
 * Improve plugin code.
 * Added codeception for automated test.
 * Added options to customize the subject and message for the approve and reject notifications, with shortcode support.
+* Removing html form the reject template.
+* Added the reject and approve option inside the posts view to improve the moderation process.
+* Added the functionality to hide the comment box when the post is awaiting review.
 
 = 1.4.4 - 11 Jan 2020 =
 * Change the visibility of the submit Action button to let 3rd party extensions take over.
