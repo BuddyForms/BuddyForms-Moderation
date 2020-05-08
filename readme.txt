@@ -95,6 +95,8 @@ You need the BuddyForms plugin installed for the plugin to work.
 * Removing html form the reject template.
 * Added the reject and approve option inside the posts view to improve the moderation process.
 * Added the functionality to hide the comment box when the post is awaiting review.
+* Fixed some typos.
+* Removing not needed option to force the moderators.
 
 = 1.4.4 - 11 Jan 2020 =
 * Change the visibility of the submit Action button to let 3rd party extensions take over.
