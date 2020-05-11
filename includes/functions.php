@@ -752,7 +752,7 @@ function buddyforms_moderation_form_display_message( $display_message, $form_slu
 	}
 	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
 	if ( empty( $is_moderation_enabled ) ) {
-		return $is_moderation_enabled;
+		return $display_message;
 	}
 
 	$post_status = get_post_status( $post_id );
