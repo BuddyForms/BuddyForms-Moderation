@@ -98,6 +98,7 @@ You need the BuddyForms plugin installed for the plugin to work.
 * Fixed some typos.
 * Removing not needed option to force the moderators.
 * Fixed the error of empty submit message for form submission.
+* Added the time to the post list to improve the user interface.
 
 = 1.4.4 - 11 Jan 2020 =
 * Change the visibility of the submit Action button to let 3rd party extensions take over.
