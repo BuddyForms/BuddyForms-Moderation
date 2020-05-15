@@ -197,7 +197,18 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 	$args = apply_filters( 'buddyforms_the_lp_query', $args );
 
+	$wp_date_format = get_option( 'date_format' );
+	if ( empty( $wp_date_format ) ) {
+		$wp_date_format = 'M j, Y';
+	}
+
+	$wp_time_format = get_option( 'time_format' );
+	if ( empty( $wp_time_format ) ) {
+		$wp_time_format = '';
+	}
+
 	$the_moderation_query = new WP_Query( $args ); ?>
+
 
 	<?php if ( $the_moderation_query->have_posts() ) : ?>
 		<style>
@@ -257,7 +268,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						<div class="meta">
 							<div class="item-status"><?php echo $post_status_name; ?></div>
 							<?php buddyforms_post_entry_actions( $form_slug ); ?>
-							<div class="publish-date"><?php _e( 'Created ', 'buddyforms-moderation' ); ?><?php the_time( 'M j, Y' ) ?></div>
+							<div class="publish-date"><?php _e( 'Created', 'buddyforms-moderation' ); ?>&nbsp;<?php the_time( $wp_date_format . ' ' . $wp_time_format ) ?></div>
 						</div>
 					</div>
 
@@ -279,6 +290,41 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 }
 
 add_action( 'buddyforms_the_loop_li_last', 'bf_buddyforms_the_loop_li_last' );
+
+/**
+ * Change the datetime format for the list of post used in the moderation shortcode
+ *
+ * @param $bf_date_time_format
+ * @param $form_slug
+ *
+ * @return mixed
+ * @since 1.4.5
+ *
+ */
+function buddyforms_moderation_the_loop_date_format( $bf_date_time_format, $form_slug ) {
+	if ( empty( $form_slug ) ) {
+		return $bf_date_time_format;
+	}
+
+	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
+	if ( empty( $is_moderation_enabled ) ) {
+		return $bf_date_time_format;
+	}
+
+	$wp_date_format = get_option( 'date_format' );
+	if ( empty( $wp_date_format ) ) {
+		$wp_date_format = 'M j, Y';
+	}
+
+	$wp_time_format = get_option( 'time_format' );
+	if ( empty( $wp_time_format ) ) {
+		$wp_time_format = '';
+	}
+
+	return $wp_date_format . ' ' . $wp_time_format;
+}
+
+add_filter( 'buddyforms_the_loop_date_format', 'buddyforms_moderation_the_loop_date_format', 10, 2 );
 
 add_action( 'buddyforms_post_edit_meta_box_select_form', 'buddyforms_moderation_post_edit_meta_box_actions' );
 

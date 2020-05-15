@@ -80,7 +80,7 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 			) );
 
 			if ( $the_lp_query->have_posts() ) {
-				buddyforms_locate_template( 'the-loop' );
+				buddyforms_locate_template( 'the-loop', $form_slug );
 			} else {
 				echo '<p>' . $errormessage . '</p>';
 			}
