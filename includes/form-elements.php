@@ -17,11 +17,15 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 
 	$buddyform = get_post_meta( get_the_ID(), '_buddyforms_options', true );
 
-	$form_setup = array();
+	$form_setup = array(
+		'general'        => array( 'title' => __( 'General', 'buddyforms-moderation' ) ),
+		'emails'         => array( 'title' => __( 'Email', 'buddyforms-moderation' ), 'tooltip' => __( 'Define the communications emails', 'buddyforms' ) ),
+		'status_message' => array( 'title' => __( 'Submission Messages', 'buddyforms-moderation' ), 'tooltip' => __( 'Override the message for the form submission '.PHP_EOL.' base on the post status.', 'buddyforms' ) ),
+	);
 
 	$moderation_logic = isset( $buddyform['moderation_logic'] ) ? $buddyform['moderation_logic'] : 'default';
 
-	$form_setup[] = new Element_Radio(
+	$form_setup['general']['fields'][] = new Element_Radio(
 		'<b>' . __( 'Moderation Logic', 'buddyforms-moderation' ) . '</b>',
 		"buddyforms_options[moderation_logic]",
 		Array(
@@ -38,20 +42,20 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
-	$label_submit = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __( 'Submit', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
+	$label_submit                      = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __( 'Submit', 'buddyforms-moderation' );
+	$form_setup['general']['fields'][] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
 
-	$label_save   = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __( 'Save', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
+	$label_save                        = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __( 'Save', 'buddyforms-moderation' );
+	$form_setup['general']['fields'][] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
 
-	$label_review = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __( 'Submit for moderation', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
+	$label_review                      = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __( 'Submit for moderation', 'buddyforms-moderation' );
+	$form_setup['general']['fields'][] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
 
-	$label_new_draft = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __( 'Create new Draft', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
+	$label_new_draft                   = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __( 'Create new Draft', 'buddyforms-moderation' );
+	$form_setup['general']['fields'][] = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
 
-	$label_no_edit = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __( 'This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms-moderation' );
-	$form_setup[]  = new Element_Textarea( '<b>' . __( 'If the form is displayed but editing is disabled', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
+	$label_no_edit                     = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __( 'This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms-moderation' );
+	$form_setup['general']['fields'][] = new Element_Textarea( '<b>' . __( 'If the form is displayed but editing is disabled', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
 
 	$roles = get_editable_roles();
 
@@ -64,7 +68,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	if ( isset( $buddyform['moderation']['frontend-moderators'] ) ) {
 		$frontend_moderators = $buddyform['moderation']['frontend-moderators'];
 	}
-	$form_setup[] = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
+	$form_setup['general']['fields'][] = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
 		'value'     => $frontend_moderators,
 		'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' )
 	) );
@@ -73,8 +77,8 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$element_name    = 'buddyforms_options[moderation][reject_subject]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
-	$reject_subject = ! empty( $buddyform['moderation']['reject_subject'] ) ? $buddyform['moderation']['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-moderation' );
-	$form_setup[]   = new Element_Textbox( '<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$reject_subject                   = ! empty( $buddyform['moderation']['reject_subject'] ) ? $buddyform['moderation']['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-moderation' );
+	$form_setup['emails']['fields'][] = new Element_Textbox( '<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $reject_subject,
 			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
@@ -84,8 +88,8 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$element_name    = 'buddyforms_options[moderation][reject_message]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
-	$reject_message = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
-	$form_setup[]   = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$reject_message                   = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
+	$form_setup['emails']['fields'][] = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $reject_message,
 			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
@@ -95,8 +99,8 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$element_name    = 'buddyforms_options[moderation][approve_subject]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
-	$approve_subject = ! empty( $buddyform['moderation']['approve_subject'] ) ? $buddyform['moderation']['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$approve_subject                  = ! empty( $buddyform['moderation']['approve_subject'] ) ? $buddyform['moderation']['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
+	$form_setup['emails']['fields'][] = new Element_Textbox( '<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $approve_subject,
 			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
@@ -106,25 +110,29 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$element_name    = 'buddyforms_options[moderation][approve_message]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
-	$approve_message = ! empty( $buddyform['moderation']['approve_message'] ) ? $buddyform['moderation']['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textarea( '<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$approve_message                  = ! empty( $buddyform['moderation']['approve_message'] ) ? $buddyform['moderation']['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
+	$form_setup['emails']['fields'][] = new Element_Textarea( '<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>', $element_name,
 		array(
 			'value'     => $approve_message,
 			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
 		)
 	);
 
+	$draft_message                            = ! empty( $buddyform['moderation']['draft_message'] ) ? $buddyform['moderation']['draft_message'] : __( 'Form Saved Successfully', 'buddyforms-moderation' );
+	$form_setup['status_message']['fields'][] = new Element_Textarea( '<b>' . __( 'Draft Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][draft_message]',
+		array(
+			'value' => $draft_message,
+		)
+	);
 
-	if ( ! isset( $field_id ) ) {
-		$field_id = $mod5 = substr( md5( time() * rand() ), 0, 10 );
-	}
+	$awaiting_review_message                  = ! empty( $buddyform['moderation']['awaiting_review_message'] ) ? $buddyform['moderation']['awaiting_review_message'] : __( 'Form Submit to Review Successfully', 'buddyforms-moderation' );
+	$form_setup['status_message']['fields'][] = new Element_Textarea( '<b>' . __( 'Awaiting Review Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][awaiting_review_message]',
+		array(
+			'value' => $awaiting_review_message,
+		)
+	);
 
-	?>
-
-	<?php buddyforms_display_field_group_table( $form_setup ) ?>
-
-	<?php
-
+//	buddyforms_display_field_group_table( $form_setup, 'moderation', 'striped');
 }
 
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );
