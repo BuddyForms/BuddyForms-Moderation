@@ -114,17 +114,21 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
+	$draft_message                            = ! empty( $buddyform['moderation']['draft_message'] ) ? $buddyform['moderation']['draft_message'] : __( 'Form Saved Successfully', 'buddyforms-moderation' );
+	$form_setup[] = new Element_Textarea( '<b>' . __( 'Draft Form Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][draft_message]',
+		array(
+			'value' => $draft_message,
+		)
+	);
 
-	if ( ! isset( $field_id ) ) {
-		$field_id = $mod5 = substr( md5( time() * rand() ), 0, 10 );
-	}
+	$awaiting_review_message                  = ! empty( $buddyform['moderation']['awaiting_review_message'] ) ? $buddyform['moderation']['awaiting_review_message'] : __( 'Form Submit to Review Successfully', 'buddyforms-moderation' );
+	$form_setup[] = new Element_Textarea( '<b>' . __( 'Awaiting Review Form Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][awaiting_review_message]',
+		array(
+			'value' => $awaiting_review_message,
+		)
+	);
 
-	?>
-
-	<?php buddyforms_display_field_group_table( $form_setup ) ?>
-
-	<?php
-
+	buddyforms_display_field_group_table( $form_setup );
 }
 
 add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_metabox' );

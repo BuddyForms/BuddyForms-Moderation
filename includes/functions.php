@@ -750,14 +750,27 @@ function buddyforms_moderation_form_display_message( $display_message, $form_slu
 	if ( empty( $form_slug ) || empty( $post_id ) ) {
 		return $display_message;
 	}
+
 	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
 	if ( empty( $is_moderation_enabled ) ) {
 		return $display_message;
 	}
 
+	$moderation_options = buddyforms_get_form_option( $form_slug, 'moderation' );
+	if ( empty( $moderation_options ) ) {
+		return $display_message;
+	}
+
 	$post_status = get_post_status( $post_id );
-	if ( $post_status === 'edit-draft' ) {
-		$display_message = __( 'Form Saved Successfully.', 'buddyforms' );
+
+	switch ( $post_status ) {
+		case 'edit-draft':
+		case 'new-draft':
+			$display_message = ( ! empty( $moderation_options['draft_message'] ) ) ? $moderation_options['draft_message'] : $display_message;
+			break;
+		case 'awaiting-review':
+			$display_message = ( ! empty( $moderation_options['awaiting_review_message'] ) ) ? $moderation_options['awaiting_review_message'] : $display_message;
+			break;
 	}
 
 	return $display_message;
@@ -830,4 +843,4 @@ function buddyforms_moderators_actions_attachment( $content ) {
 	return $content;
 }
 
-add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+//add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
