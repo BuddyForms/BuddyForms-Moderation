@@ -79,7 +79,7 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
-= 1.4.5 - 7 May 2020 =
+= 1.4.5 - 15 May 2020 =
 * Update freemius loader and requirement message.
 * Added option to accept or reject a post send for moderation from the frontend.
 * Added localization for the plugins.
