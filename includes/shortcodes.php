@@ -137,4 +137,4 @@ function buddyforms_moderators_actions_shortcode() {
 	return $output;
 }
 
-add_shortcode( 'buddyforms_moderator_action', 'buddyforms_moderators_actions_shortcode' );
+//add_shortcode( 'buddyforms_moderator_action', 'buddyforms_moderators_actions_shortcode' );

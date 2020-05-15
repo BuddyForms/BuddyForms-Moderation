@@ -116,6 +116,17 @@ function buddyforms_moderation_need_buddyforms() {
 	</div><?php
 }
 
+/**
+ * Clean permalink
+ *
+ * @since 1.4.5
+ */
+function buddyform_moderation_activate() {
+	flush_rewrite_rules();
+}
+
+register_activation_hook( __FILE__, 'buddyform_moderation_activate' );
+
 function buddyform_moderation_dependency() {
 	// Create the required plugins array
 	if ( ! defined( 'BUDDYFORMS_PRO_VERSION' ) ) {
