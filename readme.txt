@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 5.3
-Stable tag: 1.4.4
+Tested up to: 5.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,27 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.5 - 15 May 2020 =
+* Update freemius loader and requirement message.
+* Added option to accept or reject a post send for moderation from the frontend.
+* Added localization for the plugins.
+* Improved validation for the moderation field.
+* Added option to setup the moderation users by role.
+* Fixed the list of post because it was not showing the child draft.
+* Fixed the reject email notification.
+* Added the approve email notification.
+* Fixed the buttons for the moderation logic.
+* Improve plugin code.
+* Added codeception for automated test.
+* Added options to customize the subject and message for the approve and reject notifications, with shortcode support.
+* Removing html form the reject template.
+* Added the reject and approve option inside the posts view to improve the moderation process.
+* Added the functionality to hide the comment box when the post is awaiting review.
+* Fixed some typos.
+* Removing not needed option to force the moderators.
+* Fixed the error of empty submit message for form submission.
+* Added the time to the post list to improve the user interface.
+
 = 1.4.4 - 11 Jan 2020 =
 * Change the visibility of the submit Action button to let 3rd party extensions take over.
 * Fixed the submit issue.

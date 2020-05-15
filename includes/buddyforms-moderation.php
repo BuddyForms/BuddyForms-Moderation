@@ -6,16 +6,16 @@
  */
 
 class BF_Moderation_Update_Post {
-	
+
 	private $status_edit;
 	private $status_moderation;
 	private $status_approved;
 	private $statuses;
-	
+
 	public function __construct() {
-		$this->status_edit       = __( 'Edit Draft', 'buddyform' );
-		$this->status_moderation = __( 'Awaiting moderation', 'buddyform' );
-		$this->status_approved   = __( 'Approved', 'buddyform' );
+		$this->status_edit       = __( 'Edit Draft', 'buddyforms-moderation' );
+		$this->status_moderation = __( 'Awaiting moderation', 'buddyforms-moderation' );
+		$this->status_approved   = __( 'Approved', 'buddyforms-moderation' );
 		$this->statuses          = array(
 			'edit-draft'      => $this->status_edit,
 			'awaiting-review' => $this->status_moderation,
@@ -28,46 +28,46 @@ class BF_Moderation_Update_Post {
 		add_filter( 'buddyforms_get_post_status_array', array( $this, 'bf_moderation_get_post_status_array' ), 10, 1 );
 		add_filter( 'display_post_states', array( $this, "display_post_states" ), 10, 2 );
 	}
-	
+
 	public function display_post_states( $post_states, $post ) {
-		
-		
+
+
 		$add_suffix = array_key_exists( $post->post_status, $this->statuses );
 		if ( $add_suffix ) {
 			$post_states = array( $this->statuses[ $post->post_status ] );
 		}
-		
+
 		return $post_states;
 	}
-	
+
 	public function modify_post_content( $data, $postarr ) {
 		global $buddyforms;
 		$buddyforms_options = $buddyforms;
-		
+
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $postarr['ID'] );
-		
+
 		if ( empty( $bf_form_slug ) ) {
 			return $data;
 		}
-		
+
 		if ( ! isset( $buddyforms_options[ $bf_form_slug ]['post_type'] ) ) {
 			return $data;
 		}
-		
+
 		if ( $data['post_type'] != $buddyforms_options[ $bf_form_slug ]['post_type'] ) {
 			return $data;
 		}
-		
-		
+
+
 		if ( $data['post_status'] == 'publish' || $data['post_status'] == 'approved' ) {
 			if ( $data['post_type'] == 'revision' ) {
 				return $data;
 			}
-			
+
 			if ( isset( $bf_form_slug ) && $data['post_parent'] != 0 ) {
-				
+
 				$data['post_status'] = 'approved';
-				
+
 				$update_post = array(
 					'ID'             => $postarr['post_parent'],
 					'post_title'     => $postarr['post_title'],
@@ -77,46 +77,46 @@ class BF_Moderation_Update_Post {
 					'comment_status' => $postarr['comment_status'],
 					'post_excerpt'   => $postarr['post_excerpt'],
 				);
-				
+
 				$parent_post_id = wp_update_post( $update_post );
-				
+
 				if ( $parent_post_id ) {
 					$this->bf_moderation_copy_post_taxonomies( $parent_post_id, $postarr['ID'] );
 					$this->bf_moderation_copy_post_meta_info( $parent_post_id, $postarr['ID'] );
-					
+
 					$args = array(
 						'post_type'      => $postarr['post_type'],
 						'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 						'posts_per_page' => - 1,
 						'post_parent'    => $postarr['post_parent'],
 					);
-					
+
 					// Get all children
 					$the_delete_query = new WP_Query( $args );
-					
+
 					// Check if children exits and move them to trash
 					if ( $the_delete_query->have_posts() ) {
-						
+
 						while ( $the_delete_query->have_posts() ) {
 							$the_delete_query->the_post();
-							
+
 							wp_delete_post( get_the_ID() );
-							
+
 						}
 					}
-					
+
 					wp_reset_query();
 				}
-				
+
 			} else {
 				$data['post_status'] = 'publish';
 			}
 		}
-		
+
 		return $data;
-		
+
 	}
-	
+
 	/**
 	 * Copy the taxonomies of a post to another post
 	 *
@@ -128,11 +128,11 @@ class BF_Moderation_Update_Post {
 		if ( isset( $wpdb->terms ) ) {
 			// Clear default category (added by wp_insert_post)
 			wp_set_object_terms( $parent_post_id, null, 'category' );
-			
+
 			$post = get_post( $child_post_id );
-			
+
 			$post_taxonomies = get_object_taxonomies( $post->post_type );
-			
+
 			foreach ( $post_taxonomies as $taxonomy ) {
 				$post_terms = wp_get_object_terms( $post->ID, $taxonomy, array( 'orderby' => 'term_order' ) );
 				$terms      = array();
@@ -143,7 +143,7 @@ class BF_Moderation_Update_Post {
 			}
 		}
 	}
-	
+
 	/**
 	 * Copy the meta information of a post to another post
 	 *
@@ -158,7 +158,7 @@ class BF_Moderation_Update_Post {
 		if ( empty( $post_meta_keys ) ) {
 			return;
 		}
-		
+
 		foreach ( $post_meta_keys as $meta_key ) {
 			$meta_values = get_post_custom_values( $meta_key, $child_post_id );
 			if ( is_array( $meta_values ) ) {
@@ -169,10 +169,10 @@ class BF_Moderation_Update_Post {
 			}
 		}
 	}
-	
-	
+
+
 	function bf_moderation_post_status() {
-		
+
 		$args = array(
 			'label'                     => _x( 'Edit Draft', 'Edit Draft', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Edit Draft (%s)', 'Edit Draft (%s)', 'buddyforms' ),
@@ -183,7 +183,7 @@ class BF_Moderation_Update_Post {
 			'protected'                 => true,
 		);
 		register_post_status( 'edit-draft', $args );
-		
+
 		$args = array(
 			'label'                     => _x( 'Awaiting moderation', 'Awaiting moderation', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Awaiting moderation (%s)', 'Awaiting moderation (%s)', 'buddyforms' ),
@@ -194,7 +194,7 @@ class BF_Moderation_Update_Post {
 			'protected'                 => true,
 		);
 		register_post_status( 'awaiting-review', $args );
-		
+
 		$args = array(
 			'label'                     => _x( 'Approved', 'Approved', 'buddyforms' ),
 			'label_count'               => _n_noop( 'Approved (%s)', 'Approved (%s)', 'buddyforms' ),
@@ -205,31 +205,31 @@ class BF_Moderation_Update_Post {
 			'protected'                 => true,
 		);
 		register_post_status( 'approved', $args );
-		
+
 	}
-	
+
 	function bf_moderation_submitbox_misc_actions() {
 		global $post, $buddyforms;
-		
+
 		$buddyforms_options = $buddyforms;
-		
+
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
-		
+
 		if ( ! isset( $bf_form_slug ) ) {
 			return;
 		}
-		
+
 		if ( ! isset( $buddyforms_options[ $bf_form_slug ]['post_type'] ) ) {
 			return;
 		}
-		
+
 		if ( $post->post_type != $buddyforms_options[ $bf_form_slug ]['post_type'] ) {
 			return;
 		}
-		
+
 		$complete = '';
 		$label    = '';
-		
+
 		echo '<script>';
 		echo ' jQuery(document).ready(function($){';
 		if ( $post->post_status == 'edit-draft' ) {
@@ -258,10 +258,10 @@ class BF_Moderation_Update_Post {
 			echo '$("#post-status-display").text("' . $this->statuses[ $post->post_status ] . '");';
 		}
 		echo ' });</script>';
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Append the custom post type to the post status
 	 * dropdown in the quick edit area on the post
@@ -270,27 +270,27 @@ class BF_Moderation_Update_Post {
 	 */
 	function bf_moderation_append_to_inline_status_dropdown() {
 		global $post, $buddyforms;
-		
+
 		if ( ! $post ) {
 			return;
 		}
-		
+
 		$buddyforms_options = $buddyforms;
-		
+
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $post->ID );
-		
+
 		if ( ! isset( $bf_form_slug ) ) {
 			return;
 		}
-		
+
 		if ( ! isset( $buddyforms_options[ $bf_form_slug ]['post_type'] ) ) {
 			return;
 		}
-		
+
 		if ( $post->post_type != $buddyforms_options[ $bf_form_slug ]['post_type'] ) {
 			return;
 		}
-		
+
 		echo "
         <script>
         jQuery(document).ready(function ($){
@@ -300,15 +300,15 @@ class BF_Moderation_Update_Post {
         });
         </script>
         ";
-		
+
 	}
-	
+
 	function bf_moderation_get_post_status_array( $status_array ) {
 		$status_array = array_merge($status_array, $this->statuses);
-		
+
 		return $status_array;
 	}
-	
+
 }
 
 new BF_Moderation_Update_Post;
