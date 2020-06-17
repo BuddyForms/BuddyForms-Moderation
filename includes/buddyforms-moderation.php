@@ -46,6 +46,11 @@ class BF_Moderation_Update_Post {
 
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $postarr['ID'] );
 
+        $moderation_logic = $buddyforms_options[$bf_form_slug]['moderation_logic'];
+        if($moderation_logic !=='many_drafts'){
+            return $data;
+        }
+
 		if ( empty( $bf_form_slug ) ) {
 			return $data;
 		}
@@ -76,6 +81,7 @@ class BF_Moderation_Update_Post {
 					'post_status'    => 'publish',
 					'comment_status' => $postarr['comment_status'],
 					'post_excerpt'   => $postarr['post_excerpt'],
+
 				);
 
 				$parent_post_id = wp_update_post( $update_post );
