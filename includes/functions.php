@@ -72,6 +72,23 @@ function buddyforms_moderation_get_logic( $form_slug ) {
 	return $logic;
 }
 
+
+function bf_moderation_the_loop_post_status( $statuses, $form_slug ) {
+	if ( empty( $form_slug ) ) {
+		return $statuses;
+	}
+
+	global $buddyforms;
+
+	if ( ! isset( $buddyforms[ $form_slug ]['moderation_logic'] ) || $buddyforms[ $form_slug ]['moderation_logic'] == 'default' ) {
+		return $statuses;
+	}
+
+	return array_merge( array( 'approved', 'publish', 'awaiting-review', 'edit-draft', 'draft' ), $statuses );
+}
+
+add_filter( 'buddyforms_shortcode_the_loop_post_status', 'bf_moderation_the_loop_post_status', 90, 2 );
+
 add_filter( 'buddyforms_loop_edit_post_link', 'bf_moderation_edit_post_link', 50, 2 );
 function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 	global $buddyforms;

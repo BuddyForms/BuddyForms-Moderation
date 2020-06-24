@@ -44,12 +44,24 @@ class BF_Moderation_Update_Post {
 		global $buddyforms;
 		$buddyforms_options = $buddyforms;
 
+		if ( empty( $postarr ) || empty( $postarr['ID'] ) ) {
+			return $data;
+		}
+
 		$bf_form_slug = buddyforms_get_form_slug_by_post_id( $postarr['ID'] );
 
-        $moderation_logic = $buddyforms_options[$bf_form_slug]['moderation_logic'];
-        if($moderation_logic !=='many_drafts'){
-            return $data;
-        }
+		if ( empty( $bf_form_slug ) ) {
+			return $data;
+		}
+
+		if ( empty( $buddyforms_options[ $bf_form_slug ]['moderation_logic'] ) ) {
+			return $data;
+		}
+
+		$moderation_logic = $buddyforms_options[ $bf_form_slug ]['moderation_logic'];
+		if ( $moderation_logic === 'default' ) {
+			return $data;
+		}
 
 		if ( empty( $bf_form_slug ) ) {
 			return $data;
@@ -310,7 +322,7 @@ class BF_Moderation_Update_Post {
 	}
 
 	function bf_moderation_get_post_status_array( $status_array ) {
-		$status_array = array_merge($status_array, $this->statuses);
+		$status_array = array_merge( $status_array, $this->statuses );
 
 		return $status_array;
 	}

@@ -337,7 +337,7 @@ function buddyforms_moderators_ajax_approve_post() {
 
 		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
 		if ( ! $form_slug ) {
-			_e( 'You are not allowed to delete this entry! What are you doing here?', 'buddyforms-moderation' );
+			_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-moderation' );
 			die();
 		}
 
