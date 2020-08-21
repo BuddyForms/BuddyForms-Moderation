@@ -89,6 +89,8 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 			echo '<p>' . $errormessage . '</p>';
 		}
 
+		BuddyFormsAssets::front_js_css();
+
 		$output = ob_get_clean();
 	}
 
@@ -130,6 +132,7 @@ function buddyforms_moderators_actions_shortcode() {
 			echo '<div class="buddyforms_moderators_action_container buddyforms-list">';
 			buddyforms_moderators_actions_html( $form_slug, $post->ID );
 			echo '</div>';
+			BuddyFormsAssets::front_js_css( '', $form_slug );
 			$output = ob_get_clean();
 		}
 	}

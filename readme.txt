@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
 Tested up to: 5.4
-Stable tag: 1.4.5
+Stable tag: 1.4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,18 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.8 - 21 Aug 2020 =
+* Code improvement to make the plugin more compatible with BuddyForms.
+
+= 1.4.7 - 24 Jun 2020 =
+* Improving the code.
+* Added the approve status to be included in the list of entries.
+* Fixed the moderation process to only execute when the moderation is enabled in form.
+* Improved the shortcode compatibility with buddyforms 2.5.
+
+= 1.4.6 - 16 Jun 2020 =
+* Fixed the Moderator field visibility base on the value of the option `Frontend Moderators Role`.
+
 = 1.4.5 - 15 May 2020 =
 * Update freemius loader and requirement message.
 * Added option to accept or reject a post send for moderation from the frontend.

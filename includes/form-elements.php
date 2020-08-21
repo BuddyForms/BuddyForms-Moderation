@@ -420,19 +420,6 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 
 //add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
-function bf_create_post_status_to_display( $query_args ) {
-	global $buddyforms;
-
-	if ( isset( $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] ) && $buddyforms[ $query_args['form_slug'] ]['moderation_logic'] != 'default' ) {
-		$query_args['post_status'] = array( 'publish', 'awaiting-review', 'edit-draft', 'draft' );
-	}
-
-	return $query_args;
-
-}
-
-add_filter( 'buddyforms_post_to_display_args', 'bf_create_post_status_to_display', 9999, 1 );
-
 function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	global $buddyforms;
 
