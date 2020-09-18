@@ -41,12 +41,10 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
-		if ( buddyforms_moderation_freemius()->is__premium_only() ) {
-			if ( buddyforms_moderation_freemius()->is_plan( 'professional', true ) ) {
-				include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
-				include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
-				include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
-			}
+		if ( buddyforms_moderation_freemius()->is_paying_or_trial__premium_only() ) {
+			include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
+			include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
+			include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
 		}
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
