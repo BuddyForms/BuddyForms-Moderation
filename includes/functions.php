@@ -907,3 +907,21 @@ function buddyforms_moderators_actions_attachment( $content ) {
 }
 
 //add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+
+/**
+ * Include assets after buddyforms
+ */
+function buddyforms_moderation_include_assets() {
+	wp_enqueue_style( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'css/buddyforms-moderation.css', array(), BUDDYFORMS_MODERATION_VERSION );
+	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), BUDDYFORMS_MODERATION_VERSION );
+	wp_localize_script( 'buddyforms-moderation', 'buddyformsModeration', array(
+		'ajax'  => admin_url( 'admin-ajax.php' ),
+		'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
+		'il18n' => array(
+			'approve'          => __( 'Approve this Post', 'buddyforms-moderation' ),
+			'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
+		),
+	) );
+}
+
+add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
