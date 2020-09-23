@@ -3,7 +3,7 @@
  * Plugin Name: BuddyForms Moderation ( Former: Review Logic )
  * Plugin URI: https://themekraft.com/products/review/
  * Description: Create new drafts or pending moderations from new or published posts without changing the live version.
- * Version: 1.4.8
+ * Version: 1.4.9
  * Author: ThemeKraft
  * Author URI: https://themekraft.com/buddyforms/
  * License: GPLv2 or later
@@ -41,16 +41,14 @@ function bf_moderation_includes() {
 		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
 		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
 		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
-		if ( buddyforms_moderation_freemius()->is__premium_only() ) {
-			if ( buddyforms_moderation_freemius()->is_plan( 'professional', true ) ) {
-				include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
-				include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
-				include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
-			}
+		if ( buddyforms_moderation_freemius()->is_paying_or_trial__premium_only() ) {
+			include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
+			include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
+			include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
 		}
 		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
-		define( 'BUDDYFORMS_MODERATION_VERSION', '1.4.8' );
+		define( 'BUDDYFORMS_MODERATION_VERSION', '1.4.9' );
 	}
 
 	// Only Check for requirements in the admin

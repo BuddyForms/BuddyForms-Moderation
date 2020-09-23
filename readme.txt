@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
 Tested up to: 5.4
-Stable tag: 1.4.8
+Stable tag: 1.4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,10 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.9 - 23 Sep 2020 =
+* Improve freemius trial conditional.
+* Fixed the missing assets (buddyforms-moderation.js mostly) on the free plugin version are breaking the submission process on the Front-end.
+
 = 1.4.8 - 21 Aug 2020 =
 * Code improvement to make the plugin more compatible with BuddyForms.
 
