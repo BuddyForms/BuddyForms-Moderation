@@ -1,31 +1,5 @@
 <?php
 
-
-/**
- * Add Moderation form elements in the form elements select box
- *
- * @param $elements_select_options
- *
- * @return mixed
- */
-function buddyforms_moderators_select( $elements_select_options ) {
-	global $post;
-
-	if ( $post->post_type != 'buddyforms' ) {
-		return $elements_select_options;
-	}
-	$elements_select_options['moderators']['label']                = __( 'Moderation', 'buddyforms-moderation' );
-	$elements_select_options['moderators']['class']                = 'bf_show_if_f_type_post';
-	$elements_select_options['moderators']['fields']['moderators'] = array(
-		'label' => __( 'Select Moderators ', 'buddyforms-moderation' ),
-	);
-
-	return $elements_select_options;
-}
-
-add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_select', 1, 2 );
-
-
 /**
  * Create the new Builder Form Elements
  *
