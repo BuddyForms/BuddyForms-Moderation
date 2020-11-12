@@ -69,7 +69,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' )
 	) );
 
-	if ( buddyforms_members_fs()->is_not_paying() ) {
+	if ( buddyforms_moderation_freemius()->is_not_paying() ) {
 		$element->setAttribute( 'disabled', 'disabled' );
 	}
 	
