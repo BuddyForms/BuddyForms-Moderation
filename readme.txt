@@ -3,7 +3,7 @@ Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
 Tested up to: 5.5
-Stable tag: 1.4.10
+Stable tag: 1.4.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,9 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.11 - 12 Nov 2020 =
+* Fixed issue related with Form Builder and caused by a bad implementation of the Freemius SDK.
+
 = 1.4.10 - 3 Nov 2020 =
 Added: Pro labels in the "Frontend Moderators Role" selector. This option was pointless on the free version.
 Changed: Improve visibility of the Moderator form field, adding it to form field selector on the Builder as a - PRO element.
