@@ -64,11 +64,16 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	if ( isset( $buddyform['moderation']['frontend-moderators'] ) ) {
 		$frontend_moderators = $buddyform['moderation']['frontend-moderators'];
 	}
-	$form_setup[] = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
+	$element = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
 		'value'     => $frontend_moderators,
 		'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' )
 	) );
 
+	if ( buddyforms_moderation_freemius()->is_not_paying() ) {
+		$element->setAttribute( 'disabled', 'disabled' );
+	}
+	
+	$form_setup[] = $element;
 
 	$element_name    = 'buddyforms_options[moderation][reject_subject]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
