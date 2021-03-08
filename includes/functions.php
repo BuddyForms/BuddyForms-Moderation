@@ -562,6 +562,10 @@ function buddyforms_reject_now() {
 
 	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
 
+	if ( ! is_array( $bf_moderation_message_history ) ) {
+		$bf_moderation_message_history = ! empty( $bf_moderation_message_history ) ? array( $bf_moderation_message_history ) : array();
+	}
+
 	$bf_moderation_message_history[] = the_date( 'l, F j, Y' ) . $emailBody;
 	update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
 
