@@ -954,3 +954,37 @@ function buddyforms_moderators_select( $elements_select_options ) {
 }
 
 add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_select', 1, 2 );
+
+
+add_action( 'pre_get_posts', 'buddyforms_enable_single_post_preview_for_moderators');
+function buddyforms_enable_single_post_preview_for_moderators( $query ){
+	global $buddyforms;
+
+	if ( ! $query->is_single() || ! ( $query instanceof WP_Query ) ) {
+		return;
+	}
+
+	if ( ! ( isset( $_GET['bf_awaiting_review_preview'] ) && $query->get( 'p' ) === (int) $_GET['bf_awaiting_review_preview'] ) ) {
+		return;
+	}
+
+	$post_id            = $query->get( 'p' );
+	$form_slug          = get_post_meta( $post_id, '_bf_form_slug', true );
+	$current_user       = wp_get_current_user();
+	$frontend_moderator = isset( $buddyforms['buddyforms'][ $form_slug ]['moderation']['frontend-moderators'] ) ? $buddyforms['buddyforms'][ $form_slug ]['moderation']['frontend-moderators'] : false;
+
+	if ( $frontend_moderator === 'all' || in_array( $frontend_moderator, (array) $current_user->roles ) ) {
+		$query->set( 'post_status', 'awaiting-review' );
+	}
+}
+
+
+add_filter( 'buddyforms_post_link_on_the_loop', 'buddyforms_post_link_on_list_posts_to_moderate', 10, 2 );
+function buddyforms_post_link_on_list_posts_to_moderate( $post_link, $post_id ) {
+
+	if ( isset( $_GET['buddyforms_list_posts_to_moderate'] ) ) {
+		$post_link = add_query_arg( array( 'bf_awaiting_review_preview' => $post_id ), $post_link );
+	}
+
+	return $post_link;
+}
