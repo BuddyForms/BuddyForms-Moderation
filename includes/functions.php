@@ -971,7 +971,7 @@ function buddyforms_enable_single_post_preview_for_moderators( $query ){
 	$post_id            = $query->get( 'p' );
 	$form_slug          = get_post_meta( $post_id, '_bf_form_slug', true );
 	$current_user       = wp_get_current_user();
-	$frontend_moderator = isset( $buddyforms['buddyforms'][ $form_slug ]['moderation']['frontend-moderators'] ) ? $buddyforms['buddyforms'][ $form_slug ]['moderation']['frontend-moderators'] : false;
+	$frontend_moderator = isset( $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] ) ? $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] : false;
 
 	if ( $frontend_moderator === 'all' || in_array( $frontend_moderator, (array) $current_user->roles ) ) {
 		$query->set( 'post_status', 'awaiting-review' );
