@@ -58,8 +58,14 @@ function BuddyFormsModeration() {
     }
 
     function onFormActionClickWrapper(event) {
-        var target = jQuery(this).data('target');
-        var status = jQuery(this).data('status');
+        const target = jQuery(this).data('target');
+        const status = jQuery(this).data('status');
+
+        const confirmationMessage = jQuery(this).data('confirmation');
+        if (status === 'awaiting-review' && !awaitingReviewConfirmation(confirmationMessage)) {
+            event.preventDefault();
+        }
+
         var targetForms = jQuery('form#buddyforms_form_' + target);
         BuddyFormsHooks.doAction('bf-moderation:submit:click', [targetForms, target, status, event]);
     }
@@ -114,6 +120,14 @@ function BuddyFormsModeration() {
 
             return result;
         }, "");
+    }
+
+    function awaitingReviewConfirmation( confirmationMessage ) {
+        if (typeof confirmationMessage === 'undefined' || confirm(confirmationMessage)) {
+            return true;
+        }
+
+        return false;
     }
 
     return {
