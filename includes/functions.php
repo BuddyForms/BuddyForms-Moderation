@@ -353,10 +353,10 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 	<script>
 		jQuery(document).ready(function () {
 			jQuery(document).on("click", '#buddyforms_reject_now', function (evt) {
-
-				var bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
-				var bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
-				var bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
+				const $this = jQuery(this);
+				const bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
+				const bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
+				const bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
 
 				if (bf_reject_mail_from == '') {
 					alert('Mail From is a required field');
@@ -385,6 +385,9 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 						"bf_reject_mail_subject": bf_reject_mail_subject,
 						"bf_reject_mail_message": bf_reject_mail_message
 					},
+					beforeSend: function() {
+    	                $this.closest('#buddyforms_reject_wrap').LoadingOverlay("show", { zIndex: 100051 });
+ 	    	        },
 					success: function (data) {
 
 						if (data) {
@@ -395,7 +398,10 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 					},
 					error: function (request, status, error) {
 						alert(request.responseText);
-					}
+					},
+					complete: function() {
+                    	$this.closest('#buddyforms_reject_wrap').LoadingOverlay("hide");
+                	}
 				});
 
 			});

@@ -1,6 +1,8 @@
 function BuddyFormsModeration() {
     function buddyforms_moderators_approve() {
-        var post_id = jQuery(this).attr('id');
+        const $this   = jQuery(this);
+        const post_id = $this.attr('id');
+
         if (confirm(buddyformsModeration.il18n.approve)) {
             jQuery.ajax({
                 type: 'POST',
@@ -9,6 +11,9 @@ function BuddyFormsModeration() {
                     "action": "buddyforms_moderators_ajax_approve_post",
                     "post_id": post_id,
                     "nonce": buddyformsModeration.nonce
+                },
+                beforeSend: function() {
+                    $this.closest('.buddyforms_posts_list').LoadingOverlay("show");
                 },
                 success: function (data) {
                     if (isNaN(data)) {
@@ -19,7 +24,11 @@ function BuddyFormsModeration() {
                 },
                 error: function (request) {
                     alert(request.responseText);
+                },
+                complete: function() {
+                    $this.closest('.buddyforms_posts_list').LoadingOverlay("hide");
                 }
+
             });
         } else {
             return false;
