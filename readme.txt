@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 5.7
-Stable tag: 1.4.12
+Tested up to: 5.8
+Stable tag: 1.4.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,13 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.13 - 11 Jul 2021 =
+* Tested up to WordPress 5.8
+* Improved moderation shortcode (buddyforms_list_posts_to_moderate) to let moderators preview single post view even if they don't have admin enough capabilities to see hidden posts.
+* Added new  confirmation window to show before submit an entry for moderation.
+* Added new attribute on the "buddyforms_list_posts_to_moderate" shortcode to let users filter specific post-type to moderate.
+* Added loading indicator on AJAX requests.
+
 = 1.4.12 - 8 Mar 2021 =
 * Fixed error on action "Sent Message and Set post status to edit-draft" on post-rejection.
 * Tested up to 5.7
