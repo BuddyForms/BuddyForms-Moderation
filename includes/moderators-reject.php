@@ -6,9 +6,11 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	?>
 	<script>
 		jQuery(document).ready(function () {
+			console.log('Aqui')
 			jQuery(document).on("click", '#buddyforms_reject_post_as_moderator_<?php echo $post_id ?>', function (evt) {
-				var post_reject_email_subject = jQuery('#post_reject_email_subject_<?php echo $post_id ?>').val();
-				var post_reject_email_message = jQuery('#post_reject_email_message_<?php echo $post_id ?>').val();
+				const $this = jQuery(this);
+				const post_reject_email_subject = jQuery('#post_reject_email_subject_<?php echo $post_id ?>').val();
+				const post_reject_email_message = jQuery('#post_reject_email_message_<?php echo $post_id ?>').val();
 
 				if (post_reject_email_subject == '') {
 					alert('<?php _e('Mail Subject is a required field', 'buddyforms-moderation')?>');
@@ -19,8 +21,8 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 					return false;
 				}
 
-				var post_id = jQuery(this).attr("data-post_id");
-				var form_slug = jQuery(this).attr("data-form_slug");
+				const post_id = jQuery(this).attr("data-post_id");
+				const form_slug = jQuery(this).attr("data-form_slug");
 
 				jQuery.ajax({
 					type: 'POST',
@@ -34,13 +36,19 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 						"post_reject_email_subject": post_reject_email_subject,
 						"post_reject_email_message": post_reject_email_message
 					},
+					beforeSend: function() {
+    	                $this.closest('#buddyforms_reject_wrap').LoadingOverlay("show", { zIndex: 100051 });
+ 	    	        },
 					success: function (data) {
 						alert(data.result);
 						window.location.reload();
 					},
 					error: function (request, status, error) {
 						alert(request.responseText);
-					}
+					},
+					complete: function() {
+                    	$this.closest('#buddyforms_reject_wrap').LoadingOverlay("hide");
+                	}
 				});
 			});
 		});

@@ -72,7 +72,7 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	if ( buddyforms_moderation_freemius()->is_not_paying() ) {
 		$element->setAttribute( 'disabled', 'disabled' );
 	}
-	
+
 	$form_setup[] = $element;
 
 	$element_name    = 'buddyforms_options[moderation][reject_subject]';
@@ -133,6 +133,12 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 		)
 	);
 
+	$review_confirmation_message = isset( $buddyform['moderation']['review_confirmation_message'] ) ? $buddyform['moderation']['review_confirmation_message'] : __( 'Are you sure you want send it to moderation?', 'buddyforms-moderation' );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Submit for Moderation Confirmation', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][review_confirmation_message]", array(
+		'value' => $review_confirmation_message,
+		'shortDesc' => __( 'Message shown on the confirmation window. Keep this option empty if you want to skip the confirmation before the submission.', 'buddyforms-moderation' )
+	));
+
 	buddyforms_display_field_group_table( $form_setup );
 }
 
@@ -166,6 +172,13 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 	$submit_new_draft_button  = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
 
 	$label_no_edit = new Element_HTML( '<div style="text-align: center; padding: 1rem;"><p>' . wp_kses_post( $moderation['label_no_edit'] ) . '</p></div>' );
+
+	if (
+		isset( $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] ) &&
+		! empty( $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] )
+	) {
+		$submit_moderation_button->setAttribute( 'data-confirmation', $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] );
+	}
 
 	if ( is_user_logged_in() ) {
 		// If post_id is 0 we have a new posts

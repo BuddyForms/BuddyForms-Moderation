@@ -353,10 +353,10 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 	<script>
 		jQuery(document).ready(function () {
 			jQuery(document).on("click", '#buddyforms_reject_now', function (evt) {
-
-				var bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
-				var bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
-				var bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
+				const $this = jQuery(this);
+				const bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
+				const bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
+				const bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
 
 				if (bf_reject_mail_from == '') {
 					alert('Mail From is a required field');
@@ -385,6 +385,9 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 						"bf_reject_mail_subject": bf_reject_mail_subject,
 						"bf_reject_mail_message": bf_reject_mail_message
 					},
+					beforeSend: function() {
+    	                $this.closest('#buddyforms_reject_wrap').LoadingOverlay("show", { zIndex: 100051 });
+ 	    	        },
 					success: function (data) {
 
 						if (data) {
@@ -395,7 +398,10 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 					},
 					error: function (request, status, error) {
 						alert(request.responseText);
-					}
+					},
+					complete: function() {
+                    	$this.closest('#buddyforms_reject_wrap').LoadingOverlay("hide");
+                	}
 				});
 
 			});
@@ -561,6 +567,10 @@ function buddyforms_reject_now() {
 	}
 
 	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
+
+	if ( ! is_array( $bf_moderation_message_history ) ) {
+		$bf_moderation_message_history = ! empty( $bf_moderation_message_history ) ? array( $bf_moderation_message_history ) : array();
+	}
 
 	$bf_moderation_message_history[] = the_date( 'l, F j, Y' ) . $emailBody;
 	update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
@@ -950,3 +960,37 @@ function buddyforms_moderators_select( $elements_select_options ) {
 }
 
 add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_select', 1, 2 );
+
+
+add_action( 'pre_get_posts', 'buddyforms_enable_single_post_preview_for_moderators');
+function buddyforms_enable_single_post_preview_for_moderators( $query ){
+	global $buddyforms;
+
+	if ( ! $query->is_single() || ! ( $query instanceof WP_Query ) ) {
+		return;
+	}
+
+	if ( ! ( isset( $_GET['bf_awaiting_review_preview'] ) && $query->get( 'p' ) === (int) $_GET['bf_awaiting_review_preview'] ) ) {
+		return;
+	}
+
+	$post_id            = $query->get( 'p' );
+	$form_slug          = get_post_meta( $post_id, '_bf_form_slug', true );
+	$current_user       = wp_get_current_user();
+	$frontend_moderator = isset( $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] ) ? $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] : false;
+
+	if ( $frontend_moderator === 'all' || in_array( $frontend_moderator, (array) $current_user->roles ) ) {
+		$query->set( 'post_status', 'awaiting-review' );
+	}
+}
+
+
+add_filter( 'buddyforms_post_link_on_the_loop', 'buddyforms_post_link_on_list_posts_to_moderate', 10, 2 );
+function buddyforms_post_link_on_list_posts_to_moderate( $post_link, $post_id ) {
+
+	if ( isset( $_GET['buddyforms_list_posts_to_moderate'] ) ) {
+		$post_link = add_query_arg( array( 'bf_awaiting_review_preview' => $post_id ), $post_link );
+	}
+
+	return $post_link;
+}
