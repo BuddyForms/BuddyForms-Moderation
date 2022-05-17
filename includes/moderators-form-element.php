@@ -332,6 +332,8 @@ function buddyforms_moderators_ajax_approve_post() {
 			}
 		}
 
+		do_action( 'buddyforms_moderators_after_approving_post', $post_id );
+
 		// Remove the post from the user posts taxonomy
 		wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts' );
 

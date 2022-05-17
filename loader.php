@@ -219,9 +219,7 @@ function bfmod_fs_is_parent_active() {
 	}
 
 	foreach ( $active_plugins as $basename ) {
-		if ( 0 === strpos( $basename, 'buddyforms/' ) ||
-		     0 === strpos( $basename, 'buddyforms-premium/' )
-		) {
+		if ( 0 === strpos( strtolower( $basename ), 'buddyforms/' ) || 0 === strpos( strtolower( $basename ), 'buddyforms-premium/' ) ) {
 			return true;
 		}
 	}
