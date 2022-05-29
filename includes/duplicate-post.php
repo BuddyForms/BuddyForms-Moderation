@@ -23,7 +23,7 @@ function buddyforms_moderation_duplicate_post() {
 					$results = array(
 						'error'     => false,
 						'error_msg' => '0',
-						'redirect'  => admin_url( 'post.php?action=edit&post=' . $new_post_id )
+						'redirect'  => admin_url( 'post.php?action=edit&post=' . $new_post_id ),
 					);
 					echo json_encode( $results );
 					die;
@@ -35,7 +35,7 @@ function buddyforms_moderation_duplicate_post() {
 					$results = array(
 						'error'     => true,
 						'error_msg' => 'Post creation failed, could not find original post: ' . $post_id,
-						'redirect'  => get_permalink()
+						'redirect'  => get_permalink(),
 					);
 					echo json_encode( $results );
 					die;
@@ -48,7 +48,7 @@ function buddyforms_moderation_duplicate_post() {
 		$results = array(
 			'error'     => true,
 			'error_msg' => 'You are not logged in.',
-			'redirect'  => wp_login_url( get_permalink() )
+			'redirect'  => wp_login_url( get_permalink() ),
 		);
 		echo json_encode( $results );
 		die;
@@ -71,8 +71,8 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
 	 * if post data exists, create the post duplicate
 	 */
 	if ( isset( $post ) && $post != null ) {
-		$post_title   = ! empty( $_POST['buddyforms_form_title'] ) ? sanitize_title( $_POST['buddyforms_form_title'] ) : $post->post_title;
-		$post_content = ! empty( $_POST['buddyforms_form_content'] ) ? sanitize_textarea_field( $_POST['buddyforms_form_content'] ) : $post->post_content;
+		$post_title   = ! empty( $_POST['buddyforms_form_title'] ) ? sanitize_title( wp_unslash( $_POST['buddyforms_form_title'] ) ) : $post->post_title;
+		$post_content = ! empty( $_POST['buddyforms_form_content'] ) ? sanitize_textarea_field( wp_unslash( $_POST['buddyforms_form_content'] ) ) : $post->post_content;
 		$args         = array(
 			'comment_status' => $post->comment_status,
 			'ping_status'    => $post->ping_status,
@@ -86,7 +86,7 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
 			'post_title'     => $post_title,
 			'post_type'      => $post->post_type,
 			'to_ping'        => $post->to_ping,
-			'menu_order'     => $post->menu_order
+			'menu_order'     => $post->menu_order,
 		);
 
 		$new_post_id = wp_insert_post( $args );
@@ -127,12 +127,11 @@ function buddyforms_moderation_duplicate_post_from_original( $post_id ) {
 /**
  * Add an action to the post list to create a new draft from a published post
  *
- * @param array $actions
+ * @param array   $actions
  * @param WP_Post $post
  *
  * @return array
  * @since 1.4.0 Added the action to the post list and validate to show the action only to the published posts
- *
  */
 function buddyforms_moderation_duplicate_post_link( $actions, $post ) {
 	if ( current_user_can( 'edit_pages' ) && $post->post_status === 'publish' ) {
@@ -169,8 +168,8 @@ function buddyforms_moderation_admin_bar_mod_button( $wp_admin_bar ) {
 		'href'  => get_admin_url() . wp_nonce_url( 'admin.php?action=buddyforms_moderation_duplicate_post&post_id=' . $post->ID, basename( __FILE__ ), 'duplicate_nonce' ),
 		'meta'  => array(
 			'data-post_id' => $post->ID,
-			'class'        => 'buddyforms-admin-bar-moderation'
-		)
+			'class'        => 'buddyforms-admin-bar-moderation',
+		),
 	);
 	$wp_admin_bar->add_node( $args );
 }

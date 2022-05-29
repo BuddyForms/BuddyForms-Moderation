@@ -19,18 +19,17 @@ class BF_Moderation_Update_Post {
 		$this->statuses          = array(
 			'edit-draft'      => $this->status_edit,
 			'awaiting-review' => $this->status_moderation,
-			'approved'        => $this->status_approved
+			'approved'        => $this->status_approved,
 		);
 		add_action( 'wp_insert_post_data', array( $this, 'modify_post_content' ), 99, 2 );
 		add_action( 'init', array( $this, 'bf_moderation_post_status' ), 999 );
 		add_action( 'post_submitbox_misc_actions', array( $this, 'bf_moderation_submitbox_misc_actions' ) );
 		add_action( 'admin_footer-edit.php', array( $this, 'bf_moderation_append_to_inline_status_dropdown' ), 999 );
 		add_filter( 'buddyforms_get_post_status_array', array( $this, 'bf_moderation_get_post_status_array' ), 10, 1 );
-		add_filter( 'display_post_states', array( $this, "display_post_states" ), 10, 2 );
+		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 10, 2 );
 	}
 
 	public function display_post_states( $post_states, $post ) {
-
 
 		$add_suffix = array_key_exists( $post->post_status, $this->statuses );
 		if ( $add_suffix ) {
@@ -74,7 +73,6 @@ class BF_Moderation_Update_Post {
 		if ( $data['post_type'] != $buddyforms_options[ $bf_form_slug ]['post_type'] ) {
 			return $data;
 		}
-
 
 		if ( $data['post_status'] == 'publish' || $data['post_status'] == 'approved' ) {
 			if ( $data['post_type'] == 'revision' ) {
@@ -125,7 +123,6 @@ class BF_Moderation_Update_Post {
 
 					wp_reset_query();
 				}
-
 			} else {
 				$data['post_status'] = 'publish';
 			}
@@ -254,26 +251,26 @@ class BF_Moderation_Update_Post {
 			$complete = ' selected=\"selected\"';
 			$label    = '<span id=\"post-status-display\"> ' . $this->status_edit . '</span>';
 		}
-		echo '$("select#post_status").append("<option value=\"' . $post->post_status . '\" ' . $complete . '>' . $this->status_edit . '</option>");
-            $(".misc-pub-section label").append("' . $label . '");';
+		echo '$("select#post_status").append("<option value=\"' . esc_attr( $post->post_status ) . '\" ' . esc_attr( $complete ) . '>' . esc_html( $this->status_edit ) . '</option>");
+            $(".misc-pub-section label").append("' . esc_js( $label ) . '");';
 		$complete = '';
 		$label    = '';
 		if ( $post->post_status == 'awaiting-review' ) {
 			$complete = ' selected=\"selected\"';
 			$label    = '<span id=\"post-status-display\"> ' . $this->status_moderation . '</span>';
 		}
-		echo '$("select#post_status").append("<option value=\"' . $post->post_status . '\" ' . $complete . '>' . $this->status_moderation . '</option>");
-            $(".misc-pub-section label").append("' . $label . '");';
+		echo '$("select#post_status").append("<option value=\"' . esc_attr( $post->post_status ) . '\" ' . esc_attr( $complete ) . '>' . esc_html( $this->status_moderation ) . '</option>");
+            $(".misc-pub-section label").append("' . esc_js( $label ) . '");';
 		$complete = '';
 		$label    = '';
 		if ( $post->post_status == 'approved' ) {
 			$complete = ' selected=\"selected\"';
 			$label    = '<span id=\"post-status-display\"> ' . $this->status_approved . '</span>';
 		}
-		echo '$("select#post_status").append("<option value=\"' . $post->post_status . '\" ' . $complete . '>' . $this->status_approved . '</option>");
-            $(".misc-pub-section label").append("' . $label . '");';
+		echo '$("select#post_status").append("<option value=\"' . esc_attr( $post->post_status ) . '\" ' . esc_attr( $complete ) . '>' . esc_html( $this->status_approved ) . '</option>");
+            $(".misc-pub-section label").append("' . esc_js( $label ) . '");';
 		if ( array_key_exists( $post->post_status, $this->statuses ) ) {
-			echo '$("#post-status-display").text("' . $this->statuses[ $post->post_status ] . '");';
+			echo '$("#post-status-display").text("' . esc_js( $this->statuses[ $post->post_status ] ) . '");';
 		}
 		echo ' });</script>';
 
@@ -284,6 +281,7 @@ class BF_Moderation_Update_Post {
 	 * Append the custom post type to the post status
 	 * dropdown in the quick edit area on the post
 	 * listing page.
+	 *
 	 * @return null
 	 */
 	function bf_moderation_append_to_inline_status_dropdown() {
@@ -312,9 +310,9 @@ class BF_Moderation_Update_Post {
 		echo "
         <script>
         jQuery(document).ready(function ($){
-            jQuery('.inline-edit-status select').append('<option value=\"edit-draft\">" . $this->status_edit . "</option>' +
-             '<option value=\"awaiting-review\">" . $this->status_moderation . "</option>' +
-             '<option value=\"approved\">" . $this->status_approved . "</option>');
+            jQuery('.inline-edit-status select').append('<option value=\"edit-draft\">" . esc_attr( $this->status_edit ) . "</option>' +
+             '<option value=\"awaiting-review\">" . esc_attr( $this->status_moderation ) . "</option>' +
+             '<option value=\"approved\">" . esc_attr( $this->status_approved ) . "</option>');
         });
         </script>
         ";
@@ -329,4 +327,4 @@ class BF_Moderation_Update_Post {
 
 }
 
-new BF_Moderation_Update_Post;
+new BF_Moderation_Update_Post();

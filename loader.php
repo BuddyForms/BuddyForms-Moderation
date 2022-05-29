@@ -37,16 +37,16 @@ add_action( 'init', 'bf_moderation_includes', 10 );
 function bf_moderation_includes() {
 	global $buddyforms_new;
 	if ( ! empty( $buddyforms_new ) ) {
-		include_once( dirname( __FILE__ ) . '/includes/buddyforms-moderation.php' );
-		include_once( dirname( __FILE__ ) . '/includes/form-elements.php' );
-		include_once( dirname( __FILE__ ) . '/includes/duplicate-post.php' );
-		include_once( dirname( __FILE__ ) . '/includes/functions.php' );
+		include_once dirname( __FILE__ ) . '/includes/buddyforms-moderation.php';
+		include_once dirname( __FILE__ ) . '/includes/form-elements.php';
+		include_once dirname( __FILE__ ) . '/includes/duplicate-post.php';
+		include_once dirname( __FILE__ ) . '/includes/functions.php';
 		if ( buddyforms_moderation_freemius()->is_paying_or_trial__premium_only() ) {
-			include_once( dirname( __FILE__ ) . '/includes/moderators-taxonomy.php' );
-			include_once( dirname( __FILE__ ) . '/includes/moderators-form-element.php' );
-			include_once( dirname( __FILE__ ) . '/includes/moderators-reject.php' );
+			include_once dirname( __FILE__ ) . '/includes/moderators-taxonomy.php';
+			include_once dirname( __FILE__ ) . '/includes/moderators-form-element.php';
+			include_once dirname( __FILE__ ) . '/includes/moderators-reject.php';
 		}
-		include_once( dirname( __FILE__ ) . '/includes/shortcodes.php' );
+		include_once dirname( __FILE__ ) . '/includes/shortcodes.php';
 		define( 'BUDDYFORMS_MODERATION_ASSETS', plugins_url( 'assets/', __FILE__ ) );
 		define( 'BUDDYFORMS_MODERATION_VERSION', '1.4.15' );
 	}
@@ -57,7 +57,7 @@ function bf_moderation_includes() {
 	}
 
 	// Require TGM
-	require( dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php' );
+	require dirname( __FILE__ ) . '/includes/resources/tgm/class-tgm-plugin-activation.php';
 
 	// Hook required plugins function to the tgmpa_register action
 	add_action( 'tgmpa_register', 'buddyform_moderation_dependency' );
@@ -111,7 +111,8 @@ function buddyforms_moderation_need_buddyforms() {
 		}</style>
 	<div class="error buddyforms-notice buddyforms-title"><label class="buddyforms-title">BuddyForms Moderation</label>
 		<div class="buddyforms-notice-body"><b>Oops...</b> BuddyForms Moderation cannot run without <a target="_blank" href="https://themekraft.com/buddyforms/">BuddyForms</a>.</div>
-	</div><?php
+	</div>
+	<?php
 }
 
 /**
@@ -155,7 +156,7 @@ function buddyform_moderation_dependency() {
 }
 
 if ( ! function_exists( 'bfmod_fs' ) ) {
-// Create a helper function for easy SDK access.
+	// Create a helper function for easy SDK access.
 	function buddyforms_moderation_freemius() {
 		global $bfmod_fs;
 
@@ -165,36 +166,38 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 				if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php' ) ) {
 					// Try to load SDK from parent plugin folder.
 					require_once dirname( dirname( __FILE__ ) ) . '/buddyforms/includes/resources/freemius/start.php';
-				} else if ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
+				} elseif ( file_exists( dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php' ) ) {
 					// Try to load SDK from premium parent plugin folder.
 					require_once dirname( dirname( __FILE__ ) ) . '/buddyforms-premium/includes/resources/freemius/start.php';
 				}
 
-				$bfmod_fs = fs_dynamic_init( array(
-					'id'                  => '409',
-					'slug'                => 'buddyforms-review',
-					'type'                => 'plugin',
-					'public_key'          => 'pk_b92e3b1876e342874bdc7f6e80d05',
-					'is_premium'          => true,
-					'premium_suffix'      => 'Professional',
-					// If your addon is a serviceware, set this option to false.
-					'has_premium_version' => true,
-					'has_paid_plans'      => true,
-					'trial'               => array(
-						'days'               => 14,
-						'is_require_payment' => true,
-					),
-					'parent'              => array(
-						'id'         => '391',
-						'slug'       => 'buddyforms',
-						'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
-						'name'       => 'BuddyForms',
-					),
-					'menu'                => array(
-						'slug'    => 'buddyforms',
-						'support' => false,
+				$bfmod_fs = fs_dynamic_init(
+					array(
+						'id'                  => '409',
+						'slug'                => 'buddyforms-review',
+						'type'                => 'plugin',
+						'public_key'          => 'pk_b92e3b1876e342874bdc7f6e80d05',
+						'is_premium'          => true,
+						'premium_suffix'      => 'Professional',
+						// If your addon is a serviceware, set this option to false.
+						'has_premium_version' => true,
+						'has_paid_plans'      => true,
+						'trial'               => array(
+							'days'               => 14,
+							'is_require_payment' => true,
+						),
+						'parent'              => array(
+							'id'         => '391',
+							'slug'       => 'buddyforms',
+							'public_key' => 'pk_dea3d8c1c831caf06cfea10c7114c',
+							'name'       => 'BuddyForms',
+						),
+						'menu'                => array(
+							'slug'    => 'buddyforms',
+							'support' => false,
+						),
 					)
-				) );
+				);
 
 			}
 		} catch ( Freemius_Exception $e ) {
@@ -241,7 +244,7 @@ function bfmod_fs_init() {
 if ( bfmod_fs_is_parent_active_and_loaded() ) {
 	// If parent already included, init add-on.
 	bfmod_fs_init();
-} else if ( bfmod_fs_is_parent_active() ) {
+} elseif ( bfmod_fs_is_parent_active() ) {
 	// Init add-on only after the parent is loaded.
 	add_action( 'buddyforms_core_fs_loaded', 'bfmod_fs_init' );
 } else {

@@ -39,8 +39,8 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 			 * @var WP_Post_Type $post_type
 			 */
 			$post_type = get_post_type_object( $post_type_to_mderate );
-			if (isset($post_type->labels->name) && ! empty($post_type->labels->name)) {
-				$post_type_to_mderate_plural_label = esc_html($post_type->labels->name);
+			if ( isset( $post_type->labels->name ) && ! empty( $post_type->labels->name ) ) {
+				$post_type_to_mderate_plural_label = esc_html( $post_type->labels->name );
 			}
 		}
 
@@ -56,8 +56,8 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 					'key'     => '_bf_form_slug',
 					'value'   => $user_is_moderator_in_forms,
 					'compare' => 'IN',
-				)
-			)
+				),
+			),
 		);
 
 		$forced_moderation_args = apply_filters( 'buddyforms_moderation_list_posts_to_moderate_query', $forced_moderation_args );
@@ -71,12 +71,14 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 		$user_posts = wp_get_object_terms( get_current_user_id(), 'buddyforms_moderators_posts', array( 'fields' => 'slugs' ) );
 
 		if ( ! empty( $user_posts ) ) {
-			$query_user_posts = new WP_Query( array(
-				'fields'      => 'ids',
-				'post__in'    => $user_posts,
-				'post_status' => 'awaiting-review',
-				'post_type'   => 'any'
-			) );
+			$query_user_posts = new WP_Query(
+				array(
+					'fields'      => 'ids',
+					'post__in'    => $user_posts,
+					'post_status' => 'awaiting-review',
+					'post_type'   => 'any',
+				)
+			);
 
 			if ( $query_user_posts->have_posts() ) {
 				if ( empty( $forced_posts_ids ) ) {
@@ -89,11 +91,13 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 
 		if ( ! empty( $forced_posts_ids ) ) {
 
-			$the_lp_query = new WP_Query( array(
-				'post__in'    => $forced_posts_ids,
-				'post_status' => 'awaiting-review',
-				'post_type'   => 'any'
-			) );
+			$the_lp_query = new WP_Query(
+				array(
+					'post__in'    => $forced_posts_ids,
+					'post_status' => 'awaiting-review',
+					'post_type'   => 'any',
+				)
+			);
 
 			if ( $the_lp_query->have_posts() ) {
 
@@ -102,11 +106,11 @@ function buddyforms_moderators_list_posts_to_moderate( $args ) {
 
 				buddyforms_locate_template( 'the-loop', $form_slug );
 			} else {
-				echo '<p>' . $errormessage . '</p>';
+				echo '<p>' . esc_html( $errormessage ) . '</p>';
 			}
 			wp_reset_postdata();
 		} else {
-			echo '<p>' . $errormessage . '</p>';
+			echo '<p>' . esc_html( $errormessage ) . '</p>';
 		}
 
 		BuddyFormsAssets::front_js_css();
@@ -160,4 +164,4 @@ function buddyforms_moderators_actions_shortcode() {
 	return $output;
 }
 
-//add_shortcode( 'buddyforms_moderator_action', 'buddyforms_moderators_actions_shortcode' );
+// add_shortcode( 'buddyforms_moderator_action', 'buddyforms_moderators_actions_shortcode' );
