@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 5.9.3
-Stable tag: 1.4.15
+Tested up to: 6.0
+Stable tag: 1.4.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,10 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.16 - 29 may 2022 =
+* Fixed vulnerability issue.
+* Tested up to WordPress 6.0
+
 = 1.4.15 - 17 may 2022 =
 * Fixed issue with plugin activation.
 * Added new hook.
