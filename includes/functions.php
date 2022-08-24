@@ -279,7 +279,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 						$post_thumbnail = apply_filters( 'buddyforms_loop_thumbnail', $post_thumbnail );
 						?>
 
-						<a href="<?php echo esc_url( $the_permalink ); ?>"><?php echo $post_thumbnail; ?></a>
+						<a href="<?php echo esc_url( $the_permalink ); ?>"><?php echo esc_html( $post_thumbnail ); ?></a>
 					</div>
 
 					<div class="item">
@@ -1016,4 +1016,12 @@ function buddyforms_post_link_on_list_posts_to_moderate( $post_link, $post_id ) 
 	}
 
 	return $post_link;
+}
+
+function buddyforms_sanitize_mixed( $var ) {
+	if ( is_array( $var ) ) {
+		return array_map( 'buddyforms_sanitize_mixed', $var );
+	} else {
+		return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
+	}
 }

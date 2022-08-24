@@ -192,10 +192,10 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
 		// Update the editors post meta
 		if ( ! empty( $_POST['buddyforms_moderators'] ) ) {
-			update_post_meta( $post_id, 'buddyforms_moderators', wp_unslash( $_POST['buddyforms_moderators'] ) );
+			update_post_meta( $post_id, 'buddyforms_moderators', buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) );
 
 			// Update the editors array
-			foreach ( wp_unslash( $_POST['buddyforms_moderators'] ) as $key => $moderator ) {
+			foreach ( buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) as $key => $moderator ) {
 				$moderators[ $moderator ] = $moderator;
 			}
 		}
