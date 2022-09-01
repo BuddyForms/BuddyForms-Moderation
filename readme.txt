@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 6.0.1
-Stable tag: 1.4.17
+Tested up to: 6.0.2
+Stable tag: 1.4.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,10 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.4.18 - 31 Aug 2022 =
+* Added support to myCred plugin.
+* Tested up to WordPress 6.0.2
+
 = 1.4.17 - 24 Aug 2022 =
 * Fixed security issue.
 * Tested up to WordPress 6.0.1
