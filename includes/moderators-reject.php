@@ -106,7 +106,7 @@ function buddyforms_moderators_reject_post( $post_id, $form_slug ) {
 	</div>
 	<?php
 	$content = ob_get_clean();
-	echo wp_kses_post( $content );
+	echo $content;
 }
 
 add_action( 'wp_ajax_buddyforms_reject_post_as_moderator', 'buddyforms_reject_post_as_moderator' );

@@ -1025,3 +1025,16 @@ function buddyforms_sanitize_mixed( $var ) {
 		return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
 	}
 }
+
+if( class_exists('myCRED_Hook') ){
+	add_filter( 'mycred_publish_hook_old', 'include_new_post_status', 10, 3 );
+	function include_new_post_status( $allowed_status, $post_id, $mycred_type ){
+	
+		if( ! isset( $allowed_status['awaiting-review'] ) ){
+			array_push( $allowed_status, 'awaiting-review' );
+		}
+		return $allowed_status;
+		
+	}
+}
+
