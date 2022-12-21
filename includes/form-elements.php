@@ -396,7 +396,14 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 }
 
-function buddyforms_remove_private_prefix( $title, $post_id ) {
+function buddyforms_remove_private_prefix( $title ) {
+	global $post;
+
+	if( ! is_object( $post ) ) {
+		return $title;
+	}
+	
+	$post_id = $post->ID;
 	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
 	if ( ! empty( $form_slug ) ) {
 		$title = str_replace( 'Private: ', '', $title );
