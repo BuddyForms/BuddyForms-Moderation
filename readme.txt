@@ -2,8 +2,8 @@
 Contributors: svenl77, buddyforms
 Tags: buddypress, user, members, profiles, custom post types, taxonomy, frontend posting, frontend editing, revision, review, moderation, frontend editor
 Requires at least: 3.9
-Tested up to: 5.5
-Stable tag: 1.4.11
+Tested up to: 6.1.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,44 @@ You need the BuddyForms plugin installed for the plugin to work.
 3. **Button Logic in the Front-end edit Screen**
 
 == Changelog ==
+= 1.5.0 - 20 Dec 2022 =
+* Fixed error when accessing post listing pages.
+* Enabled trial version.
+* Enabled bundle license auto activation.
+* Tested up to WordPress 6.1.1
+
+= 1.4.18 - 31 Aug 2022 =
+* Added support to myCred plugin.
+* Tested up to WordPress 6.0.2
+
+= 1.4.17 - 24 Aug 2022 =
+* Fixed security issue.
+* Tested up to WordPress 6.0.1
+
+= 1.4.16 - 29 May 2022 =
+* Fixed vulnerability issue.
+* Tested up to WordPress 6.0
+
+= 1.4.15 - 17 May 2022 =
+* Fixed issue with plugin activation.
+* Added new hook.
+* Updated readme.txt
+
+= 1.4.14 - 6 Jan 2022 =
+* Improved Freemius integration.
+* Added new option to allow users edit posts and not have to wait for approval again. 
+
+= 1.4.13 - 11 Jul 2021 =
+* Tested up to WordPress 5.8
+* Improved moderation shortcode (buddyforms_list_posts_to_moderate) to let moderators preview single post view even if they don't have admin enough capabilities to see hidden posts.
+* Added new  confirmation window to show before submit an entry for moderation.
+* Added new attribute on the "buddyforms_list_posts_to_moderate" shortcode to let users filter specific post-type to moderate.
+* Added loading indicator on AJAX requests.
+
+= 1.4.12 - 8 Mar 2021 =
+* Fixed error on action "Sent Message and Set post status to edit-draft" on post-rejection.
+* Tested up to 5.7
+
 = 1.4.11 - 12 Nov 2020 =
 * Fixed issue related with Form Builder and caused by a bad implementation of the Freemius SDK.
 

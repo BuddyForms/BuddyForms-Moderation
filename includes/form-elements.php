@@ -2,7 +2,7 @@
 
 
 function buddyforms_moderation_admin_settings_sidebar_metabox() {
-	add_meta_box( 'buddyforms_moderation', __( "Moderation", 'buddyforms-moderation' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
+	add_meta_box( 'buddyforms_moderation', __( 'Moderation', 'buddyforms-moderation' ), 'buddyforms_moderation_admin_settings_sidebar_metabox_html', 'buddyforms', 'normal', 'low' );
 	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_class' );
 	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_show_if_form_type_post' );
 	add_filter( 'postbox_classes_buddyforms_buddyforms_moderation', 'buddyforms_metabox_show_if_post_type_none' );
@@ -23,35 +23,38 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 
 	$form_setup[] = new Element_Radio(
 		'<b>' . __( 'Moderation Logic', 'buddyforms-moderation' ) . '</b>',
-		"buddyforms_options[moderation_logic]",
-		Array(
-			'default'      => 'Moderation is disabled<br>',
-			'one_draft'    => 'Users can create, save and edit a draft until it is submitted for moderation. Once submitted, changes cannot be made until the post is approved. However, the user can delete the submitted post before it is approved.<br>',
-			'hidden_draft' => 'Users can only submit a post for moderation. Drafts cannot be saved.<br>',
-			'many_drafts'  => 'Users can create as many drafts as they like and submit them for moderation. When a post is approved, all related older posts that are awaiting review get deleted. This could result in the post appearing multiple times in Edit Draft or Awaiting Moderation.<br>'
-		)
-		,
+		'buddyforms_options[moderation_logic]',
+		array(
+			'default'       => 'Moderation is disabled<br>',
+			'one_draft'     => 'Users can create, save and edit a draft until it is submitted for moderation. Once submitted, changes cannot be made until the post is approved. However, the user can delete the submitted post before it is approved.<br>',
+			'hidden_draft'  => 'Users can only submit a post for moderation. Drafts cannot be saved.<br>',
+			'many_drafts'   => 'Users can create as many drafts as they like and submit them for moderation. When a post is approved, all related older posts that are awaiting review get deleted. This could result in the post appearing multiple times in Edit Draft or Awaiting Moderation.<br>',
+			'publish_draft' => 'Users can edit and publish posts that have got approved and published before without the need for a new moderation.',
+		),
 		array(
 			'value' => $moderation_logic,
 			// 'shortDesc'  => 'If a post is created or edited and the moderation logic is enabled the post is saved with post status edit-draft.
-			//         If a post is submit for moderation the post status is set to awaiting-approval'
+			// If a post is submit for moderation the post status is set to awaiting-approval'
 		)
 	);
 
 	$label_submit = isset( $buddyform['moderation']['label_submit'] ) ? $buddyform['moderation']['label_submit'] : __( 'Submit', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_submit]", array( 'value' => $label_submit ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit Button', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_submit]', array( 'value' => $label_submit ) );
 
 	$label_save   = isset( $buddyform['moderation']['label_save'] ) ? $buddyform['moderation']['label_save'] : __( 'Save', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_save]", array( 'value' => $label_save ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Save Button', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_save]', array( 'value' => $label_save ) );
 
 	$label_review = isset( $buddyform['moderation']['label_review'] ) ? $buddyform['moderation']['label_review'] : __( 'Submit for moderation', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_review]", array( 'value' => $label_review ) );
+	$form_setup[] = new Element_Textbox( '<b>' . __( 'Label for Submit for moderation Button', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_review]', array( 'value' => $label_review ) );
 
 	$label_new_draft = isset( $buddyform['moderation']['label_new_draft'] ) ? $buddyform['moderation']['label_new_draft'] : __( 'Create new Draft', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_new_draft]", array( 'value' => $label_new_draft ) );
+	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Label for Create new Draft Button', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_new_draft]', array( 'value' => $label_new_draft ) );
 
 	$label_no_edit = isset( $buddyform['moderation']['label_no_edit'] ) ? $buddyform['moderation']['label_no_edit'] : __( 'This Post is waiting for approval and can not be changed until it gets approved', 'buddyforms-moderation' );
-	$form_setup[]  = new Element_Textarea( '<b>' . __( 'If the form is displayed but editing is disabled', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][label_no_edit]", array( 'value' => $label_no_edit ) );
+	$form_setup[]  = new Element_Textarea( '<b>' . __( 'If the form is displayed but editing is disabled', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_no_edit]', array( 'value' => $label_no_edit ) );
+
+	$label_publish = isset( $buddyform['moderation']['label_publish'] ) ? $buddyform['moderation']['label_publish'] : __( 'Publish', 'buddyforms-moderation' );
+	$form_setup[]  = new Element_Textbox( '<b>' . __( 'Label for Publish Button', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][label_publish]', array( 'value' => $label_publish ) );
 
 	$roles = get_editable_roles();
 
@@ -64,25 +67,32 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	if ( isset( $buddyform['moderation']['frontend-moderators'] ) ) {
 		$frontend_moderators = $buddyform['moderation']['frontend-moderators'];
 	}
-	$element = new Element_Select( '<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[moderation][frontend-moderators]", $roles_array, array(
-		'value'     => $frontend_moderators,
-		'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' )
-	) );
+	$element = new Element_Select(
+		'<b>' . __( 'Frontend Moderators Role', 'buddyforms-moderation' ) . '</b>',
+		'buddyforms_options[moderation][frontend-moderators]',
+		$roles_array,
+		array(
+			'value'     => $frontend_moderators,
+			'shortDesc' => __( 'Select which role the users will need to moderate the content from the front. This option takes precedence over the moderation field so it would not be shown to the user.', 'buddyforms-moderation' ),
+		)
+	);
 
 	if ( buddyforms_moderation_freemius()->is_not_paying() ) {
 		$element->setAttribute( 'disabled', 'disabled' );
 	}
-	
+
 	$form_setup[] = $element;
 
 	$element_name    = 'buddyforms_options[moderation][reject_subject]';
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
 	$reject_subject = ! empty( $buddyform['moderation']['reject_subject'] ) ? $buddyform['moderation']['reject_subject'] : __( 'Your submission got Rejected', 'buddyforms-moderation' );
-	$form_setup[]   = new Element_Textbox( '<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$form_setup[]   = new Element_Textbox(
+		'<b>' . __( 'Reject Subject', 'buddyforms-moderation' ) . '</b>',
+		$element_name,
 		array(
 			'value'     => $reject_subject,
-			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html,
 		)
 	);
 
@@ -90,10 +100,12 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
 	$reject_message = ! empty( $buddyform['moderation']['reject_message'] ) ? $buddyform['moderation']['reject_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben rejected.', 'buddyforms-moderation' );
-	$form_setup[]   = new Element_Textarea( '<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$form_setup[]   = new Element_Textarea(
+		'<b>' . __( 'Reject Message', 'buddyforms-moderation' ) . '</b>',
+		$element_name,
 		array(
 			'value'     => $reject_message,
-			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html,
 		)
 	);
 
@@ -101,10 +113,12 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
 	$approve_subject = ! empty( $buddyform['moderation']['approve_subject'] ) ? $buddyform['moderation']['approve_subject'] : __( 'Your submission got Approve', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textbox( '<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$form_setup[]    = new Element_Textbox(
+		'<b>' . __( 'Approve Subject', 'buddyforms-moderation' ) . '</b>',
+		$element_name,
 		array(
 			'value'     => $approve_subject,
-			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Subject', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html,
 		)
 	);
 
@@ -112,24 +126,40 @@ function buddyforms_moderation_admin_settings_sidebar_metabox_html() {
 	$shortcodes_html = buddyforms_moderation_element_shortcodes_helper( $buddyform, $element_name );
 
 	$approve_message = ! empty( $buddyform['moderation']['approve_message'] ) ? $buddyform['moderation']['approve_message'] : __( 'Hi [user_login], your submitted post [published_post_title] has ben approve.', 'buddyforms-moderation' );
-	$form_setup[]    = new Element_Textarea( '<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>', $element_name,
+	$form_setup[]    = new Element_Textarea(
+		'<b>' . __( 'Approve Message', 'buddyforms-moderation' ) . '</b>',
+		$element_name,
 		array(
 			'value'     => $approve_message,
-			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html
+			'shortDesc' => '<strong>' . __( 'You may use the shortcodes below to dynamically populate the Message', 'buddyforms-moderation' ) . '</strong><br/>' . $shortcodes_html,
 		)
 	);
 
-	$draft_message                            = ! empty( $buddyform['moderation']['draft_message'] ) ? $buddyform['moderation']['draft_message'] : __( 'Form Saved Successfully', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textarea( '<b>' . __( 'Draft Form Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][draft_message]',
+	$draft_message = ! empty( $buddyform['moderation']['draft_message'] ) ? $buddyform['moderation']['draft_message'] : __( 'Form Saved Successfully', 'buddyforms-moderation' );
+	$form_setup[]  = new Element_Textarea(
+		'<b>' . __( 'Draft Form Message', 'buddyforms-moderation' ) . '</b>',
+		'buddyforms_options[moderation][draft_message]',
 		array(
 			'value' => $draft_message,
 		)
 	);
 
-	$awaiting_review_message                  = ! empty( $buddyform['moderation']['awaiting_review_message'] ) ? $buddyform['moderation']['awaiting_review_message'] : __( 'Form Submit to Review Successfully', 'buddyforms-moderation' );
-	$form_setup[] = new Element_Textarea( '<b>' . __( 'Awaiting Review Form Message', 'buddyforms-moderation' ) . '</b>', 'buddyforms_options[moderation][awaiting_review_message]',
+	$awaiting_review_message = ! empty( $buddyform['moderation']['awaiting_review_message'] ) ? $buddyform['moderation']['awaiting_review_message'] : __( 'Form Submit to Review Successfully', 'buddyforms-moderation' );
+	$form_setup[]            = new Element_Textarea(
+		'<b>' . __( 'Awaiting Review Form Message', 'buddyforms-moderation' ) . '</b>',
+		'buddyforms_options[moderation][awaiting_review_message]',
 		array(
 			'value' => $awaiting_review_message,
+		)
+	);
+
+	$review_confirmation_message = isset( $buddyform['moderation']['review_confirmation_message'] ) ? $buddyform['moderation']['review_confirmation_message'] : __( 'Are you sure you want send it to moderation?', 'buddyforms-moderation' );
+	$form_setup[]                = new Element_Textbox(
+		'<b>' . __( 'Submit for Moderation Confirmation', 'buddyforms-moderation' ) . '</b>',
+		'buddyforms_options[moderation][review_confirmation_message]',
+		array(
+			'value'     => $review_confirmation_message,
+			'shortDesc' => __( 'Message shown on the confirmation window. Keep this option empty if you want to skip the confirmation before the submission.', 'buddyforms-moderation' ),
 		)
 	);
 
@@ -141,9 +171,9 @@ add_filter( 'add_meta_boxes', 'buddyforms_moderation_admin_settings_sidebar_meta
 /**
  * Display correct form action buttons
  *
- * @param Form $form
+ * @param Form   $form
  * @param string $form_slug
- * @param int $post_id
+ * @param int    $post_id
  *
  * @return mixed
  */
@@ -164,20 +194,30 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 	$submit_button            = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_submit'] ), 'edit-draft' );
 	$submit_save_button       = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_save'] ), 'edit-draft' );
 	$submit_new_draft_button  = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
+	$submit_publish_button    = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_publish'] ), 'publish-draft' );
 
 	$label_no_edit = new Element_HTML( '<div style="text-align: center; padding: 1rem;"><p>' . wp_kses_post( $moderation['label_no_edit'] ) . '</p></div>' );
+
+	if (
+		isset( $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] ) &&
+		! empty( $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] )
+	) {
+		$submit_moderation_button->setAttribute( 'data-confirmation', $buddyforms[ $form_slug ]['moderation']['review_confirmation_message'] );
+	}
 
 	if ( is_user_logged_in() ) {
 		// If post_id is 0 we have a new posts
 		$post_status = get_post_status( $post_id ); // Get the Posts status
-		if ( 'auto-draft' === $post_status ) {//New post
+		if ( 'auto-draft' === $post_status ) {// New post
 			if ( 'hidden_draft' == $moderation_logic ) {
+				$form->addElement( $submit_moderation_button );
+			} elseif ( 'publish_draft' == $moderation_logic ) {
 				$form->addElement( $submit_moderation_button );
 			} else {
 				$form->addElement( $submit_save_button );
 				$form->addElement( $submit_moderation_button );
 			}
-		} else { //Existing posts
+		} else { // Existing posts
 			if ( 'one_draft' === $moderation_logic ) {
 				if ( 'awaiting-review' == $post_status ) {
 					$form->addElement( $label_no_edit );
@@ -185,13 +225,13 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 					$form->addElement( $submit_save_button );
 					$form->addElement( $submit_moderation_button );
 				}
-			} else if ( 'hidden_draft' === $moderation_logic ) {
+			} elseif ( 'hidden_draft' === $moderation_logic ) {
 				if ( 'awaiting-review' == $post_status ) {
 					$form->addElement( $label_no_edit );
 				} else {
 					$form->addElement( $submit_moderation_button );
 				}
-			} else if ( 'many_drafts' === $moderation_logic ) {
+			} elseif ( 'many_drafts' === $moderation_logic ) {
 				if ( 'awaiting-review' === $post_status || 'publish' === $post_status ) {
 					$parent_id = wp_get_post_parent_id( $post_id );
 					if ( empty( $parent_id ) ) {
@@ -203,6 +243,8 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 					$form->addElement( $submit_save_button );
 					$form->addElement( $submit_moderation_button );
 				}
+			} elseif ( 'publish_draft' == $moderation_logic ) {
+					$form->addElement( $submit_publish_button );
 			}
 		}
 	} else {
@@ -216,7 +258,7 @@ function buddyforms_moderation_form_action_elements( $form, $form_slug, $post_id
 /**
  * Display the new Form Element in the Frontend Form
  *
- * @param Form $form
+ * @param Form      $form
  * @param $form_slug
  * @param $post_id
  *
@@ -272,7 +314,7 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 		return $json_args;
 	}
 
-	$form_slug = buddyforms_sanitize_slug( $_POST['form_slug'] );
+	$form_slug = buddyforms_sanitize_slug( wp_unslash( $_POST['form_slug'] ) );
 
 	$is_moderation_enabled = buddyforms_moderation_is_enabled( $form_slug );
 
@@ -288,10 +330,11 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 	$moderation = buddyforms_get_form_option( $form_slug, 'moderation' );
 
-	$label_moderation = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_review'] ), 'awaiting-review' );
-	$label_submit     = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_submit'] ), 'edit-draft' );
-	$label_save       = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_save'] ), 'edit-draft' );
-	$label_new_draft  = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
+	$label_moderation      = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_review'] ), 'awaiting-review' );
+	$label_submit          = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_submit'] ), 'edit-draft' );
+	$label_save            = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_save'] ), 'edit-draft' );
+	$label_new_draft       = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_new_draft'] ), 'new-draft' );
+	$submit_publish_button = buddyforms_moderation_submit_button( $form_slug, esc_attr( $moderation['label_publish'] ), 'publish-post' );
 
 	$label_no_edit = new Element_HTML( '<div style="text-align: center; padding: 1rem;"><p>' . wp_kses_post( $moderation['label_no_edit'] ) . '</p></div>' );
 
@@ -299,14 +342,14 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 	if ( is_user_logged_in() ) {
 		// If post_id is 0 we have a new posts
-		if ( 'auto-draft' === $post_status ) {//New post
+		if ( 'auto-draft' === $post_status ) {// New post
 			if ( 'hidden_draft' == $moderation_logic ) {
 				$form_elements[] = $label_moderation;
 			} else {
 				$form_elements[] = $label_save;
 				$form_elements[] = $label_moderation;
 			}
-		} else { //Existing posts
+		} else { // Existing posts
 			if ( 'one_draft' === $moderation_logic ) {
 				if ( 'awaiting-review' == $post_status ) {
 					$form_elements[] = $label_no_edit;
@@ -314,13 +357,13 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 					$form_elements[] = $label_save;
 					$form_elements[] = $label_moderation;
 				}
-			} else if ( 'hidden_draft' === $moderation_logic ) {
+			} elseif ( 'hidden_draft' === $moderation_logic ) {
 				if ( 'awaiting-review' == $post_status ) {
 					$form_elements[] = $label_no_edit;
 				} else {
 					$form_elements[] = $label_moderation;
 				}
-			} else if ( 'many_drafts' === $moderation_logic ) {
+			} elseif ( 'many_drafts' === $moderation_logic ) {
 				if ( 'awaiting-review' === $post_status || 'publish' === $post_status ) {
 					$parent_id = wp_get_post_parent_id( $post_id );
 					if ( empty( $parent_id ) ) {
@@ -332,6 +375,8 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 					$form_elements[] = $label_save;
 					$form_elements[] = $label_moderation;
 				}
+			} elseif ( 'publish_draft' === $moderation_logic ) {
+				$form_elements[] = $submit_publish_button;
 			}
 		}
 	} else {
@@ -351,7 +396,14 @@ function buddyforms_moderation_ajax_process_edit_post_json_response( $json_args 
 
 }
 
-function buddyforms_remove_private_prefix( $title, $post_id ) {
+function buddyforms_remove_private_prefix( $title ) {
+	global $post;
+
+	if( ! is_object( $post ) ) {
+		return $title;
+	}
+	
+	$post_id = $post->ID;
 	$form_slug = buddyforms_get_form_slug_by_post_id( $post_id );
 	if ( ! empty( $form_slug ) ) {
 		$title = str_replace( 'Private: ', '', $title );
@@ -369,7 +421,7 @@ function bf_moderation_post_control_args( $args ) {
 		return $args;
 	}
 
-	$post_status = sanitize_text_field( $_POST['status'] );
+	$post_status = sanitize_text_field( wp_unslash( $_POST['status'] ) );
 
 	if ( $post_status == 'new-draft' ) {
 		$args['action'] = 'new-post';
@@ -385,6 +437,10 @@ function bf_moderation_post_control_args( $args ) {
 
 	if ( $post_status == 'awaiting-review' ) {
 		$args['post_status'] = 'awaiting-review';
+	}
+
+	if ( $post_status == 'publish-draft' ) {
+		$args['post_status'] = 'publish';
 	}
 
 	return $args;
@@ -410,7 +466,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 		'posts_per_page' => 1,
 		'post_status'    => 'edit-draft',
 		'orderby '       => 'date',
-		'order '         => 'DESC'
+		'order '         => 'DESC',
 	);
 
 	$children = new WP_Query( $args );
@@ -423,7 +479,7 @@ function bf_moderation_create_edit_form_post_id( $post_id ) {
 
 }
 
-//add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
+// add_filter( 'buddyforms_create_edit_form_post_id', 'bf_moderation_create_edit_form_post_id', 10, 1 );
 
 function bf_moderation_post_status_css( $post_status_css, $form_slug ) {
 	global $buddyforms;
@@ -466,7 +522,7 @@ function buddyforms_moderation_create_edit_form_post_status( $post_status, $form
 		}
 
 		// What if someone enter a not existing post status?
-		$post_status = $_POST['status'];
+		$post_status = sanitize_text_field( wp_unslash( $_POST['status'] ) );
 	}
 
 	return $post_status;

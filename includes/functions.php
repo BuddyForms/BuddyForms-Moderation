@@ -23,7 +23,7 @@ function bf_moderation_delete_children( $new_status, $old_status, $post ) {
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => $the_author_id
+		'author'         => $the_author_id,
 	);
 
 	// Get all children
@@ -113,7 +113,7 @@ function bf_moderation_edit_post_link( $edit_post_link, $post_id ) {
 			'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 			'posts_per_page' => - 1,
 			'post_parent'    => $post_id,
-			'author'         => $the_author_id
+			'author'         => $the_author_id,
 		);
 
 		$post_parent = new WP_Query( $args );
@@ -149,36 +149,41 @@ function buddyforms_review_the_table_tr_last( $post_id ) {
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => $the_author_id
+		'author'         => $the_author_id,
 	);
 
 	$the_moderation_query = new WP_Query( $args ); ?>
 
-	<?php if ( $the_moderation_query->have_posts() ) : while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
+	<?php
+	if ( $the_moderation_query->have_posts() ) :
+		while ( $the_moderation_query->have_posts() ) :
+			$the_moderation_query->the_post();
 
-		$post_status = get_post_status();
+			$post_status = get_post_status();
 
-		$post_status_css  = buddyforms_get_post_status_css_class( $post_status, $form_slug );
-		$post_status_name = buddyforms_get_post_status_readable( $post_status );
-		?>
+			$post_status_css  = buddyforms_get_post_status_css_class( $post_status, $form_slug );
+			$post_status_name = buddyforms_get_post_status_readable( $post_status );
+			?>
 
-		<tr class="tr-sub <?php echo $post_status_css; ?>">
+		<tr class="tr-sub <?php echo esc_attr( $post_status_css ); ?>">
 			<td>
-				<span class="mobile-th"><?php _e( 'Status', 'buddyforms-moderation' ); ?></span>
+				<span class="mobile-th"><?php esc_html_e( 'Status', 'buddyforms-moderation' ); ?></span>
 				<div class="status-item">
-					<div class="table-item-status"><?php echo $post_status_name ?></div>
-					<div class="item-status-action"><?php _e( 'Created', 'buddyforms-moderation' ); ?><?php the_time( 'F j, Y' ) ?></div>
+					<div class="table-item-status"><?php echo esc_html( $post_status_name ); ?></div>
+					<div class="item-status-action"><?php esc_html_e( 'Created', 'buddyforms-moderation' ); ?><?php the_time( 'F j, Y' ); ?></div>
 				</div>
 			</td>
 			<td>
 				<div class="meta">
-					<span class="mobile-th"><?php _e( 'Actions', 'buddyforms-moderation' ); ?></span>
+					<span class="mobile-th"><?php esc_html_e( 'Actions', 'buddyforms-moderation' ); ?></span>
 					<?php buddyforms_post_entry_actions( $form_slug ); ?>
 				</div>
 			</td>
 		</tr>
 
-	<?php endwhile; endif;
+			<?php
+	endwhile;
+endif;
 
 }
 
@@ -209,7 +214,7 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 		'post_status'    => array( 'edit-draft', 'awaiting-review' ),
 		'posts_per_page' => - 1,
 		'post_parent'    => $post_parent,
-		'author'         => $the_author_id
+		'author'         => $the_author_id,
 	);
 
 	$args = apply_filters( 'buddyforms_the_lp_query', $args );
@@ -224,7 +229,8 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 		$wp_time_format = '';
 	}
 
-	$the_moderation_query = new WP_Query( $args ); ?>
+	$the_moderation_query = new WP_Query( $args );
+	?>
 
 
 	<?php if ( $the_moderation_query->have_posts() ) : ?>
@@ -247,7 +253,9 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 		</style>
 		<ul class="buddyforms-list-sub" role="sub">
 
-			<?php while ( $the_moderation_query->have_posts() ) : $the_moderation_query->the_post();
+			<?php
+			while ( $the_moderation_query->have_posts() ) :
+				$the_moderation_query->the_post();
 
 				$the_permalink = get_permalink();
 				$post_status   = get_post_status();
@@ -256,26 +264,30 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 				$post_status_name = buddyforms_get_post_status_readable( $post_status );
 				?>
 
-				<li id="bf_post_li_<?php the_ID() ?>" class="bf-submission-sub <?php echo $post_status_css; ?>">
+				<li id="bf_post_li_<?php the_ID(); ?>" class="bf-submission-sub <?php echo esc_attr( $post_status_css ); ?>">
 					<div class="item-thumb">
 
 						<?php
-						$post_thumbnail = get_the_post_thumbnail( get_the_ID(), array(
-							75,
-							75
-						), array( 'class' => "thumb" ) );
+						$post_thumbnail = get_the_post_thumbnail(
+							get_the_ID(),
+							array(
+								75,
+								75,
+							),
+							array( 'class' => 'thumb' )
+						);
 						$post_thumbnail = apply_filters( 'buddyforms_loop_thumbnail', $post_thumbnail );
 						?>
 
-						<a href="<?php echo $the_permalink; ?>"><?php echo $post_thumbnail ?></a>
+						<a href="<?php echo esc_url( $the_permalink ); ?>"><?php echo esc_html( $post_thumbnail ); ?></a>
 					</div>
 
 					<div class="item">
 						<div class="item-title">
-							<a href="<?php echo $the_permalink; ?>" rel="bookmark" title="<?php _e( 'Permanent Link to', 'buddyforms-moderation' ) ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
+							<a href="<?php echo esc_url( $the_permalink ); ?>" rel="bookmark" title="<?php esc_html_e( 'Permanent Link to', 'buddyforms-moderation' ); ?> <?php the_title_attribute(); ?>"><?php the_title(); ?></a>
 						</div>
 
-						<div class="item-desc"><?php echo get_the_excerpt(); ?></div>
+						<div class="item-desc"><?php echo esc_html( get_the_excerpt() ); ?></div>
 
 					</div>
 
@@ -283,9 +295,9 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 					<div class="action">
 						<div class="meta">
-							<div class="item-status"><?php echo $post_status_name; ?></div>
+							<div class="item-status"><?php echo esc_html( $post_status_name ); ?></div>
 							<?php buddyforms_post_entry_actions( $form_slug ); ?>
-							<div class="publish-date"><?php _e( 'Created', 'buddyforms-moderation' ); ?>&nbsp;<?php the_time( $wp_date_format . ' ' . $wp_time_format ) ?></div>
+							<div class="publish-date"><?php esc_html_e( 'Created', 'buddyforms-moderation' ); ?>&nbsp;<?php the_time( $wp_date_format . ' ' . $wp_time_format ); ?></div>
 						</div>
 					</div>
 
@@ -295,13 +307,13 @@ function bf_buddyforms_the_loop_li_last( $post_id ) {
 
 				</li>
 
-				<?php do_action( 'buddyforms_after_loop_item' ) ?>
+				<?php do_action( 'buddyforms_after_loop_item' ); ?>
 
 			<?php endwhile; ?>
 
 		</ul>
 
-	<?php
+		<?php
 	endif;
 
 }
@@ -316,7 +328,6 @@ add_action( 'buddyforms_the_loop_li_last', 'bf_buddyforms_the_loop_li_last' );
  *
  * @return mixed
  * @since 1.4.5
- *
  */
 function buddyforms_moderation_the_loop_date_format( $bf_date_time_format, $form_slug ) {
 	if ( empty( $form_slug ) ) {
@@ -353,10 +364,10 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 	<script>
 		jQuery(document).ready(function () {
 			jQuery(document).on("click", '#buddyforms_reject_now', function (evt) {
-
-				var bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
-				var bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
-				var bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
+				const $this = jQuery(this);
+				const bf_reject_mail_from = jQuery('#bf_reject_mail_from').val();
+				const bf_reject_mail_subject = jQuery('#bf_reject_mail_subject').val();
+				const bf_reject_mail_message = jQuery('#bf_reject_mail_message').val();
 
 				if (bf_reject_mail_from == '') {
 					alert('Mail From is a required field');
@@ -385,6 +396,9 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 						"bf_reject_mail_subject": bf_reject_mail_subject,
 						"bf_reject_mail_message": bf_reject_mail_message
 					},
+					beforeSend: function() {
+						$this.closest('#buddyforms_reject_wrap').LoadingOverlay("show", { zIndex: 100051 });
+					 },
 					success: function (data) {
 
 						if (data) {
@@ -395,6 +409,9 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 					},
 					error: function (request, status, error) {
 						alert(request.responseText);
+					},
+					complete: function() {
+						$this.closest('#buddyforms_reject_wrap').LoadingOverlay("hide");
 					}
 				});
 
@@ -420,7 +437,7 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 			<?php
 			if ( is_array( $bf_moderation_message_history ) ) {
 				foreach ( $bf_moderation_message_history as $key => $message ) {
-					echo '<li>' . stripslashes( substr( $message, 0, 130 ) ) . '</li>';
+					echo '<li>' . esc_html( stripslashes( substr( $message, 0, 130 ) ) ) . '</li>';
 				}
 			}
 
@@ -432,15 +449,15 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 		<div id="buddyforms_reject_wrap">
 
 			<p>Message will be sent to the
-				Author <?php echo get_the_author_meta( 'user_nicename', $post->post_author ); ?> to the mail
-				address <?php echo get_the_author_meta( 'user_email', $post->post_author ); ?></p>
+				Author <?php echo esc_html( get_the_author_meta( 'user_nicename', $post->post_author ) ); ?> to the mail
+				address <?php echo esc_html( get_the_author_meta( 'user_email', $post->post_author ) ); ?></p>
 
 			<table class="form-table">
 				<tbody>
 				<tr>
 					<th><label for="bf_reject_mail_from">Mail From</label></th>
 					<td><input id="bf_reject_mail_from" type="text"
-					           value="<?php echo get_bloginfo( 'admin_email' ); ?>"></td>
+							   value="<?php echo esc_attr( get_bloginfo( 'admin_email' ) ); ?>"></td>
 				</tr>
 				<tr>
 					<th><label for="bf_reject_mail_subject">Mail Subject</label></th>
@@ -451,18 +468,21 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 
 			<?php
 
-			wp_editor( 'Hi [user_login], Your submitted post [published_post_title] has ben rejected.', 'bf_reject_mail_message', array(
-				'media_buttons' => false,
-				'teeny'         => false,
-				'textarea_rows' => '10',
-			) );
-
+			wp_editor(
+				'Hi [user_login], Your submitted post [published_post_title] has ben rejected.',
+				'bf_reject_mail_message',
+				array(
+					'media_buttons' => false,
+					'teeny'         => false,
+					'textarea_rows' => '10',
+				)
+			);
 
 			?>
 			<br>
 			<a id="buddyforms_reject_now"
-			   data-post_id="<?php echo $post->ID ?>"
-			   data-user_email="<?php echo get_the_author_meta( 'user_email', $post->post_author ) ?>"
+			   data-post_id="<?php echo esc_attr( $post->ID ); ?>"
+			   data-user_email="<?php echo esc_attr( get_the_author_meta( 'user_email', $post->post_author ) ); ?>"
 			   href="#" class="button">Sent Message and Set post status to edit-draft</a>
 
 			<h3>User Shortcodes</h3>
@@ -494,13 +514,12 @@ function buddyforms_moderation_post_edit_meta_box_actions() {
 add_action( 'wp_ajax_buddyforms_reject_now', 'buddyforms_reject_now' );
 function buddyforms_reject_now() {
 
-
 	if ( ! isset( $_POST['post_id'] ) ) {
-		echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
 		die();
 	}
 
-	$post_id = $_POST['post_id'];
+	$post_id = sanitize_key( $_POST['post_id'] );
 
 	$post       = get_post( $post_id );
 	$post_title = $post->post_title;
@@ -517,12 +536,13 @@ function buddyforms_reject_now() {
 	$siteurl     = get_bloginfo( 'wpurl' );
 	$siteurlhtml = "<a href='$siteurl' target='_blank' >$siteurl</a>";
 
-
-	$mail_to = $_POST['user_email'];
-	$subject = $_POST['bf_reject_mail_subject'];
-
-	$from_email = $_POST['bf_reject_mail_from'];
-	$emailBody  = $_POST['bf_reject_mail_message'];
+	if ( ! isset( $_POST['user_email'] ) || ! isset( $_POST['bf_reject_mail_subject'] ) || ! isset( $_POST['bf_reject_mail_from'] ) || ! isset( $_POST['bf_reject_mail_message'] ) ) {
+		return;
+	}
+	$mail_to = sanitize_email( wp_unslash( $_POST['user_email'] ) );
+	$subject = sanitize_text_field( wp_unslash( $_POST['bf_reject_mail_subject'] ) );
+	$from_email = sanitize_email( wp_unslash( $_POST['bf_reject_mail_from'] ) );
+	$emailBody  = sanitize_text_field( wp_unslash( $_POST['bf_reject_mail_message'] ) );
 
 	$emailBody    = str_replace( '[user_login]', $usernameauth, $emailBody );
 	$emailBody    = str_replace( '[first_name]', $first_name, $emailBody );
@@ -537,30 +557,36 @@ function buddyforms_reject_now() {
 
 	$emailBody = stripslashes( htmlspecialchars_decode( $emailBody ) );
 
-	$mailheaders = "MIME-Version: 1.0\n";
+	$mailheaders  = "MIME-Version: 1.0\n";
 	$mailheaders .= "X-Priority: 1\n";
 	$mailheaders .= "Content-Type: text/html; charset=\"UTF-8\"\n";
 	$mailheaders .= "Content-Transfer-Encoding: 7bit\n\n";
-	$mailheaders .= "From: " . $from_email . "<" . $from_email . ">" . "\r\n";
+	$mailheaders .= 'From: ' . $from_email . '<' . $from_email . '>' . "\r\n";
 
 	$message = '<html><head></head><body>' . $emailBody . '</body></html>';
 
 	$result = wp_mail( $mail_to, $subject, $message, $mailheaders );
 
-	$result_update = wp_update_post( array(
-		'ID'          => $post_id,
-		'post_status' => 'edit-draft',
-	) );
+	$result_update = wp_update_post(
+		array(
+			'ID'          => $post_id,
+			'post_status' => 'edit-draft',
+		)
+	);
 
 	if ( ! $result ) {
-		echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
 	}
 
 	if ( is_wp_error( $result_update ) ) {
-		echo __( 'There has been an error changing the post status!', 'buddyforms-moderation' );
+		echo esc_html__( 'There has been an error changing the post status!', 'buddyforms-moderation' );
 	}
 
 	$bf_moderation_message_history = get_post_meta( $post_id, '_bf_moderation_message_history', true );
+
+	if ( ! is_array( $bf_moderation_message_history ) ) {
+		$bf_moderation_message_history = ! empty( $bf_moderation_message_history ) ? array( $bf_moderation_message_history ) : array();
+	}
 
 	$bf_moderation_message_history[] = the_date( 'l, F j, Y' ) . $emailBody;
 	update_post_meta( $post_id, '_bf_moderation_message_history', $bf_moderation_message_history );
@@ -574,7 +600,6 @@ function buddyforms_reject_now() {
  * Get all forms with collaborative publishing functionality
  *
  * @return array
- *
  */
 function buddyforms_moderators_get_forms() {
 	global $buddyforms;
@@ -683,12 +708,16 @@ function buddyforms_moderation_get_forced_moderator_role_by_form_slug( $form_slu
  * @return Element_Button
  */
 function buddyforms_moderation_submit_button( $form_slug, $label, $status ) {
-	return new Element_Button( $label, 'submit', array(
-		'class'       => 'bf-submit bf-moderation',
-		'name'        => $status,
-		'data-target' => $form_slug,
-		'data-status' => $status,
-	) );
+	return new Element_Button(
+		$label,
+		'submit',
+		array(
+			'class'       => 'bf-submit bf-moderation',
+			'name'        => $status,
+			'data-target' => $form_slug,
+			'data-status' => $status,
+		)
+	);
 }
 
 function buddyforms_moderation_process_shortcode( $string, $post_id, $form_slug ) {
@@ -874,7 +903,7 @@ add_filter( 'comments_open', 'buddyforms_moderation_disable_comment', 10, 2 );
 function buddyforms_moderators_actions_html( $form_slug, $post_id ) {
 	echo '<ul class="edit_links">';
 	echo '<li>';
-	echo '<a title="' . __( 'Approve', 'buddyforms-moderation' ) . '"  id="' . $post_id . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . __( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
+	echo '<a title="' . esc_html__( 'Approve', 'buddyforms-moderation' ) . '"  id="' . esc_attr( $post_id ) . '" class="buddyforms_moderators_approve buddyforms_moderators_action" href="#">' . esc_html__( 'Approve', 'buddyforms-moderation' ) . '</a></li>';
 	echo '</li>';
 	echo '<li>';
 	buddyforms_moderators_reject_post( $post_id, $form_slug );
@@ -906,7 +935,7 @@ function buddyforms_moderators_actions_attachment( $content ) {
 	return $content;
 }
 
-//add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
+// add_filter( 'the_content', 'buddyforms_moderators_actions_attachment', 888, 1 );
 
 /**
  * Include assets after buddyforms
@@ -914,14 +943,18 @@ function buddyforms_moderators_actions_attachment( $content ) {
 function buddyforms_moderation_include_assets() {
 	wp_enqueue_style( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'css/buddyforms-moderation.css', array(), BUDDYFORMS_MODERATION_VERSION );
 	wp_enqueue_script( 'buddyforms-moderation', BUDDYFORMS_MODERATION_ASSETS . 'js/buddyforms-moderation.js', array( 'jquery', 'buddyforms-js' ), BUDDYFORMS_MODERATION_VERSION );
-	wp_localize_script( 'buddyforms-moderation', 'buddyformsModeration', array(
-		'ajax'  => admin_url( 'admin-ajax.php' ),
-		'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
-		'il18n' => array(
-			'approve'          => __( 'Approve this Post', 'buddyforms-moderation' ),
-			'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
-		),
-	) );
+	wp_localize_script(
+		'buddyforms-moderation',
+		'buddyformsModeration',
+		array(
+			'ajax'  => admin_url( 'admin-ajax.php' ),
+			'nonce' => wp_create_nonce( __DIR__ . 'buddyforms_moderation' ),
+			'il18n' => array(
+				'approve'          => __( 'Approve this Post', 'buddyforms-moderation' ),
+				'select_moderator' => __( 'Please select a Moderator', 'buddyforms-moderation' ),
+			),
+		)
+	);
 }
 
 add_action( 'buddyforms_front_js_css_after_enqueue', 'buddyforms_moderation_include_assets' );
@@ -943,10 +976,65 @@ function buddyforms_moderators_select( $elements_select_options ) {
 	$elements_select_options['moderators']['class']                = 'bf_show_if_f_type_post';
 	$elements_select_options['moderators']['fields']['moderators'] = array(
 		'is_pro' => true,
-		'label' => __( 'Select Moderators ', 'buddyforms-moderation' ),
+		'label'  => __( 'Select Moderators ', 'buddyforms-moderation' ),
 	);
 
 	return $elements_select_options;
 }
 
 add_filter( 'buddyforms_add_form_element_select_option', 'buddyforms_moderators_select', 1, 2 );
+
+
+add_action( 'pre_get_posts', 'buddyforms_enable_single_post_preview_for_moderators' );
+function buddyforms_enable_single_post_preview_for_moderators( $query ) {
+	global $buddyforms;
+
+	if ( ! $query->is_single() || ! ( $query instanceof WP_Query ) ) {
+		return;
+	}
+
+	if ( ! ( isset( $_GET['bf_awaiting_review_preview'] ) && $query->get( 'p' ) === (int) $_GET['bf_awaiting_review_preview'] ) ) {
+		return;
+	}
+
+	$post_id            = $query->get( 'p' );
+	$form_slug          = get_post_meta( $post_id, '_bf_form_slug', true );
+	$current_user       = wp_get_current_user();
+	$frontend_moderator = isset( $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] ) ? $buddyforms[ $form_slug ]['moderation']['frontend-moderators'] : false;
+
+	if ( $frontend_moderator === 'all' || in_array( $frontend_moderator, (array) $current_user->roles ) ) {
+		$query->set( 'post_status', 'awaiting-review' );
+	}
+}
+
+
+add_filter( 'buddyforms_post_link_on_the_loop', 'buddyforms_post_link_on_list_posts_to_moderate', 10, 2 );
+function buddyforms_post_link_on_list_posts_to_moderate( $post_link, $post_id ) {
+
+	if ( isset( $_GET['buddyforms_list_posts_to_moderate'] ) ) {
+		$post_link = add_query_arg( array( 'bf_awaiting_review_preview' => $post_id ), $post_link );
+	}
+
+	return $post_link;
+}
+
+function buddyforms_sanitize_mixed( $var ) {
+	if ( is_array( $var ) ) {
+		return array_map( 'buddyforms_sanitize_mixed', $var );
+	} else {
+		return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
+	}
+}
+
+if( class_exists('myCRED_Hook') ){
+	add_filter( 'mycred_publish_hook_old', 'include_new_post_status', 10, 3 );
+	function include_new_post_status( $allowed_status, $post_id, $mycred_type ){
+	
+		if( ! isset( $allowed_status['awaiting-review'] ) ){
+			array_push( $allowed_status, 'awaiting-review' );
+		}
+		return $allowed_status;
+		
+	}
+}
+

@@ -15,7 +15,6 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 
 	switch ( $field_type ) {
 		case 'moderators':
-
 			$roles = get_editable_roles();
 
 			$roles_array = array( 'all' => __( 'All Roles', 'buddyforms-moderation' ) );
@@ -27,27 +26,40 @@ function buddyforms_moderators_form_builder_form_elements( $form_fields, $form_s
 			if ( isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['moderators'] ) ) {
 				$moderators = $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['moderators'];
 			}
-			$form_fields['general']['moderators'] = new Element_Select( '<b>' . __( 'Moderators', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[form_fields][" . $field_id . "][moderators]", $roles_array, array(
-				'value'         => $moderators,
-				'data-field_id' => $field_id,
-				'shortDesc'     => __( 'Let you users select the moderator(s) form the selected role or from all users.', 'buddyforms-moderation' )
-			) );
+			$form_fields['general']['moderators'] = new Element_Select(
+				'<b>' . __( 'Moderators', 'buddyforms-moderation' ) . '</b>',
+				'buddyforms_options[form_fields][' . $field_id . '][moderators]',
+				$roles_array,
+				array(
+					'value'         => $moderators,
+					'data-field_id' => $field_id,
+					'shortDesc'     => __( 'Let you users select the moderator(s) form the selected role or from all users.', 'buddyforms-moderation' ),
+				)
+			);
 
 			$hide_for_moderators                           = isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['hide_for_moderators'] ) ? $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['hide_for_moderators'] : 'false';
-			$form_fields['general']['hide_for_moderators'] = new Element_Checkbox( '<b>' . __( 'Hide for Moderator', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[form_fields][" . $field_id . "][hide_for_moderators]", array(
-				'hide_for_moderators' => '<b>' . __( 'Hide', 'buddyforms-moderation' ) . '</b>'
-			), array(
-				'value'     => $hide_for_moderators,
-				'shortDesc' => __( 'Hide this field for the moderators users.', 'buddyforms-moderation' )
-			) );
-
+			$form_fields['general']['hide_for_moderators'] = new Element_Checkbox(
+				'<b>' . __( 'Hide for Moderator', 'buddyforms-moderation' ) . '</b>',
+				'buddyforms_options[form_fields][' . $field_id . '][hide_for_moderators]',
+				array(
+					'hide_for_moderators' => '<b>' . __( 'Hide', 'buddyforms-moderation' ) . '</b>',
+				),
+				array(
+					'value'     => $hide_for_moderators,
+					'shortDesc' => __( 'Hide this field for the moderators users.', 'buddyforms-moderation' ),
+				)
+			);
 
 			$placeholder                                = isset( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) ? stripcslashes( $buddyforms[ $form_slug ]['form_fields'][ $field_id ]['data-placeholder'] ) : __( 'Select a Moderators', 'buddyforms-moderation' );
-			$form_fields['general']['data-placeholder'] = new Element_Textbox( '<b>' . __( 'Placeholder', 'buddyforms-moderation' ) . '</b>', "buddyforms_options[form_fields][" . $field_id . "][data-placeholder]", array(
-				'data'      => $field_id,
-				'value'     => $placeholder,
-				'shortDesc' => __( 'This string will be show inside the field.', 'buddyforms-moderation' )
-			) );
+			$form_fields['general']['data-placeholder'] = new Element_Textbox(
+				'<b>' . __( 'Placeholder', 'buddyforms-moderation' ) . '</b>',
+				'buddyforms_options[form_fields][' . $field_id . '][data-placeholder]',
+				array(
+					'data'      => $field_id,
+					'value'     => $placeholder,
+					'shortDesc' => __( 'This string will be show inside the field.', 'buddyforms-moderation' ),
+				)
+			);
 
 			break;
 	}
@@ -60,7 +72,7 @@ add_filter( 'buddyforms_form_element_add_field', 'buddyforms_moderators_form_bui
 /**
  * Display the new Moderator Fields in the frontend form
  *
- * @param Form $form
+ * @param Form  $form
  * @param array $form_args
  *
  * @return mixed
@@ -86,10 +98,9 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 
 	switch ( $customfield['type'] ) {
 		case 'moderators':
-
-			//Check if moderation is not forced from the form settings
+			// Check if moderation is not forced from the form settings
 			$moderation_options  = $buddyforms[ $form_slug ]['moderation'];
-			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) && !in_array( $moderation_options['frontend-moderators'], array( 'all', 'false' ) ) );
+			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) && ! in_array( $moderation_options['frontend-moderators'], array( 'all', 'false' ) ) );
 
 			if ( $is_moderation_force ) {
 				return $form;
@@ -103,9 +114,11 @@ function buddyforms_moderators_frontend_form_elements( $form, $form_args ) {
 			if ( $customfield['moderators'] == 'all' ) {
 				$blog_users = get_users();
 			} else {
-				$blog_users = get_users( array(
-					'role' => $customfield['moderators']
-				) );
+				$blog_users = get_users(
+					array(
+						'role' => $customfield['moderators'],
+					)
+				);
 			}
 
 			$hide_the_field  = false;
@@ -179,10 +192,10 @@ function buddyforms_moderators_update_post_meta( $customfield, $post_id ) {
 
 		// Update the editors post meta
 		if ( ! empty( $_POST['buddyforms_moderators'] ) ) {
-			update_post_meta( $post_id, 'buddyforms_moderators', $_POST['buddyforms_moderators'] );
+			update_post_meta( $post_id, 'buddyforms_moderators', buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) );
 
 			// Update the editors array
-			foreach ( $_POST['buddyforms_moderators'] as $key => $moderator ) {
+			foreach ( buddyforms_sanitize_mixed( wp_unslash( $_POST['buddyforms_moderators'] ) ) as $key => $moderator ) {
 				$moderators[ $moderator ] = $moderator;
 			}
 		}
@@ -217,7 +230,7 @@ function buddyforms_moderators_server_validation( $valid, $form_slug ) {
 		if ( isset( $_POST['status'] ) && $_POST['status'] == 'awaiting-review' ) {
 			$form                = buddyforms_get_form_by_slug( $form_slug );
 			$moderation_options  = $form['moderation'];
-			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) && !in_array( $moderation_options['frontend-moderators'], array( 'all', 'false' ) ) );
+			$is_moderation_force = ( ! empty( $moderation_options ) && ! empty( $moderation_options['frontend-moderators'] ) && ! in_array( $moderation_options['frontend-moderators'], array( 'all', 'false' ) ) );
 
 			if ( $is_moderation_force ) {
 				return $valid;
@@ -278,12 +291,12 @@ function buddyforms_moderators_ajax_approve_post() {
 		if ( ! isset( $_POST['action'] ) || ! isset( $_POST['nonce'] ) ) {
 			die();
 		}
-		if ( ! wp_verify_nonce( $_POST['nonce'], __DIR__ . 'buddyforms_moderation' ) ) {
+		if ( ! wp_verify_nonce( wp_unslash( $_POST['nonce'] ), __DIR__ . 'buddyforms_moderation' ) ) {
 			die();
 		}
 
 		if ( ! isset( $_POST['post_id'] ) ) {
-			echo __( 'There has been an error sending the message!', 'buddyforms-moderation' );
+			echo esc_html__( 'There has been an error sending the message!', 'buddyforms-moderation' );
 			die();
 		}
 
@@ -294,14 +307,16 @@ function buddyforms_moderators_ajax_approve_post() {
 
 		$form_slug = get_post_meta( $post_id, '_bf_form_slug', true );
 		if ( ! $form_slug ) {
-			_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-moderation' );
+			esc_html_e( 'You are not allowed to access here! What are you doing here?', 'buddyforms-moderation' );
 			die();
 		}
 
-		$approve = wp_update_post( array(
-			'ID'          => $post_id,
-			'post_status' => 'approved',
-		) );
+		$approve = wp_update_post(
+			array(
+				'ID'          => $post_id,
+				'post_status' => 'approved',
+			)
+		);
 
 		if ( ! is_wp_error( $approve ) ) {
 			$post      = get_post( $post_id );
@@ -331,6 +346,8 @@ function buddyforms_moderators_ajax_approve_post() {
 				buddyforms_moderation_error_log( 'Error sending the approve email for the post ' . $post_id );
 			}
 		}
+
+		do_action( 'buddyforms_moderators_after_approving_post', $post_id );
 
 		// Remove the post from the user posts taxonomy
 		wp_remove_object_terms( get_current_user_id(), strval( $post_id ), 'buddyforms_moderators_posts' );
