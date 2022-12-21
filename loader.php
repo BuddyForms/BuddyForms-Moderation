@@ -182,6 +182,10 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 						// If your addon is a serviceware, set this option to false.
 						'has_premium_version' => true,
 						'has_paid_plans'      => true,
+						'trial'               => array(
+							'days'               => 7,
+							'is_require_payment' => true,
+						),
 						'parent'              => array(
 							'id'         => '391',
 							'slug'       => 'buddyforms',
@@ -192,6 +196,7 @@ if ( ! function_exists( 'bfmod_fs' ) ) {
 							'slug'    => 'buddyforms',
 							'support' => false,
 						),
+						'bundle_license_auto_activation' => true,
 					)
 				);
 
